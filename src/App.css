@@ -1,0 +1,347 @@
+/* ===== Reset & Base — Iron Man HUD ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0e14; color: #e0e6f0; overflow: hidden; }
+.app { height: 100vh; display: flex; flex-direction: column; }
+
+/* ===== Header — Dark with Ferrari Red accent ===== */
+.header {
+  background: linear-gradient(135deg, #0c1018, #14101c);
+  padding: 12px 24px; display: flex; align-items: center; gap: 24px;
+  border-bottom: 1px solid rgba(255,40,0,0.15); flex-shrink: 0;
+}
+.header-logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.logo-circle {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,40,0,0.08); border: 1.5px solid rgba(255,40,0,0.35);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: bold; font-size: 14px; color: #FF2800;
+}
+.logo-text { font-size: 16px; font-weight: 600; color: #FF2800; }
+.header-stats { display: flex; gap: 14px; flex: 1; justify-content: flex-end; }
+.stat-card {
+  background: rgba(255,40,0,0.04); border: 1px solid rgba(255,40,0,0.12);
+  border-radius: 8px; padding: 6px 16px; text-align: center; min-width: 120px;
+}
+.stat-value { font-size: 16px; font-weight: 700; color: #FF4020; }
+.stat-label { font-size: 9px; color: rgba(255,40,0,0.45); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ===== Breadcrumb ===== */
+.breadcrumb-bar {
+  padding: 6px 24px; background: rgba(255,40,0,0.02);
+  border-bottom: 1px solid rgba(255,40,0,0.06); flex-shrink: 0;
+}
+.breadcrumb { font-size: 13px; color: #556677; }
+.breadcrumb-link { background: none; border: none; color: #FF4020; cursor: pointer; font-size: 13px; padding: 0; font-weight: 500; }
+.breadcrumb-link:hover { text-decoration: underline; }
+.breadcrumb-separator { color: #334455; margin: 0 6px; }
+.breadcrumb-current { color: #c0d0e0; font-weight: 600; }
+
+/* ===== Error / Loading ===== */
+.error-banner {
+  background: rgba(255, 40, 0, 0.15);
+  border-bottom: 1px solid rgba(255, 40, 0, 0.3);
+  color: #FF6040; padding: 8px 24px;
+  text-align: center; font-size: 13px; font-weight: 600;
+  flex-shrink: 0;
+}
+.loading-overlay {
+  flex: 1; display: flex; align-items: center;
+  justify-content: center; color: #FF4020; font-size: 16px; font-weight: 600;
+}
+
+/* ===== Full-screen Map ===== */
+.map-fullscreen { flex: 1; display: flex; overflow: hidden; }
+.map-container { flex: 1; display: flex; flex-direction: column; position: relative; }
+
+/* Map canvas — absolute inside a flex-grown wrapper */
+.mapbox-wrapper { flex: 1; position: relative; min-height: 0; }
+.mapbox-canvas { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+
+/* Region buttons — Ferrari Red */
+.region-bar {
+  display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 16px;
+  justify-content: center; flex-shrink: 0;
+  background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,40,0,0.08);
+  z-index: 5; position: relative;
+}
+.region-btn {
+  background: transparent; border: 1.5px solid; border-radius: 20px;
+  padding: 5px 14px; font-size: 11px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+.region-btn:hover { filter: brightness(1.3); transform: scale(1.05); }
+.region-btn.active { font-weight: 700; box-shadow: 0 0 12px currentColor; }
+
+/* ===== HUD Scanline Overlay ===== */
+.hud-scanlines {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none; z-index: 2;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 40, 0, 0.015) 2px,
+    rgba(255, 40, 0, 0.015) 4px
+  );
+  animation: scanlineScroll 8s linear infinite;
+}
+@keyframes scanlineScroll {
+  from { background-position: 0 0; }
+  to { background-position: 0 100px; }
+}
+
+/* ===== Region Legend ===== */
+.map-legend {
+  position: absolute;
+  bottom: 24px; left: 14px;
+  background: rgba(10, 14, 20, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 40, 0, 0.1);
+  border-radius: 10px;
+  padding: 10px 14px;
+  z-index: 15; min-width: 130px;
+}
+.legend-title {
+  font-size: 10px; font-weight: 700;
+  color: rgba(255, 40, 0, 0.5);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 8px; padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 40, 0, 0.1);
+}
+.legend-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 3px 0; cursor: pointer;
+  opacity: 0.55; transition: opacity 0.2s;
+}
+.legend-item:hover, .legend-item.legend-active { opacity: 1; }
+.legend-swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.legend-label { font-size: 12px; color: #c0d0e0; }
+
+/* ==========================================================
+   Overlay Panel — Glassmorphism HUD, Ferrari Red accents
+   ========================================================== */
+.overlay-panel {
+  position: absolute; top: 12px; z-index: 20;
+  width: 300px; max-height: calc(100% - 80px);
+  background: rgba(10, 14, 20, 0.88); backdrop-filter: blur(16px);
+  border: 1px solid; border-radius: 14px;
+  padding: 16px; display: flex; flex-direction: column; gap: 10px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 14px rgba(255, 40, 0, 0.06),
+    inset 0 0 40px rgba(255, 40, 0, 0.02);
+  overflow-y: auto; overflow-x: hidden;
+}
+.overlay-left  { left: 14px;  animation: slideFromLeft 0.45s ease both; }
+.overlay-right { right: 14px; animation: slideFromRight 0.45s ease both; }
+
+/* Overlay header */
+.overlay-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 40, 0, 0.1);
+}
+.overlay-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+.overlay-stats-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.overlay-stat-item { display: flex; align-items: baseline; gap: 4px; }
+.overlay-stat-value { font-size: 15px; font-weight: 800; color: #FF4020; }
+.overlay-stat-value.neon-green { color: #00ffaa; }
+.overlay-stat-label { font-size: 10px; color: #5a6a7a; font-weight: 500; }
+
+/* Card list */
+.overlay-cards { display: flex; flex-direction: column; gap: 6px; }
+
+/* Individual card */
+.overlay-card {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255, 40, 0, 0.03);
+  border: 1px solid rgba(255, 40, 0, 0.08);
+  border-radius: 10px; padding: 8px 10px;
+  animation: cardFadeIn 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.overlay-card:hover {
+  border-color: rgba(255, 40, 0, 0.3);
+  background: rgba(255, 40, 0, 0.06);
+  transform: scale(1.02);
+  box-shadow: 0 0 8px rgba(255, 40, 0, 0.1);
+}
+
+/* Card highlighted (dot-card link) */
+.overlay-card.card-highlighted {
+  border-color: #00e5ff;
+  background: rgba(0, 229, 255, 0.08);
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.15);
+  transform: scale(1.02);
+}
+
+.overlay-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0;
+  border: 1.5px solid rgba(255, 40, 0, 0.2);
+}
+.overlay-body { flex: 1; min-width: 0; }
+.overlay-name {
+  font-size: 14px; font-weight: 700; color: #e0eaf4;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 4px; line-height: 1.2;
+}
+.overlay-meta { display: flex; gap: 6px; }
+.oc-badge {
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 700;
+  padding: 2px 7px; border-radius: 5px;
+}
+.oc-badge.tickets {
+  background: rgba(255, 40, 0, 0.10); color: #FF6040;
+  border: 1px solid rgba(255, 40, 0, 0.15);
+}
+.oc-badge.money {
+  background: rgba(0, 255, 170, 0.06); color: #00ffaa;
+  border: 1px solid rgba(0, 255, 170, 0.12);
+}
+
+/* "+N more" button */
+.overlay-more-btn {
+  background: rgba(255, 40, 0, 0.06);
+  border: 1px solid rgba(255, 40, 0, 0.2);
+  border-radius: 8px; padding: 8px 0;
+  color: #FF4020; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  text-align: center; transition: all 0.2s;
+}
+.overlay-more-btn:hover {
+  background: rgba(255, 40, 0, 0.14);
+  border-color: rgba(255, 40, 0, 0.4);
+}
+
+/* Custom scrollbar */
+.overlay-panel::-webkit-scrollbar { width: 4px; }
+.overlay-panel::-webkit-scrollbar-track { background: transparent; }
+.overlay-panel::-webkit-scrollbar-thumb { background: rgba(255, 40, 0, 0.15); border-radius: 4px; }
+
+/* ===== Dot Tooltip ===== */
+.dot-tooltip {
+  position: fixed; z-index: 1000;
+  background: rgba(10, 14, 20, 0.95);
+  border: 1px solid #00e5ff;
+  border-radius: 8px; padding: 8px 12px;
+  pointer-events: none; backdrop-filter: blur(8px);
+}
+.dot-tooltip-name { font-size: 13px; font-weight: 700; color: #e0eaf4; margin-bottom: 2px; }
+.dot-tooltip-amount { font-size: 15px; font-weight: 800; color: #00ffaa; }
+
+/* ===== Province Info Bar (bottom) ===== */
+.province-info-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  display: flex; align-items: center; gap: 16px;
+  padding: 8px 20px; z-index: 15;
+  background: rgba(10, 14, 20, 0.88); backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 40, 0, 0.15);
+}
+.pib-name { font-size: 14px; font-weight: 800; }
+.pib-stat { font-size: 13px; color: #8899aa; font-weight: 600; }
+
+/* ===== Province Tooltip (hover) ===== */
+.map-tooltip {
+  position: fixed; z-index: 1000;
+  background: rgba(10, 14, 20, 0.95);
+  border: 1px solid; border-radius: 10px;
+  padding: 10px 14px; pointer-events: none;
+  backdrop-filter: blur(8px); min-width: 160px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+.map-tooltip-name { font-size: 14px; font-weight: 800; margin-bottom: 2px; }
+.map-tooltip-sub { font-size: 11px; color: #5a6a7a; margin-bottom: 6px; }
+.map-tooltip-stats { display: flex; gap: 10px; font-size: 12px; color: #8899aa; }
+.map-tooltip-stats b { color: #e0eaf4; font-weight: 700; }
+
+/* ===== Dot Pulse Animation (SVG) ===== */
+@keyframes dotPulse {
+  0%   { r: 5; stroke-opacity: 0.6; }
+  100% { r: 14; stroke-opacity: 0; }
+}
+.dot-pulse-ring { animation: dotPulse 2s ease-out infinite; }
+.dot-core { animation: dotFadeIn 0.4s ease both; }
+@keyframes dotFadeIn {
+  from { opacity: 0; r: 0; }
+  to   { opacity: 1; }
+}
+
+/* ===== INTL Panel — Country Groups ===== */
+.intl-groups {
+  display: flex; flex-direction: column; gap: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(199, 0, 57, 0.12);
+  margin-bottom: 4px;
+}
+.intl-group-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 8px; border-radius: 8px;
+  background: rgba(199, 0, 57, 0.05);
+  border: 1px solid rgba(199, 0, 57, 0.08);
+}
+.intl-group-name {
+  font-size: 13px; font-weight: 700; color: #E05070;
+}
+.intl-group-stats {
+  display: flex; gap: 8px; font-size: 11px; color: #8899aa; font-weight: 600;
+}
+.intl-group-stats .neon-green { color: #00ffaa; }
+.intl-country-tag {
+  font-size: 10px; color: #C70039; margin-top: 2px; font-weight: 600;
+}
+.intl-group-item:hover {
+  background: rgba(199, 0, 57, 0.10);
+  border-color: rgba(199, 0, 57, 0.20);
+}
+.intl-group-item.intl-group-active {
+  background: rgba(199, 0, 57, 0.15);
+  border-color: #C70039;
+  box-shadow: 0 0 8px rgba(199, 0, 57, 0.2);
+}
+.intl-clear-filter-btn {
+  background: rgba(199, 0, 57, 0.08);
+  border: 1px solid rgba(199, 0, 57, 0.25);
+  border-radius: 8px; padding: 6px 0;
+  color: #C70039; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  text-align: center; transition: all 0.2s;
+  width: 100%;
+}
+.intl-clear-filter-btn:hover {
+  background: rgba(199, 0, 57, 0.18);
+  border-color: rgba(199, 0, 57, 0.4);
+}
+.dot-tooltip-extra {
+  font-size: 11px; color: #8899aa; margin-bottom: 2px;
+}
+
+/* ===== Animations ===== */
+@keyframes slideFromLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideFromRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .header { flex-direction: column; gap: 8px; padding: 10px 16px; }
+  .header-stats { flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .stat-card { min-width: 100px; padding: 4px 10px; }
+  .stat-value { font-size: 14px; }
+  .overlay-panel { width: 240px; padding: 12px; }
+  .overlay-avatar { width: 36px; height: 36px; }
+  .overlay-name { font-size: 12px; }
+  .oc-badge { font-size: 9px; padding: 1px 5px; }
+  .map-legend { bottom: 16px; left: 8px; padding: 8px 10px; }
+  .legend-label { font-size: 10px; }
+  .region-bar { gap: 4px; padding: 8px 12px; }
+  .region-btn { padding: 4px 10px; font-size: 10px; }
+}

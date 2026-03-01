@@ -1,0 +1,103 @@
+// Mapping: province id → region, ชื่อไทย
+// 6 ภาค พร้อมสีประจำภาค
+
+export const regionColors = {
+  north:     { fill: '#FF2800', stroke: '#FF2800', glow: '#FF5030', label: 'ภาคเหนือ' },
+  northeast: { fill: '#CC2200', stroke: '#CC2200', glow: '#EE4422', label: 'ภาคอีสาน' },
+  central:   { fill: '#B00014', stroke: '#B00014', glow: '#DD2233', label: 'ภาคกลาง' },
+  east:      { fill: '#990011', stroke: '#990011', glow: '#CC2244', label: 'ภาคตะวันออก' },
+  west:      { fill: '#E04040', stroke: '#E04040', glow: '#FF6060', label: 'ภาคตะวันตก' },
+  south:     { fill: '#D4553A', stroke: '#D4553A', glow: '#F07055', label: 'ภาคใต้' },
+};
+
+export const provinceMap = {
+  // ===== ภาคเหนือ (9) =====
+  TH50: { region: 'north', name_th: 'เชียงใหม่' },
+  TH57: { region: 'north', name_th: 'เชียงราย' },
+  TH52: { region: 'north', name_th: 'ลำปาง' },
+  TH51: { region: 'north', name_th: 'ลำพูน' },
+  TH58: { region: 'north', name_th: 'แม่ฮ่องสอน' },
+  TH55: { region: 'north', name_th: 'น่าน' },
+  TH56: { region: 'north', name_th: 'พะเยา' },
+  TH54: { region: 'north', name_th: 'แพร่' },
+  TH53: { region: 'north', name_th: 'อุตรดิตถ์' },
+
+  // ===== ภาคอีสาน (20) =====
+  TH37: { region: 'northeast', name_th: 'อำนาจเจริญ' },
+  TH38: { region: 'northeast', name_th: 'บึงกาฬ' },
+  TH31: { region: 'northeast', name_th: 'บุรีรัมย์' },
+  TH36: { region: 'northeast', name_th: 'ชัยภูมิ' },
+  TH46: { region: 'northeast', name_th: 'กาฬสินธุ์' },
+  TH40: { region: 'northeast', name_th: 'ขอนแก่น' },
+  TH42: { region: 'northeast', name_th: 'เลย' },
+  TH44: { region: 'northeast', name_th: 'มหาสารคาม' },
+  TH49: { region: 'northeast', name_th: 'มุกดาหาร' },
+  TH30: { region: 'northeast', name_th: 'นครราชสีมา' },
+  TH48: { region: 'northeast', name_th: 'นครพนม' },
+  TH39: { region: 'northeast', name_th: 'หนองบัวลำภู' },
+  TH43: { region: 'northeast', name_th: 'หนองคาย' },
+  TH45: { region: 'northeast', name_th: 'ร้อยเอ็ด' },
+  TH47: { region: 'northeast', name_th: 'สกลนคร' },
+  TH33: { region: 'northeast', name_th: 'ศรีสะเกษ' },
+  TH32: { region: 'northeast', name_th: 'สุรินทร์' },
+  TH34: { region: 'northeast', name_th: 'อุบลราชธานี' },
+  TH41: { region: 'northeast', name_th: 'อุดรธานี' },
+  TH35: { region: 'northeast', name_th: 'ยโสธร' },
+
+  // ===== ภาคกลาง (22) =====
+  TH15: { region: 'central', name_th: 'อ่างทอง' },
+  TH10: { region: 'central', name_th: 'กรุงเทพมหานคร' },
+  TH18: { region: 'central', name_th: 'ชัยนาท' },
+  TH62: { region: 'central', name_th: 'กำแพงเพชร' },
+  TH16: { region: 'central', name_th: 'ลพบุรี' },
+  TH26: { region: 'central', name_th: 'นครนายก' },
+  TH73: { region: 'central', name_th: 'นครปฐม' },
+  TH60: { region: 'central', name_th: 'นครสวรรค์' },
+  TH12: { region: 'central', name_th: 'นนทบุรี' },
+  TH13: { region: 'central', name_th: 'ปทุมธานี' },
+  TH67: { region: 'central', name_th: 'เพชรบูรณ์' },
+  TH66: { region: 'central', name_th: 'พิจิตร' },
+  TH14: { region: 'central', name_th: 'พระนครศรีอยุธยา' },
+  TH65: { region: 'central', name_th: 'พิษณุโลก' },
+  TH11: { region: 'central', name_th: 'สมุทรปราการ' },
+  TH74: { region: 'central', name_th: 'สมุทรสาคร' },
+  TH75: { region: 'central', name_th: 'สมุทรสงคราม' },
+  TH19: { region: 'central', name_th: 'สระบุรี' },
+  TH17: { region: 'central', name_th: 'สิงห์บุรี' },
+  TH64: { region: 'central', name_th: 'สุโขทัย' },
+  TH72: { region: 'central', name_th: 'สุพรรณบุรี' },
+  TH61: { region: 'central', name_th: 'อุทัยธานี' },
+
+  // ===== ภาคตะวันออก (8) =====
+  TH24: { region: 'east', name_th: 'ฉะเชิงเทรา' },
+  TH22: { region: 'east', name_th: 'จันทบุรี' },
+  TH20: { region: 'east', name_th: 'ชลบุรี' },
+  THS:  { region: 'east', name_th: 'พัทยา' },
+  TH25: { region: 'east', name_th: 'ปราจีนบุรี' },
+  TH21: { region: 'east', name_th: 'ระยอง' },
+  TH27: { region: 'east', name_th: 'สระแก้ว' },
+  TH23: { region: 'east', name_th: 'ตราด' },
+
+  // ===== ภาคตะวันตก (5) =====
+  TH71: { region: 'west', name_th: 'กาญจนบุรี' },
+  TH76: { region: 'west', name_th: 'เพชรบุรี' },
+  TH77: { region: 'west', name_th: 'ประจวบคีรีขันธ์' },
+  TH70: { region: 'west', name_th: 'ราชบุรี' },
+  TH63: { region: 'west', name_th: 'ตาก' },
+
+  // ===== ภาคใต้ (14) =====
+  TH86: { region: 'south', name_th: 'ชุมพร' },
+  TH81: { region: 'south', name_th: 'กระบี่' },
+  TH80: { region: 'south', name_th: 'นครศรีธรรมราช' },
+  TH96: { region: 'south', name_th: 'นราธิวาส' },
+  TH94: { region: 'south', name_th: 'ปัตตานี' },
+  TH82: { region: 'south', name_th: 'พังงา' },
+  TH93: { region: 'south', name_th: 'พัทลุง' },
+  TH83: { region: 'south', name_th: 'ภูเก็ต' },
+  TH85: { region: 'south', name_th: 'ระนอง' },
+  TH91: { region: 'south', name_th: 'สตูล' },
+  TH90: { region: 'south', name_th: 'สงขลา' },
+  TH84: { region: 'south', name_th: 'สุราษฎร์ธานี' },
+  TH92: { region: 'south', name_th: 'ตรัง' },
+  TH95: { region: 'south', name_th: 'ยะลา' },
+};
