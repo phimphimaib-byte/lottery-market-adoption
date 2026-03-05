@@ -9,6 +9,7 @@ import './App.css';
 function App() {
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [selectedProvince, setSelectedProvince] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState(null);
   const [viewMode, setViewMode] = useState('TH'); // 'TH' | 'INTL'
 
   // Async data loading
@@ -46,6 +47,7 @@ function App() {
     setViewMode('INTL');
     setSelectedRegion(null);
     setSelectedProvince(null);
+    setSelectedCountry(null);
   }, []);
 
   const goHome = () => { setViewMode('TH'); setSelectedRegion(null); setSelectedProvince(null); };
@@ -68,7 +70,7 @@ function App() {
 
   return (
     <div className="app">
-      <Header customers={customers} viewMode={viewMode} selectedRegion={selectedRegion} />
+      <Header customers={customers} viewMode={viewMode} selectedRegion={selectedRegion} selectedProvince={selectedProvince} selectedCountry={selectedCountry} />
       {dataError && (
         <div className="error-banner">{dataError}</div>
       )}
@@ -85,8 +87,10 @@ function App() {
             onSetIntl={handleSetIntl}
             selectedRegion={selectedRegion}
             selectedProvince={selectedProvince}
+            selectedCountry={selectedCountry}
             onSelectRegion={handleSelectRegion}
             onSelectProvince={handleSelectProvince}
+            onSelectCountry={setSelectedCountry}
           />
         </div>
       )}

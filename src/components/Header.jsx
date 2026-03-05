@@ -40,10 +40,19 @@ function getCompanyAge(now = new Date()) {
   return { years, months, days, dayNumber };
 }
 
-function Header({ customers = [], viewMode = 'TH', selectedRegion = null }) {
+const INTL_COUNTRY_ALIAS = { 'ทำงานอยู่ที่ปารีส': 'France' };
+
+function Header({ customers = [], viewMode = 'TH', selectedRegion = null, selectedProvince = null, selectedCountry = null }) {
   const filtered = useMemo(() => {
     if (viewMode === 'INTL') {
-      return customers.filter((c) => c.type === 'INTL' || c.provinceId === null);
+      const intl = customers.filter((c) => c.type === 'INTL' || c.provinceId === null);
+      if (selectedCountry) {
+        return intl.filter((c) => (INTL_COUNTRY_ALIAS[c.province] || c.province) === selectedCountry);
+      }
+      return intl;
+    }
+    if (selectedProvince) {
+      return customers.filter((c) => c.provinceId === selectedProvince);
     }
     if (selectedRegion) {
       const region = getRegionById(selectedRegion);
@@ -53,7 +62,7 @@ function Header({ customers = [], viewMode = 'TH', selectedRegion = null }) {
       }
     }
     return customers;
-  }, [customers, viewMode, selectedRegion]);
+  }, [customers, viewMode, selectedRegion, selectedProvince, selectedCountry]);
 
   const stats = getTotalStats(filtered);
   const [now, setNow] = useState(() => new Date());

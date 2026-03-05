@@ -76,14 +76,29 @@ export async function loadPrizeData() {
   }
 }
 
+// ===== Merge duplicate customers by name =====
+function mergeByName(list) {
+  const map = {};
+  for (const c of list) {
+    const key = `${c.name} ${c.surname}`.trim() || c.id;
+    if (map[key]) {
+      map[key].tickets += c.tickets;
+      map[key].amount += c.amount;
+    } else {
+      map[key] = { ...c, tickets: c.tickets, amount: c.amount };
+    }
+  }
+  return Object.values(map);
+}
+
 // ===== Helper functions (take customers array as first param) =====
 
 export function getCustomersByProvince(customers, provinceId) {
-  return customers.filter((c) => c.provinceId === provinceId);
+  return mergeByName(customers.filter((c) => c.provinceId === provinceId));
 }
 
 export function getIntlCustomers(customers) {
-  return customers.filter((c) => c.type === 'INTL' || c.provinceId === null);
+  return mergeByName(customers.filter((c) => c.type === 'INTL' || c.provinceId === null));
 }
 
 export function getProvinceStats(customers, provinceId) {
@@ -98,9 +113,9 @@ export function getProvinceStats(customers, provinceId) {
 export function getRegionStats(customers, regionId) {
   const region = getRegionById(regionId);
   if (!region) return { totalCustomers: 0, totalAmount: 0, totalTickets: 0 };
-  const rc = region.provinces.flatMap((p) =>
+  const rc = mergeByName(region.provinces.flatMap((p) =>
     customers.filter((c) => c.provinceId === p.id)
-  );
+  ));
   return {
     totalCustomers: rc.length,
     totalAmount: rc.reduce((s, c) => s + c.amount, 0),

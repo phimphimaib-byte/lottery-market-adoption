@@ -160,7 +160,7 @@ function useCountUp(target, duration = 800) {
   return value;
 }
 
-function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion, selectedProvince, onSelectRegion, onSelectProvince }) {
+function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion, selectedProvince, selectedCountry, onSelectRegion, onSelectProvince, onSelectCountry }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const pulseRef = useRef(null);
@@ -171,7 +171,6 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
   const [highlightedId, setHighlightedId] = useState(null);
   const [dotTooltip, setDotTooltip] = useState(null);
   const [clickedDot, setClickedDot] = useState(null);
-  const [selectedCountry, setSelectedCountry] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Fullscreen toggle
@@ -193,7 +192,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
   const prevMode = useRef(viewMode);
   if (prevMode.current !== viewMode) {
     prevMode.current = viewMode;
-    if (selectedCountry) setSelectedCountry(null);
+    if (selectedCountry) onSelectCountry(null);
     if (showAll) setShowAll(false);
   }
 
@@ -989,7 +988,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
     const onBubbleClick = (e) => {
       if (e.features.length > 0) {
         const country = e.features[0].properties.country;
-        setSelectedCountry((prev) => {
+        onSelectCountry((prev) => {
           const next = prev === country ? null : country;
           pendingZoomRef.current = { country: next, bbox: null };
           return next;
@@ -1006,7 +1005,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         const country = GEO_NAME_TO_COUNTRY[geoName] || geoName;
         if (!COUNTRY_COORDS[country]) return;
         const bbox = geoBBox(feature);
-        setSelectedCountry((prev) => {
+        onSelectCountry((prev) => {
           const next = prev === country ? null : country;
           pendingZoomRef.current = { country: next, bbox };
           return next;
@@ -1071,7 +1070,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
                 if (isIntl) {
                   if (viewMode === 'INTL' && selectedCountry) {
                     pendingZoomRef.current = { country: null, bbox: null };
-                    setSelectedCountry(null);
+                    onSelectCountry(null);
                     setShowAll(false);
                   } else {
                     onSetIntl();
@@ -1256,7 +1255,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
 
           {/* Clear country filter */}
           {selectedCountry && (
-            <button className="intl-clear-filter-btn" onClick={() => { pendingZoomRef.current = { country: null, bbox: null }; setSelectedCountry(null); setShowAll(false); }}>
+            <button className="intl-clear-filter-btn" onClick={() => { pendingZoomRef.current = { country: null, bbox: null }; onSelectCountry(null); setShowAll(false); }}>
               ดูทุกประเทศ
             </button>
           )}
@@ -1271,7 +1270,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
                   style={{ cursor: g.coords ? 'pointer' : 'default' }}
                   onClick={() => {
                     if (!g.coords) return;
-                    setSelectedCountry((prev) => {
+                    onSelectCountry((prev) => {
                       const next = prev === g.country ? null : g.country;
                       pendingZoomRef.current = { country: next, bbox: null };
                       return next;
