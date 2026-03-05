@@ -171,6 +171,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
   const [highlightedId, setHighlightedId] = useState(null);
   const [dotTooltip, setDotTooltip] = useState(null);
   const [clickedDot, setClickedDot] = useState(null);
+  const [popupOrigin, setPopupOrigin] = useState(null); // {x, y} screen coords for animation
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Fullscreen toggle
@@ -186,6 +187,58 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
     const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
     document.addEventListener('fullscreenchange', onFsChange);
     return () => document.removeEventListener('fullscreenchange', onFsChange);
+  }, []);
+
+  // Open popup from card click — fly to marker, then show popup
+  const openPopupFromCard = useCallback((c) => {
+    const map = mapRef.current;
+    const pInfo = c.provinceId ? provinceMap[c.provinceId] : null;
+    const rInfo = pInfo ? getRegionById(pInfo.region) : null;
+
+    // Find this customer's dot in the winners source
+    let dotCoords = null;
+    if (map) {
+      const src = map.getSource('winners');
+      if (src && src._data && src._data.features) {
+        const feat = src._data.features.find((f) => f.properties.cid === c.id);
+        if (feat) dotCoords = feat.geometry.coordinates;
+      }
+    }
+
+    // Fly map to the dot
+    if (map && dotCoords) {
+      map.easeTo({ center: dotCoords, zoom: Math.max(map.getZoom(), 10), duration: 600, essential: true });
+      // After fly, compute screen position for marker animation
+      setTimeout(() => {
+        const pt = map.project(dotCoords);
+        const mapRect = containerRef.current.getBoundingClientRect();
+        setPopupOrigin({ x: pt.x, y: pt.y });
+        setHighlightedId(c.id);
+        setClickedDot({
+          cid: c.id,
+          name: `${c.name} ${c.surname}`,
+          amount: c.amount,
+          tickets: c.tickets,
+          avatar: c.avatar,
+          drawDate: c.drawDate || '',
+          provinceName: pInfo?.name_th || c.province || '',
+          regionName: rInfo?.name || '',
+        });
+      }, 650);
+    } else {
+      // No dot found — just open popup centered
+      setPopupOrigin(null);
+      setClickedDot({
+        cid: c.id,
+        name: `${c.name} ${c.surname}`,
+        amount: c.amount,
+        tickets: c.tickets,
+        avatar: c.avatar,
+        drawDate: c.drawDate || '',
+        provinceName: pInfo?.name_th || c.province || '',
+        regionName: rInfo?.name || '',
+      });
+    }
   }, []);
 
   // Reset on viewMode change
@@ -601,6 +654,14 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
       if (e.features.length > 0) {
         const props = e.features[0].properties;
         setHighlightedId(props.cid);
+        const pInfo = props.provinceId ? provinceMap[props.provinceId] : null;
+        const rInfo = pInfo ? getRegionById(pInfo.region) : null;
+        // Store marker screen position for fly-out animation
+        const mapRect = containerRef.current.getBoundingClientRect();
+        setPopupOrigin({
+          x: e.originalEvent.clientX - mapRect.left,
+          y: e.originalEvent.clientY - mapRect.top,
+        });
         setClickedDot({
           cid: props.cid,
           name: props.name,
@@ -608,6 +669,8 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
           tickets: Number(props.tickets),
           avatar: props.avatar,
           drawDate: props.drawDate,
+          provinceName: pInfo?.name_th || props.province || '',
+          regionName: rInfo?.name || '',
         });
       }
     };
@@ -651,13 +714,21 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
       for (const [id, info] of Object.entries(provinceMap)) {
         const inRegion = info.region === selectedRegion;
         const hasData = activeProvinces.has(id);
-        grayExpr.push(id, inRegion ? (hasData ? regionColors[info.region].fill : '#c8c8d0') : '#D9D9D9');
+        if (selectedProvince) {
+          grayExpr.push(id, id === selectedProvince ? regionColors[info.region].fill : '#D9D9D9');
+        } else {
+          grayExpr.push(id, inRegion ? (hasData ? regionColors[info.region].fill : '#c8c8d0') : '#D9D9D9');
+        }
       }
       map.setPaintProperty('provinces-fill', 'fill-color', ['match', ['get', 'id'], ...grayExpr, '#D9D9D9']);
       map.setPaintProperty('provinces-fill', 'fill-opacity', ['match', ['get', 'id'],
-        ...Object.entries(provinceMap).flatMap(([id, info]) =>
-          [id, info.region === selectedRegion ? (selectedProvince && selectedProvince !== id ? 0.35 : 0.7) : 0.25]
-        ),
+        ...Object.entries(provinceMap).flatMap(([id, info]) => {
+          const inRegion = info.region === selectedRegion;
+          if (selectedProvince) {
+            return [id, id === selectedProvince ? 0.7 : 0.25];
+          }
+          return [id, inRegion ? 0.7 : 0.25];
+        }),
         0.25,
       ]);
     } else {
@@ -697,7 +768,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         const dotFeatures = provCustomers.map((c, i) => ({
           type: 'Feature',
           geometry: { type: 'Point', coordinates: dotPositions[i] || featureCentroid(feature) },
-          properties: { cid: c.id, name: `${c.name} ${c.surname}`, amount: c.amount, tickets: c.tickets, avatar: c.avatar, drawDate: c.drawDate || '' },
+          properties: { cid: c.id, name: `${c.name} ${c.surname}`, amount: c.amount, tickets: c.tickets, avatar: c.avatar, drawDate: c.drawDate || '', provinceId: c.provinceId || '', province: c.province || '' },
         }));
         let revealed = 0;
         map.getSource('winners').setData({ type: 'FeatureCollection', features: [] });
@@ -724,7 +795,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
           dotFeatures.push({
             type: 'Feature',
             geometry: { type: 'Point', coordinates: dotPositions[i] || featureCentroid(feature) },
-            properties: { cid: c.id, name: `${c.name} ${c.surname}`, amount: c.amount, tickets: c.tickets, avatar: c.avatar, drawDate: c.drawDate || '' },
+            properties: { cid: c.id, name: `${c.name} ${c.surname}`, amount: c.amount, tickets: c.tickets, avatar: c.avatar, drawDate: c.drawDate || '', provinceId: c.provinceId || '', province: c.province || '' },
           });
         }
       }
@@ -912,6 +983,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
           .map((g) => COUNTRY_TO_GEO_NAME[g.country] || g.country);
         map.setFilter('world-highlight', ['in', ['get', 'NAME'], ['literal', geoNames]]);
         map.setFilter('world-highlight-fill', ['in', ['get', 'NAME'], ['literal', geoNames]]);
+
       };
       loadWorld();
     } else {
@@ -1245,7 +1317,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
                   }}
                 />
                 <div className="overlay-body">
-                  <div className="overlay-name">{c.name} {c.surname}</div>
+                  <div className="overlay-name overlay-name-clickable" onClick={() => openPopupFromCard(c)}>{c.name} {c.surname}</div>
                   <div className="overlay-meta">
                     <span className="oc-badge tickets">{c.tickets} ใบ</span>
                     <span className="oc-badge money">฿{c.amount.toLocaleString('th-TH')}</span>
@@ -1345,7 +1417,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
                       }}
                     />
                     <div className="overlay-body">
-                      <div className="overlay-name">{c.name} {c.surname}</div>
+                      <div className="overlay-name overlay-name-clickable" onClick={() => openPopupFromCard(c)}>{c.name} {c.surname}</div>
                       <div className="overlay-meta">
                         <span className="oc-badge tickets">{c.tickets} ใบ</span>
                         <span className="oc-badge money">฿{c.amount.toLocaleString('th-TH')}</span>
@@ -1365,30 +1437,45 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         </div>
       )}
 
-      {/* Game-like winner popup */}
+      {/* Winner card popup */}
       {clickedDot && (
         <div className="game-popup-overlay" onClick={() => setClickedDot(null)}>
-          <div className="game-popup" onClick={(e) => e.stopPropagation()}>
+          <div
+            className={`game-popup ${popupOrigin ? 'from-marker' : ''}`}
+            style={popupOrigin ? { '--origin-x': `${popupOrigin.x}px`, '--origin-y': `${popupOrigin.y}px` } : undefined}
+            onClick={(e) => e.stopPropagation()}
+          >
             <button className="game-popup-close" onClick={() => setClickedDot(null)}>&times;</button>
-            <div className="game-popup-avatar-ring">
+            <div className="game-popup-avatar-area">
               <img className="game-popup-avatar" src={clickedDot.avatar} alt="" />
             </div>
-            <div className="game-popup-name">{clickedDot.name}</div>
-            <div className="game-popup-badge">WINNER</div>
-            <div className="game-popup-stats">
-              <div className="game-popup-stat">
-                <div className="game-popup-stat-val neon-green">{clickedDot.amount.toLocaleString('th-TH')}</div>
-                <div className="game-popup-stat-lbl">บาท</div>
+            <div className="game-popup-body">
+              <div className="game-popup-name">{clickedDot.name}</div>
+              {(clickedDot.provinceName || clickedDot.regionName) && (
+                <div className="game-popup-location">
+                  {clickedDot.provinceName && <span className="game-popup-province">{clickedDot.provinceName}</span>}
+                  {clickedDot.provinceName && clickedDot.regionName && ' · '}
+                  {clickedDot.regionName && <span>{clickedDot.regionName}</span>}
+                </div>
+              )}
+              <div className="game-popup-id">{clickedDot.cid.startsWith('ROW') ? 'null' : clickedDot.cid}</div>
+              <div className="game-popup-stats">
+                <div className="game-popup-stat-box">
+                  <div className="game-popup-stat-val tickets">{clickedDot.tickets}</div>
+                  <div className="game-popup-stat-lbl">ใบ</div>
+                </div>
+                <div className="game-popup-stat-box">
+                  <div className="game-popup-stat-val amount">{(clickedDot.amount / 1e6).toLocaleString('th-TH', { maximumFractionDigits: 0 })}</div>
+                  <div className="game-popup-stat-lbl">ล้านบาท</div>
+                </div>
               </div>
-              <div className="game-popup-divider" />
-              <div className="game-popup-stat">
-                <div className="game-popup-stat-val">{clickedDot.tickets}</div>
-                <div className="game-popup-stat-lbl">ใบ</div>
-              </div>
+              {clickedDot.drawDate && (
+                <div className="game-popup-date">
+                  <svg className="game-popup-date-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+                  งวดวันที่ {clickedDot.drawDate}
+                </div>
+              )}
             </div>
-            {clickedDot.drawDate && (
-              <div className="game-popup-date">{clickedDot.drawDate}</div>
-            )}
           </div>
         </div>
       )}
