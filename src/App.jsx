@@ -68,7 +68,7 @@ function App() {
 
   return (
     <div className="app">
-      <Header customers={customers} />
+      <Header customers={customers} viewMode={viewMode} selectedRegion={selectedRegion} />
       {dataError && (
         <div className="error-banner">{dataError}</div>
       )}

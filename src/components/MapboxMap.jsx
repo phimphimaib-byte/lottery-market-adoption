@@ -3,7 +3,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import thailandGeo from '../data/thailand.json';
 import { provinceMap, regionColors } from '../data/provinceMapping';
-import { getProvinceStats, getCustomersByProvince, getIntlCustomers, getTotalStats } from '../data/prizeData';
+import { getProvinceStats, getRegionStats, getRegionById, getCustomersByProvince, getIntlCustomers, getTotalStats } from '../data/prizeData';
 
 const MAX_CARDS = 8;
 const THAI_CENTER = [100.5, 13.2];
@@ -36,8 +36,8 @@ const GEO_NAME_TO_COUNTRY = Object.fromEntries(
   Object.entries(COUNTRY_TO_GEO_NAME).map(([k, v]) => [v, k])
 );
 
-// Free dark basemap — no token required
-const DARK_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
+// Free light basemap — no token required
+const LIGHT_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 
 // ===== Compute bounding box [west, south, east, north] from a GeoJSON feature =====
 function geoBBox(feature) {
@@ -66,8 +66,8 @@ function buildColorExpr(activeIds) {
       if (info) entries.push(id, regionColors[info.region]?.fill || '#444');
     }
   }
-  if (entries.length === 0) return '#333340';
-  return ['match', ['get', 'id'], ...entries, '#333340'];
+  if (entries.length === 0) return '#c8c8d0';
+  return ['match', ['get', 'id'], ...entries, '#c8c8d0'];
 }
 
 // ===== Build label expression: id → name_th =====
@@ -229,7 +229,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
     if (mapRef.current) return;
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: DARK_STYLE,
+      style: LIGHT_STYLE,
       center: THAI_CENTER,
       zoom: INIT_ZOOM,
       pitch: INIT_PITCH,
@@ -245,7 +245,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         maxzoom: 14,
       });
 
-      // Dark building extrusions
+      // Building extrusions — light gray with subtle red tint
       map.addLayer({
         id: '3d-buildings',
         source: 'openmaptiles',
@@ -253,10 +253,10 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         type: 'fill-extrusion',
         minzoom: 13,
         paint: {
-          'fill-extrusion-color': '#1a1014',
+          'fill-extrusion-color': '#d4d0ce',
           'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 10],
           'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
-          'fill-extrusion-opacity': 0.7,
+          'fill-extrusion-opacity': 0.6,
         },
       });
 
@@ -268,10 +268,10 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         type: 'fill-extrusion',
         minzoom: 13,
         paint: {
-          'fill-extrusion-color': '#FF2800',
+          'fill-extrusion-color': '#DC0000',
           'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 10],
           'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
-          'fill-extrusion-opacity': 0.08,
+          'fill-extrusion-opacity': 0.06,
         },
       });
 
@@ -284,7 +284,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         type: 'fill',
         source: 'provinces',
         paint: {
-          'fill-color': '#333340',
+          'fill-color': '#c8c8d0',
           'fill-opacity': 0.6,
         },
       });
@@ -295,9 +295,9 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         type: 'line',
         source: 'provinces',
         paint: {
-          'line-color': '#ffffff',
+          'line-color': '#999999',
           'line-width': 0.5,
-          'line-opacity': 0.3,
+          'line-opacity': 0.4,
         },
       });
 
@@ -307,9 +307,9 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         type: 'line',
         source: 'provinces',
         paint: {
-          'line-color': '#ffffff',
+          'line-color': '#DC0000',
           'line-width': 2.5,
-          'line-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.9, 0],
+          'line-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.8, 0],
         },
       });
 
@@ -320,9 +320,9 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         source: 'provinces',
         filter: ['==', ['get', 'id'], ''],
         paint: {
-          'line-color': '#FF2800',
+          'line-color': '#DC0000',
           'line-width': 6,
-          'line-opacity': 0.5,
+          'line-opacity': 0.4,
           'line-blur': 4,
         },
       });
@@ -334,9 +334,9 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         source: 'provinces',
         filter: ['==', ['get', 'id'], ''],
         paint: {
-          'line-color': '#ffffff',
+          'line-color': '#DC0000',
           'line-width': 2.5,
-          'line-opacity': 0.9,
+          'line-opacity': 0.85,
         },
       });
 
@@ -353,9 +353,9 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
           'text-allow-overlap': false,
         },
         paint: {
-          'text-color': '#ffffff',
+          'text-color': '#1a1a2e',
           'text-opacity': 0.85,
-          'text-halo-color': '#000000',
+          'text-halo-color': '#ffffff',
           'text-halo-width': 1.5,
         },
       });
@@ -369,7 +369,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         type: 'fill',
         source: 'world-borders',
         paint: {
-          'fill-color': '#FF2800',
+          'fill-color': '#DC0000',
           'fill-opacity': 0.04,
         },
       });
@@ -380,7 +380,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         type: 'line',
         source: 'world-borders',
         paint: {
-          'line-color': '#FF2800',
+          'line-color': '#DC0000',
           'line-width': 0.8,
           'line-opacity': 0.3,
         },
@@ -421,7 +421,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         source: 'intl-bubbles',
         paint: {
           'circle-radius': ['interpolate', ['linear'], ['get', 'winnersCount'], 1, 20, 5, 36],
-          'circle-color': '#FF2800',
+          'circle-color': '#DC0000',
           'circle-opacity': 0.12,
           'circle-blur': 0.6,
         },
@@ -455,8 +455,8 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
           'text-allow-overlap': true,
         },
         paint: {
-          'text-color': '#ffffff',
-          'text-halo-color': '#000000',
+          'text-color': '#1a1a2e',
+          'text-halo-color': '#ffffff',
           'text-halo-width': 1.5,
         },
       });
@@ -470,39 +470,39 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         type: 'circle',
         source: 'winners',
         paint: {
-          'circle-radius': 10,
+          'circle-radius': 12,
           'circle-color': 'transparent',
-          'circle-stroke-color': '#00e5ff',
-          'circle-stroke-width': 1.5,
-          'circle-stroke-opacity': 0.4,
+          'circle-stroke-color': '#FFD700',
+          'circle-stroke-width': 2,
+          'circle-stroke-opacity': 0.5,
         },
       });
 
-      // Core dot layer
+      // Core dot layer — bright yellow for max contrast on red
       map.addLayer({
         id: 'winners-dots',
         type: 'circle',
         source: 'winners',
         paint: {
-          'circle-radius': 5,
-          'circle-color': '#00e5ff',
-          'circle-stroke-color': 'rgba(0,229,255,0.3)',
-          'circle-stroke-width': 1,
-          'circle-opacity': 0.9,
+          'circle-radius': 6,
+          'circle-color': '#FFD700',
+          'circle-stroke-color': '#1a1a2e',
+          'circle-stroke-width': 1.5,
+          'circle-opacity': 1,
         },
       });
 
-      // Highlighted dot
+      // Highlighted dot — bright white glow
       map.addLayer({
         id: 'winners-highlight',
         type: 'circle',
         source: 'winners',
         filter: ['==', ['get', 'cid'], ''],
         paint: {
-          'circle-radius': 7,
-          'circle-color': '#00ffaa',
-          'circle-stroke-color': '#ffffff',
-          'circle-stroke-width': 2,
+          'circle-radius': 9,
+          'circle-color': '#FFEB3B',
+          'circle-stroke-color': '#1a1a2e',
+          'circle-stroke-width': 2.5,
           'circle-opacity': 1,
         },
       });
@@ -651,7 +651,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
       for (const [id, info] of Object.entries(provinceMap)) {
         const inRegion = info.region === selectedRegion;
         const hasData = activeProvinces.has(id);
-        grayExpr.push(id, inRegion ? (hasData ? regionColors[info.region].fill : '#333340') : '#D9D9D9');
+        grayExpr.push(id, inRegion ? (hasData ? regionColors[info.region].fill : '#c8c8d0') : '#D9D9D9');
       }
       map.setPaintProperty('provinces-fill', 'fill-color', ['match', ['get', 'id'], ...grayExpr, '#D9D9D9']);
       map.setPaintProperty('provinces-fill', 'fill-opacity', ['match', ['get', 'id'],
@@ -662,7 +662,6 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
       ]);
     } else {
       const colorExpr = buildColorExpr(activeProvinces);
-      console.log('[GRAY DEBUG] activeProvinces size:', activeProvinces.size, 'has TH71:', activeProvinces.has('TH71'), 'expr type:', typeof colorExpr === 'string' ? colorExpr : 'match[' + (colorExpr.length - 3) / 2 + ']');
       map.setPaintProperty('provinces-fill', 'fill-color', colorExpr);
       map.setPaintProperty('provinces-fill', 'fill-opacity', 0.6);
     }
@@ -690,6 +689,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
     if (staggerRef.current) { clearInterval(staggerRef.current); staggerRef.current = null; }
 
     if (selectedProvince) {
+      // Single province: dots spread within that province
       const feature = thailandGeo.features.find((f) => f.properties.id === selectedProvince);
       if (feature) {
         const provCustomers = getCustomersByProvince(customers, selectedProvince);
@@ -699,18 +699,42 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
           geometry: { type: 'Point', coordinates: dotPositions[i] || featureCentroid(feature) },
           properties: { cid: c.id, name: `${c.name} ${c.surname}`, amount: c.amount, tickets: c.tickets, avatar: c.avatar, drawDate: c.drawDate || '' },
         }));
-        // Staggered reveal — dots appear one by one
         let revealed = 0;
         map.getSource('winners').setData({ type: 'FeatureCollection', features: [] });
         staggerRef.current = setInterval(() => {
           revealed = Math.min(revealed + 1, dotFeatures.length);
           map.getSource('winners').setData({ type: 'FeatureCollection', features: dotFeatures.slice(0, revealed) });
-          if (revealed >= dotFeatures.length) {
-            clearInterval(staggerRef.current);
-            staggerRef.current = null;
-          }
+          if (revealed >= dotFeatures.length) { clearInterval(staggerRef.current); staggerRef.current = null; }
         }, 80);
       }
+    } else if (selectedRegion) {
+      // Region level: dots spread across all provinces in the region
+      const regionProvinceIds = Object.entries(provinceMap)
+        .filter(([, v]) => v.region === selectedRegion)
+        .map(([id]) => id);
+      const dotFeatures = [];
+      for (const pid of regionProvinceIds) {
+        const feature = thailandGeo.features.find((f) => f.properties.id === pid);
+        if (!feature) continue;
+        const provCustomers = getCustomersByProvince(customers, pid);
+        if (provCustomers.length === 0) continue;
+        const dotPositions = generateDotsInFeature(feature, provCustomers.length);
+        for (let i = 0; i < provCustomers.length; i++) {
+          const c = provCustomers[i];
+          dotFeatures.push({
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: dotPositions[i] || featureCentroid(feature) },
+            properties: { cid: c.id, name: `${c.name} ${c.surname}`, amount: c.amount, tickets: c.tickets, avatar: c.avatar, drawDate: c.drawDate || '' },
+          });
+        }
+      }
+      let revealed = 0;
+      map.getSource('winners').setData({ type: 'FeatureCollection', features: [] });
+      staggerRef.current = setInterval(() => {
+        revealed = Math.min(revealed + 1, dotFeatures.length);
+        map.getSource('winners').setData({ type: 'FeatureCollection', features: dotFeatures.slice(0, revealed) });
+        if (revealed >= dotFeatures.length) { clearInterval(staggerRef.current); staggerRef.current = null; }
+      }, 80);
     } else {
       map.getSource('winners').setData({ type: 'FeatureCollection', features: [] });
     }
@@ -722,6 +746,31 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
     if (!map || !mapReady) return;
     map.setFilter('winners-highlight', ['==', ['get', 'cid'], highlightedId || '']);
   }, [mapReady, highlightedId]);
+
+  // ===== Region overview panel data =====
+  const regionOverview = useMemo(() => {
+    if (!selectedRegion || selectedProvince || viewMode !== 'TH') return null;
+    const region = getRegionById(selectedRegion);
+    if (!region) return null;
+    const stats = getRegionStats(customers, selectedRegion);
+    const provinceList = region.provinces.map((p) => {
+      const pStats = getProvinceStats(customers, p.id);
+      return { id: p.id, name: p.name, ...pStats };
+    });
+    // Sort: provinces with winners first (by amount desc), then no-data provinces
+    provinceList.sort((a, b) => b.totalAmount - a.totalAmount || b.totalCustomers - a.totalCustomers);
+    return {
+      regionName: region.name,
+      color: regionColors[selectedRegion]?.stroke,
+      totalProvinces: region.provinces.length,
+      provincesWithData: provinceList.filter((p) => p.totalCustomers > 0).length,
+      ...stats,
+      provinceList,
+    };
+  }, [selectedRegion, selectedProvince, viewMode, customers]);
+
+  const regionAnimAmount = useCountUp(regionOverview?.totalAmount || 0);
+  const regionAnimCount = useCountUp(regionOverview?.totalCustomers || 0, 500);
 
   // ===== Overlay panel data =====
   const overlayData = useMemo(() => {
@@ -787,7 +836,10 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
     const visible = filtered.slice(0, effectiveMax);
     const remaining = Math.max(0, filtered.length - effectiveMax);
 
-    return { groups, unmapped, geojson, visible, remaining, ...stats };
+    // Use filtered stats when a country is selected
+    const displayStats = selectedCountry ? getTotalStats(filtered) : stats;
+
+    return { groups, unmapped, geojson, visible, remaining, ...displayStats };
   }, [viewMode, customers, showAll, selectedCountry]);
 
   const intlAnimAmount = useCountUp(intlData?.totalAmount || 0);
@@ -979,11 +1031,22 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
     };
   }, [mapReady, zoomToCountry, zoomToIntlOverview]);
 
-  // Region buttons
-  const regionButtons = useMemo(() => [
-    { id: null, label: 'ทั้งหมด' },
-    ...Object.entries(regionColors).map(([id, v]) => ({ id, label: v.label })),
-  ], []);
+  // Region buttons with stats
+  const regionButtons = useMemo(() => {
+    const allStats = getTotalStats(customers);
+    const btns = [
+      { id: null, label: 'ทั้งหมด', count: allStats.totalCustomers, tickets: allStats.totalTickets },
+      ...Object.entries(regionColors).map(([id, v]) => {
+        const s = getRegionStats(customers, id);
+        return { id, label: v.label, count: s.totalCustomers, tickets: s.totalTickets };
+      }),
+    ];
+    // INTL
+    const intlCustomers = getIntlCustomers(customers);
+    const intlStats = getTotalStats(intlCustomers);
+    btns.push({ id: 'INTL', label: 'ต่างประเทศ', count: intlStats.totalCustomers, tickets: intlStats.totalTickets });
+    return btns;
+  }, [customers]);
 
   const handleRegionBtn = useCallback((id) => {
     onSelectRegion(id);
@@ -996,37 +1059,32 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
       {/* Region bar */}
       <div className="region-bar">
         {regionButtons.map((btn) => {
-          const isActive = viewMode === 'TH' && btn.id === selectedRegion;
-          const color = btn.id ? regionColors[btn.id]?.stroke : '#FF2800';
+          const isIntl = btn.id === 'INTL';
+          const isActive = isIntl ? viewMode === 'INTL' : (viewMode === 'TH' && btn.id === selectedRegion);
+          const color = isIntl ? '#C70039' : (btn.id ? regionColors[btn.id]?.stroke : '#DC0000');
           return (
             <button
               key={btn.id || 'all'}
               className={`region-btn ${isActive ? 'active' : ''}`}
-              style={isActive ? { background: color, borderColor: color, color: '#fff' } : { borderColor: color, color }}
-              onClick={() => handleRegionBtn(btn.id)}
+              style={isActive ? { background: color, borderColor: color } : { borderColor: color, '--btn-color': color }}
+              onClick={() => {
+                if (isIntl) {
+                  if (viewMode === 'INTL' && selectedCountry) {
+                    pendingZoomRef.current = { country: null, bbox: null };
+                    setSelectedCountry(null);
+                    setShowAll(false);
+                  } else {
+                    onSetIntl();
+                  }
+                } else {
+                  handleRegionBtn(btn.id);
+                }
+              }}
             >
-              {btn.label}
+              <span className="region-btn-label">{btn.label}</span>
             </button>
           );
         })}
-        <button
-          className={`region-btn intl-btn ${viewMode === 'INTL' ? 'active' : ''}`}
-          style={viewMode === 'INTL'
-            ? { background: '#C70039', borderColor: '#C70039', color: '#fff' }
-            : { borderColor: '#C70039', color: '#C70039' }}
-          onClick={() => {
-            if (viewMode === 'INTL' && selectedCountry) {
-              // Already in INTL with country selected → go back to overview
-              pendingZoomRef.current = { country: null, bbox: null };
-              setSelectedCountry(null);
-              setShowAll(false);
-            } else {
-              onSetIntl();
-            }
-          }}
-        >
-          ต่างประเทศ
-        </button>
       </div>
 
       {/* Map container — wrapper for absolute sizing */}
@@ -1052,6 +1110,59 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         )}
       </button>
 
+
+      {/* Region overview panel */}
+      {regionOverview && (
+        <div
+          key={`region-${selectedRegion}`}
+          className="overlay-panel overlay-right"
+          style={{ borderColor: regionOverview.color }}
+        >
+          <div className="overlay-header">
+            <div className="overlay-title" style={{ color: regionOverview.color }}>
+              {regionOverview.regionName}
+            </div>
+            <div className="overlay-stats-row">
+              <span className="overlay-stat-item">
+                <span className="overlay-stat-value">{regionAnimCount}</span>
+                <span className="overlay-stat-label">คน</span>
+              </span>
+              <span className="overlay-stat-item">
+                <span className="overlay-stat-value">{regionOverview.totalTickets}</span>
+                <span className="overlay-stat-label">ใบ</span>
+              </span>
+              <span className="overlay-stat-item">
+                <span className="overlay-stat-value neon-green">฿{regionAnimAmount.toLocaleString('th-TH')}</span>
+                <span className="overlay-stat-label">ยอดรวม</span>
+              </span>
+            </div>
+            <div className="region-province-count">
+              {regionOverview.provincesWithData} / {regionOverview.totalProvinces} จังหวัดมีผู้ถูกรางวัล
+            </div>
+          </div>
+          <div className="region-province-list">
+            {regionOverview.provinceList.map((p) => (
+              <div
+                key={p.id}
+                className={`region-province-item ${p.totalCustomers > 0 ? 'has-data' : 'no-data'}`}
+                onClick={() => { if (p.totalCustomers > 0) onSelectProvince(p.id); }}
+                style={p.totalCustomers > 0 ? { cursor: 'pointer' } : { cursor: 'default' }}
+              >
+                <div className="region-province-name">{p.name}</div>
+                {p.totalCustomers > 0 ? (
+                  <div className="region-province-stats">
+                    <span>{p.totalCustomers} คน</span>
+                    <span>{p.totalTickets} ใบ</span>
+                    <span className="neon-green">฿{p.totalAmount.toLocaleString('th-TH')}</span>
+                  </div>
+                ) : (
+                  <div className="region-province-stats no-data-label">ไม่มีข้อมูล</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Overlay card panel */}
       {overlayData && (
@@ -1094,7 +1205,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
                   src={c.avatar}
                   alt={c.name}
                   onError={(e) => {
-                    e.target.src = `https://ui-avatars.com/api/?name=${c.name}&background=0d1528&color=FF2800&size=100`;
+                    e.target.src = `https://ui-avatars.com/api/?name=${c.name}&background=fff0f0&color=DC0000&size=100`;
                   }}
                 />
                 <div className="overlay-body">
@@ -1128,10 +1239,19 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
                 <span className="overlay-stat-label">คน</span>
               </span>
               <span className="overlay-stat-item">
+                <span className="overlay-stat-value">{intlData.totalTickets}</span>
+                <span className="overlay-stat-label">ใบ</span>
+              </span>
+              <span className="overlay-stat-item">
                 <span className="overlay-stat-value neon-green">฿{intlAnimAmount.toLocaleString('th-TH')}</span>
                 <span className="overlay-stat-label">ยอดรวม</span>
               </span>
             </div>
+            {!selectedCountry && (
+              <div className="region-province-count">
+                {intlData.groups.length} ประเทศ
+              </div>
+            )}
           </div>
 
           {/* Clear country filter */}
@@ -1141,13 +1261,13 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
             </button>
           )}
 
-          {/* Country group summary */}
+          {/* Country list overview (no country selected) */}
           {!selectedCountry && (
-            <div className="intl-groups">
+            <div className="region-province-list">
               {intlData.groups.map((g) => (
                 <div
                   key={g.country}
-                  className={`intl-group-item ${selectedCountry === g.country ? 'intl-group-active' : ''}`}
+                  className="region-province-item has-data"
                   style={{ cursor: g.coords ? 'pointer' : 'default' }}
                   onClick={() => {
                     if (!g.coords) return;
@@ -1159,8 +1279,8 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
                     setShowAll(false);
                   }}
                 >
-                  <div className="intl-group-name">{g.country}{!g.coords ? ' *' : ''}</div>
-                  <div className="intl-group-stats">
+                  <div className="region-province-name">{g.country}{!g.coords ? ' *' : ''}</div>
+                  <div className="region-province-stats">
                     <span>{g.customers.length} คน</span>
                     <span>{g.tickets} ใบ</span>
                     <span className="neon-green">฿{g.amount.toLocaleString('th-TH')}</span>
@@ -1170,37 +1290,41 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
             </div>
           )}
 
-          {/* Individual cards */}
-          <div className="overlay-cards">
-            {intlData.visible.map((c, i) => (
-              <div
-                key={c.id}
-                className="overlay-card"
-                style={{ animationDelay: `${i * 0.05}s` }}
-              >
-                <img
-                  className="overlay-avatar"
-                  src={c.avatar}
-                  alt={c.name}
-                  onError={(e) => {
-                    e.target.src = `https://ui-avatars.com/api/?name=${c.name}&background=0d1528&color=C70039&size=100`;
-                  }}
-                />
-                <div className="overlay-body">
-                  <div className="overlay-name">{c.name} {c.surname}</div>
-                  <div className="overlay-meta">
-                    <span className="oc-badge tickets">{c.tickets} ใบ</span>
-                    <span className="oc-badge money">฿{c.amount.toLocaleString('th-TH')}</span>
+          {/* Individual cards (only when country selected) */}
+          {selectedCountry && (
+            <>
+              <div className="overlay-cards">
+                {intlData.visible.map((c, i) => (
+                  <div
+                    key={c.id}
+                    className="overlay-card"
+                    style={{ animationDelay: `${i * 0.05}s` }}
+                  >
+                    <img
+                      className="overlay-avatar"
+                      src={c.avatar}
+                      alt={c.name}
+                      onError={(e) => {
+                        e.target.src = `https://ui-avatars.com/api/?name=${c.name}&background=fff0f0&color=DC0000&size=100`;
+                      }}
+                    />
+                    <div className="overlay-body">
+                      <div className="overlay-name">{c.name} {c.surname}</div>
+                      <div className="overlay-meta">
+                        <span className="oc-badge tickets">{c.tickets} ใบ</span>
+                        <span className="oc-badge money">฿{c.amount.toLocaleString('th-TH')}</span>
+                      </div>
+                      <div className="intl-country-tag">{INTL_COUNTRY_ALIAS[c.province] || c.province}</div>
+                    </div>
                   </div>
-                  <div className="intl-country-tag">{INTL_COUNTRY_ALIAS[c.province] || c.province}</div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-          {intlData.remaining > 0 && (
-            <button className="overlay-more-btn" onClick={() => setShowAll(true)}>
-              +{intlData.remaining} ดูทั้งหมด
-            </button>
+              {intlData.remaining > 0 && (
+                <button className="overlay-more-btn" onClick={() => setShowAll(true)}>
+                  +{intlData.remaining} ดูทั้งหมด
+                </button>
+              )}
+            </>
           )}
         </div>
       )}

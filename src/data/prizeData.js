@@ -60,7 +60,7 @@ export async function loadPrizeData() {
         id: memberId && memberId !== 'null' ? memberId : `ROW${i}`,
         name: firstName,
         surname,
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName)}&background=0d1528&color=FF2800&size=100`,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName)}&background=fff0f0&color=DC0000&size=100`,
         provinceId,
         tickets,
         amount,
@@ -109,8 +109,18 @@ export function getRegionStats(customers, regionId) {
 }
 
 export function getTotalStats(customers) {
+  let blankCount = 0;
+  const uniqueNames = new Set();
+  for (const c of customers) {
+    const full = `${c.name} ${c.surname}`.trim();
+    if (full === '') {
+      blankCount++;
+    } else {
+      uniqueNames.add(full);
+    }
+  }
   return {
-    totalCustomers: customers.length,
+    totalCustomers: uniqueNames.size + (blankCount > 0 ? 1 : 0),
     totalAmount: customers.reduce((s, c) => s + c.amount, 0),
     totalTickets: customers.reduce((s, c) => s + c.tickets, 0),
   };
