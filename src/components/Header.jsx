@@ -71,11 +71,11 @@ function Header({ customers = [], viewMode = 'TH', selectedRegion = null }) {
 
   return (
     <header className="header">
-      <div className="header-logo">
-        <div className="logo-circle">
-          <span>FT</span>
-        </div>
-        <span className="logo-text">Smart Data Intelligence</span>
+      <div className="header-logos">
+        <img src="/logo1.png" alt="กองฉลาก" className="header-logo-img" />
+        <img src="/logo2.png" alt="กองฉลาก" className="header-logo-img" />
+        <img src="/logo3.png" alt="กองฉลากพลัส" className="header-logo-img" />
+        <img src="/logo4.png" alt="ลอตเตอรี่พลัส" className="header-logo-img" />
       </div>
       <div className="header-stats">
         <div className="stat-card">
