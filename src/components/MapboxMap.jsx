@@ -889,7 +889,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
 
   // ===== INTL: populate bubble + world data =====
   const showWorldColors = viewMode === 'INTL' || (viewMode === 'TH' && !selectedRegion);
-  const showIntlBubbles = viewMode === 'INTL' || (viewMode === 'TH' && !selectedRegion);
+  const showIntlBubbles = viewMode === 'INTL';
 
   // World borders + country colors (ทั้งหมด + ต่างประเทศ)
   useEffect(() => {
