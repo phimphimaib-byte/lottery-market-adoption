@@ -229,11 +229,12 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: LIGHT_STYLE,
-      center: THAI_CENTER,
-      zoom: INIT_ZOOM,
-      pitch: INIT_PITCH,
-      bearing: INIT_BEARING,
+      center: [75, 25],
+      zoom: 2.8,
+      pitch: 0,
+      bearing: 0,
       antialias: true,
+      renderWorldCopies: false,
     });
 
     map.on('load', () => {
@@ -641,7 +642,7 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         map.easeTo({ center, zoom: 7, pitch: 55, bearing: -20, duration: 800 });
       }
     } else {
-      map.easeTo({ center: THAI_CENTER, zoom: INIT_ZOOM, pitch: INIT_PITCH, bearing: INIT_BEARING, duration: 800 });
+      map.easeTo({ center: [75, 25], zoom: 2.8, pitch: 0, bearing: 0, duration: 800 });
     }
 
     // --- Province fill: gray-out non-selected region + no-data provinces ---
@@ -844,6 +845,30 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
   const intlAnimAmount = useCountUp(intlData?.totalAmount || 0);
   const intlAnimCount = useCountUp(intlData?.totalCustomers || 0, 500);
 
+  // ===== INTL bubble GeoJSON — also shown in "ทั้งหมด" mode =====
+  const intlBubbleGeo = useMemo(() => {
+    const intlCustomers = getIntlCustomers(customers);
+    if (intlCustomers.length === 0) return null;
+    const byCountry = {};
+    for (const c of intlCustomers) {
+      const raw = c.province || 'Unknown';
+      const country = INTL_COUNTRY_ALIAS[raw] || raw;
+      if (!byCountry[country]) byCountry[country] = { country, customers: [], tickets: 0, amount: 0, coords: COUNTRY_COORDS[country] || null };
+      byCountry[country].customers.push(c);
+      byCountry[country].tickets += c.tickets;
+      byCountry[country].amount += c.amount;
+    }
+    const groups = Object.values(byCountry).sort((a, b) => b.amount - a.amount);
+    const features = groups
+      .filter((g) => g.coords)
+      .map((g) => ({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: g.coords },
+        properties: { country: g.country, winnersCount: g.customers.length, tickets: g.tickets, amount: g.amount },
+      }));
+    return { type: 'FeatureCollection', features, groups };
+  }, [customers]);
+
   // ===== INTL: saved overview camera + pending zoom =====
   const intlOverviewCam = useRef({ center: INTL_CENTER, zoom: INTL_ZOOM, pitch: 0, bearing: 0 });
   const pendingZoomRef = useRef(null);
@@ -862,16 +887,17 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
     }
   }, [mapReady, viewMode]);
 
-  // ===== INTL: populate bubble + world data (on intlData change) =====
+  // ===== INTL: populate bubble + world data =====
+  const showWorldColors = viewMode === 'INTL' || (viewMode === 'TH' && !selectedRegion);
+  const showIntlBubbles = viewMode === 'INTL' || (viewMode === 'TH' && !selectedRegion);
+
+  // World borders + country colors (ทั้งหมด + ต่างประเทศ)
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !mapReady) return;
     let cancelled = false;
 
-    if (viewMode === 'INTL' && intlData) {
-      map.getSource('intl-bubbles').setData(intlData.geojson);
-
-      // Load world borders (cached after first fetch)
+    if (showWorldColors && intlBubbleGeo) {
       const loadWorld = async () => {
         if (!worldGeoCache.current) {
           try {
@@ -882,21 +908,32 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
         if (cancelled) return;
         map.getSource('world-borders').setData(worldGeoCache.current);
 
-        const geoNames = intlData.groups
+        const geoNames = intlBubbleGeo.groups
           .map((g) => COUNTRY_TO_GEO_NAME[g.country] || g.country);
         map.setFilter('world-highlight', ['in', ['get', 'NAME'], ['literal', geoNames]]);
         map.setFilter('world-highlight-fill', ['in', ['get', 'NAME'], ['literal', geoNames]]);
       };
       loadWorld();
     } else {
-      map.getSource('intl-bubbles').setData({ type: 'FeatureCollection', features: [] });
       map.getSource('world-borders').setData({ type: 'FeatureCollection', features: [] });
       map.setFilter('world-highlight', ['==', ['get', 'NAME'], '']);
       map.setFilter('world-highlight-fill', ['==', ['get', 'NAME'], '']);
     }
 
     return () => { cancelled = true; };
-  }, [mapReady, viewMode, intlData]);
+  }, [mapReady, showWorldColors, intlBubbleGeo]);
+
+  // INTL bubble markers (เฉพาะต่างประเทศ)
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapReady) return;
+
+    if (showIntlBubbles && intlBubbleGeo) {
+      map.getSource('intl-bubbles').setData(intlBubbleGeo);
+    } else {
+      map.getSource('intl-bubbles').setData({ type: 'FeatureCollection', features: [] });
+    }
+  }, [mapReady, showIntlBubbles, intlBubbleGeo]);
 
   // ===== INTL: highlight selected country border =====
   useEffect(() => {
