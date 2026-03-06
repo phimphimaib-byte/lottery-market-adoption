@@ -3,7 +3,7 @@ import { getTotalStats, getRegionById } from '../data/prizeData';
 import { provinceMap } from '../data/provinceMapping';
 
 const TZ = 'Asia/Bangkok';
-const START = { y: 2021, m: 9, d: 29 };
+const START = { y: 2020, m: 12, d: 27 };
 
 function getBangkokYMD(date = new Date()) {
   const parts = new Intl.DateTimeFormat('en-CA', {
