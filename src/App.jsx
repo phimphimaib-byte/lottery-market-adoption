@@ -121,6 +121,15 @@ function App() {
           <HandGestureLayer mapRef={gestureMapRef} containerRef={gestureContainerRef} onClickRef={gestureClickRef} />
         </div>
       )}
+      <button
+        className="fullscreen-btn"
+        onClick={() => {
+          if (document.fullscreenElement) document.exitFullscreen();
+          else document.documentElement.requestFullscreen();
+        }}
+      >
+        ⛶
+      </button>
     </div>
   );
 }

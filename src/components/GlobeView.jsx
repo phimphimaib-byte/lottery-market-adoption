@@ -61,6 +61,7 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
   const [selectedInfo, setSelectedInfo] = useState(null);
   const [drillLevel, setDrillLevel] = useState('overview'); // 'overview' | 'region' | 'province'
   const [drillRegion, setDrillRegion] = useState(null);
+  const [globeError, setGlobeError] = useState(null);
   const [hoveredId, setHoveredId] = useState(null);
   const customerDotsRef = useRef([]);
   const provinceCoordsRef = useRef({});
@@ -245,8 +246,23 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
   useEffect(() => {
     if (!globeContainerRef.current || globeRef.current) return;
 
+    // WebGL check
+    try {
+      const testCanvas = document.createElement('canvas');
+      const gl = testCanvas.getContext('webgl2') || testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+      if (!gl) {
+        setGlobeError('WebGL ไม่รองรับบนเบราว์เซอร์นี้ — ลองเปิด chrome://flags แล้วเปิด "Override software rendering list"');
+        return;
+      }
+    } catch (e) {
+      setGlobeError('WebGL error: ' + e.message);
+      return;
+    }
+
     const container = globeContainerRef.current;
-    const globe = Globe()(container)
+    let globe;
+    try {
+    globe = Globe()(container)
       .globeImageUrl(EARTH_IMG)
       .bumpImageUrl(BUMP_IMG)
       .backgroundColor('#000810')
@@ -331,6 +347,10 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
     onResize();
 
     return () => { window.removeEventListener('resize', onResize); };
+    } catch (e) {
+      console.error('Globe init failed:', e);
+      setGlobeError('3D Globe โหลดไม่สำเร็จ: ' + e.message);
+    }
   }, [selectProvince, selectDot]);
 
   // Update polygons + points data
@@ -439,14 +459,25 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
       const grid = winnersGridRef.current;
       const SCROLL_SPEED = 12;
 
-      // ชี้นิ้ว = scroll ตามตำแหน่งมือ (บน=ขึ้น, ล่าง=ลง)
-      if (raw === 'point' || raw === 'open') {
-        setGesture(raw === 'point' ? 'scrollDown' : 'scrollUp');
-        if (smoothed.y > 0.55) {
-          grid.scrollTop += SCROLL_SPEED;
-        } else if (smoothed.y < 0.45) {
-          grid.scrollTop -= SCROLL_SPEED;
-        }
+      // กางมือ = เลื่อนขึ้น
+      if (raw === 'open') {
+        setGesture('scrollUp');
+        grid.scrollTop -= SCROLL_SPEED;
+        leftPrevGestureRef.current = raw;
+        prevPosRef.current = smoothed;
+        return;
+      }
+      // กำมือ = เลื่อนลง
+      if (raw === 'fist') {
+        setGesture('scrollDown');
+        grid.scrollTop += SCROLL_SPEED;
+        leftPrevGestureRef.current = raw;
+        prevPosRef.current = smoothed;
+        return;
+      }
+      // ชี้นิ้ว = หยุด (ไม่ scroll)
+      if (raw === 'point') {
+        setGesture('none');
         leftPrevGestureRef.current = raw;
         prevPosRef.current = smoothed;
         return;
@@ -640,6 +671,21 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
 
   // Current region data for region-level view
   const currentRegionData = drillRegion ? regionGroups[drillRegion] : null;
+
+  if (globeError) {
+    return (
+      <div className="globe-wrapper" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000810' }}>
+        <div style={{ textAlign: 'center', color: '#fff', padding: '40px', maxWidth: '500px' }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🌐</div>
+          <div style={{ fontSize: '20px', fontWeight: 700, marginBottom: '12px' }}>3D Globe ไม่สามารถโหลดได้</div>
+          <div style={{ fontSize: '14px', color: '#aaa', lineHeight: 1.6 }}>{globeError}</div>
+          <div style={{ marginTop: '20px', fontSize: '13px', color: '#666', lineHeight: 1.6 }}>
+            ลองเปิด <b style={{ color: '#4488ff' }}>chrome://flags</b> → ค้นหา <b>"Override software rendering list"</b> → Enabled → Relaunch
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="globe-wrapper">
