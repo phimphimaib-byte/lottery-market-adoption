@@ -1,7 +1,8 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import Header from './components/Header';
 import Breadcrumb from './components/Breadcrumb';
 import MapboxMap from './components/MapboxMap';
+import HandGestureLayer from './components/HandGestureLayer';
 import { getRegionById, loadPrizeData } from './data/prizeData';
 import { provinceMap } from './data/provinceMapping';
 import './App.css';
@@ -11,6 +12,9 @@ function App() {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [viewMode, setViewMode] = useState('TH'); // 'TH' | 'INTL'
+  const gestureMapRef = useRef(null);
+  const gestureContainerRef = useRef(null);
+  const gestureClickRef = useRef(null);
 
   // Async data loading
   const [customers, setCustomers] = useState([]);
@@ -91,7 +95,11 @@ function App() {
             onSelectRegion={handleSelectRegion}
             onSelectProvince={handleSelectProvince}
             onSelectCountry={setSelectedCountry}
+            gestureMapRef={gestureMapRef}
+            gestureContainerRef={gestureContainerRef}
+            onGestureClick={gestureClickRef}
           />
+          <HandGestureLayer mapRef={gestureMapRef} containerRef={gestureContainerRef} onClickRef={gestureClickRef} />
         </div>
       )}
     </div>

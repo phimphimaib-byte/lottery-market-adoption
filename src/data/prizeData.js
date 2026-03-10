@@ -60,7 +60,9 @@ export async function loadPrizeData() {
         id: memberId && memberId !== 'null' ? memberId : `ROW${i}`,
         name: firstName,
         surname,
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName)}&background=fff0f0&color=DC0000&size=100`,
+        avatar: memberId && memberId !== 'null'
+          ? `/avatars/${memberId}.jpg`
+          : `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName)}&background=fff0f0&color=DC0000&size=100`,
         provinceId,
         tickets,
         amount,

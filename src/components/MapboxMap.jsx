@@ -160,7 +160,7 @@ function useCountUp(target, duration = 800) {
   return value;
 }
 
-function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion, selectedProvince, selectedCountry, onSelectRegion, onSelectProvince, onSelectCountry }) {
+function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion, selectedProvince, selectedCountry, onSelectRegion, onSelectProvince, onSelectCountry, gestureMapRef, gestureContainerRef, onGestureClick }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const pulseRef = useRef(null);
@@ -603,6 +603,18 @@ function MapboxMap({ customers = [], viewMode = 'TH', onSetIntl, selectedRegion,
       pulseRef.current = requestAnimationFrame(animatePulse);
 
       mapRef.current = map;
+      if (gestureMapRef) gestureMapRef.current = map;
+      if (gestureContainerRef) gestureContainerRef.current = containerRef.current;
+      // Expose gesture click handler — dispatch real DOM click on canvas
+      if (onGestureClick) onGestureClick.current = (sx, sy) => {
+        const canvas = map.getCanvas();
+        const rect = canvas.getBoundingClientRect();
+        canvas.dispatchEvent(new MouseEvent('click', {
+          clientX: rect.left + sx,
+          clientY: rect.top + sy,
+          bubbles: true,
+        }));
+      };
       requestAnimationFrame(() => map.resize());
       setMapReady(true);
     });
