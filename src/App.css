@@ -846,153 +846,118 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:
 }
 
 /* ================================================================
-   Province Panel — Winner Cards (Globe right panel)
+   Winners Grid Overlay — Fullscreen
    ================================================================ */
-.province-panel {
-  position: absolute; top: 12px; right: 14px; bottom: 12px; z-index: 30;
-  width: 340px;
-  background: rgba(10, 12, 20, 0.92); backdrop-filter: blur(16px);
-  border: 1px solid rgba(220, 0, 0, 0.2);
-  border-radius: 16px;
+.winners-overlay {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(12px);
   display: flex; flex-direction: column;
+  animation: fadeIn 0.3s ease;
   overflow: hidden;
-  animation: slideFromRight 0.4s ease both;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
-.province-panel-header {
-  padding: 18px 20px 14px;
+.winners-overlay-header {
+  position: relative;
+  padding: 20px 28px 16px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
   flex-shrink: 0;
 }
-.province-panel-title {
-  font-size: 20px; font-weight: 800; color: #fff;
-  margin-bottom: 2px;
+.winners-overlay-title {
+  font-size: 24px; font-weight: 800; color: #fff;
 }
-.province-panel-sub {
-  font-size: 12px; color: #888; font-weight: 600;
-  margin-bottom: 10px;
+.winners-overlay-sub {
+  font-size: 14px; font-weight: 600; color: #DC0000;
 }
-.province-panel-stats {
-  display: flex; gap: 14px; font-size: 13px; font-weight: 700; color: #aaa;
+.winners-overlay-summary {
+  display: flex; gap: 16px; margin-top: 8px;
+  font-size: 14px; font-weight: 700; color: #aaa;
 }
-.province-panel-stats .green { color: #4ade80; }
-.province-panel-list {
-  flex: 1; overflow-y: auto; padding: 10px 12px 16px;
-  display: flex; flex-direction: column; gap: 8px;
-}
-.province-panel-list::-webkit-scrollbar { width: 4px; }
-.province-panel-list::-webkit-scrollbar-thumb { background: rgba(220,0,0,0.25); border-radius: 4px; }
-
-/* Winner card */
-.winner-card {
-  display: flex; align-items: center; gap: 12px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 12px; padding: 10px 12px;
-  cursor: pointer;
+.winners-overlay-summary .green { color: #4ade80; }
+.winners-overlay-close {
+  position: absolute; top: 16px; right: 20px;
+  background: rgba(255,255,255,0.1); border: none;
+  width: 40px; height: 40px; border-radius: 50%;
+  color: #fff; font-size: 22px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
   transition: all 0.2s;
 }
-.winner-card:hover {
-  background: rgba(220, 0, 0, 0.1);
-  border-color: rgba(220, 0, 0, 0.3);
-  transform: scale(1.02);
-}
-.winner-card-photo {
-  width: 48px; height: 48px; border-radius: 50%;
-  object-fit: cover; flex-shrink: 0;
-  border: 2px solid rgba(255,255,255,0.1);
-}
-.winner-card:hover .winner-card-photo {
-  border-color: rgba(220, 0, 0, 0.4);
-}
-.winner-card-body { flex: 1; min-width: 0; }
-.winner-card-name {
-  font-size: 14px; font-weight: 700; color: #fff;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  margin-bottom: 4px;
-}
-.winner-card-row { display: flex; gap: 6px; }
-.winner-tag {
-  font-size: 11px; font-weight: 700;
-  padding: 2px 8px; border-radius: 6px;
-}
-.winner-tag.red {
-  background: rgba(220, 0, 0, 0.15); color: #ff6b6b;
-  border: 1px solid rgba(220, 0, 0, 0.2);
-}
-.winner-tag.green {
-  background: rgba(0, 200, 100, 0.08); color: #4ade80;
-  border: 1px solid rgba(0, 200, 100, 0.15);
-}
-.winner-card-date {
-  font-size: 10px; color: #666; margin-top: 3px;
-}
+.winners-overlay-close:hover { background: rgba(220,0,0,0.3); }
 
-/* ================================================================
-   Winner Detail Popup (Globe)
-   ================================================================ */
-.winner-popup-overlay {
-  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 50;
-  animation: fadeIn 0.2s ease;
-  backdrop-filter: blur(3px);
+.winners-grid {
+  flex: 1; overflow-y: auto; padding: 20px 28px 32px;
+  display: flex; flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  align-content: start;
 }
-.winner-popup {
-  position: relative;
-  width: 340px;
+/* คนน้อย (≤3) จัดกลางจอ */
+.winners-grid.few-items {
+  align-content: center;
+}
+.winners-grid > .winner-grid-card {
+  width: 280px; flex-shrink: 0;
+}
+.winners-grid::-webkit-scrollbar { width: 6px; }
+.winners-grid::-webkit-scrollbar-thumb { background: rgba(220,0,0,0.3); border-radius: 4px; }
+
+.winner-grid-card {
   background: #fff;
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  animation: gamePopupIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  transition: transform 0.2s;
 }
-.winner-popup-close {
-  position: absolute; top: 10px; right: 14px;
-  background: rgba(0,0,0,0.08); border: none;
-  width: 30px; height: 30px; border-radius: 50%;
-  color: rgba(0,0,0,0.3); font-size: 18px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  z-index: 2; transition: all 0.2s;
+.winner-grid-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(220,0,0,0.2);
 }
-.winner-popup-close:hover { background: rgba(0,0,0,0.12); color: rgba(0,0,0,0.6); }
-.winner-popup-img-area {
-  height: 220px; overflow: hidden; position: relative;
+.winner-grid-img-wrap {
+  width: 100%; aspect-ratio: 4/3; overflow: hidden;
+  background: linear-gradient(135deg, #DC0000, #8b0000);
+  position: relative;
 }
-.winner-popup-img-area::after {
-  content: '';
-  position: absolute; bottom: -1px; left: 0; right: 0; height: 30px;
-  background: linear-gradient(to top, #fff, transparent);
-}
-.winner-popup-img {
+.winner-grid-img-wrap img {
   width: 100%; height: 100%; object-fit: cover;
 }
-.winner-popup-body {
-  padding: 18px 24px 24px;
+.winner-grid-body {
+  padding: 14px 16px 18px; text-align: center;
 }
-.winner-popup-name {
-  font-size: 22px; font-weight: 800; color: #1a1a2e;
-  margin-bottom: 4px;
+.winner-grid-name {
+  font-size: 16px; font-weight: 800; color: #1a1a2e;
+  margin-bottom: 2px;
 }
-.winner-popup-location {
-  font-size: 13px; color: #DC0000; font-weight: 600;
-  margin-bottom: 16px;
+.winner-grid-province {
+  font-size: 12px; color: #DC0000; font-weight: 600;
+  margin-bottom: 2px;
 }
-.winner-popup-stats {
-  display: flex; gap: 12px; margin-bottom: 16px;
+.winner-grid-id {
+  font-size: 11px; color: #999; margin-bottom: 10px;
 }
-.winner-popup-stat {
+.winner-grid-stats {
+  display: flex; gap: 10px; justify-content: center;
+  margin-bottom: 12px;
+}
+.winner-grid-stat {
   flex: 1; text-align: center;
-  background: #f7f7f8; border-radius: 14px;
-  padding: 14px 8px;
+  background: #f7f7f8; border-radius: 12px;
+  padding: 12px 6px;
 }
-.winner-popup-stat-val {
-  font-size: 24px; font-weight: 800; color: #1a1a2e;
+.winner-grid-stat-val {
+  font-size: 22px; font-weight: 800; color: #1a1a2e;
 }
-.winner-popup-stat-val.red { color: #DC0000; }
-.winner-popup-stat-lbl {
-  font-size: 12px; color: #aaa; margin-top: 2px; font-weight: 600;
+.winner-grid-stat-val.red { color: #DC0000; }
+.winner-grid-stat-val.green { color: #2e7d32; }
+.winner-grid-stat-lbl {
+  font-size: 11px; color: #999; margin-top: 2px; font-weight: 600;
+}
+.winner-grid-date {
+  display: inline-block;
+  font-size: 12px; font-weight: 700; color: #DC0000;
+  background: rgba(220, 0, 0, 0.08);
+  border: 1px solid rgba(220, 0, 0, 0.15);
+  border-radius: 8px;
+  padding: 4px 12px;
 }
 .winner-popup-date {
   font-size: 13px; color: #aaa;

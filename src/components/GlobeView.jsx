@@ -56,9 +56,9 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
   const leftPrevGestureRef = useRef('none');
   const pinchTimerRef = useRef(0);
   const prevRollRef = useRef(null);
+  const winnersGridRef = useRef(null);
   const [geoData, setGeoData] = useState({ thailand: null, world: null });
   const [selectedInfo, setSelectedInfo] = useState(null);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [drillLevel, setDrillLevel] = useState('overview'); // 'overview' | 'region' | 'province'
   const [drillRegion, setDrillRegion] = useState(null);
   const [hoveredId, setHoveredId] = useState(null);
@@ -184,7 +184,7 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
     setDrillLevel('region');
     setDrillRegion(regionKey);
     setSelectedInfo(null);
-    setSelectedCustomer(null);
+
     // Zoom to roughly the region center
     const regionCenters = {
       north: { lat: 18.5, lng: 99, alt: 0.8 },
@@ -219,7 +219,7 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
       customers: feat._customers,
       provinceId: feat._id,
     });
-    setSelectedCustomer(null);
+
   }, []);
   selectProvinceRef.current = selectProvince;
 
@@ -237,7 +237,7 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
       if (info) setDrillRegion(info.region);
     }
     setSelectedInfo(d);
-    setSelectedCustomer(null);
+
   }, []);
   selectDotRef.current = selectDot;
 
@@ -351,12 +351,16 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
     globe.polygonsData(allPolygons);
   }, [hoveredId, allPolygons]);
 
-  // Gesture ON/OFF
+  // Lock globe when card is shown / Gesture ON/OFF
   useEffect(() => {
     const globe = globeRef.current;
     if (!globe) return;
     const controls = globe.controls();
-    if (isTracking) {
+    if (selectedInfo) {
+      // ล็อกโลกตอนโชว์การ์ด
+      controls.enabled = false;
+      controls.autoRotate = false;
+    } else if (isTracking) {
       controls.enabled = false;
       controls.autoRotate = false;
     } else {
@@ -364,7 +368,7 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
       controls.autoRotate = true;
       controls.autoRotateSpeed = 0.3;
     }
-  }, [isTracking]);
+  }, [isTracking, selectedInfo]);
 
   // Hand gesture handler — supports two hands
   const handleFrame = useCallback((landmarks, allHands) => {
@@ -427,6 +431,50 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
     if (!smoothed) {
       prevPosRef.current = null;
       setGesture('none');
+      return;
+    }
+
+    // === OVERLAY MODE: ถ้าโชว์การ์ดอยู่ ใช้มือ scroll แทน ===
+    if (selectedInfoRef.current && winnersGridRef.current) {
+      const grid = winnersGridRef.current;
+      const SCROLL_SPEED = 12;
+
+      // ชี้นิ้ว = scroll ตามตำแหน่งมือ (บน=ขึ้น, ล่าง=ลง)
+      if (raw === 'point' || raw === 'open') {
+        setGesture(raw === 'point' ? 'scrollDown' : 'scrollUp');
+        if (smoothed.y > 0.55) {
+          grid.scrollTop += SCROLL_SPEED;
+        } else if (smoothed.y < 0.45) {
+          grid.scrollTop -= SCROLL_SPEED;
+        }
+        leftPrevGestureRef.current = raw;
+        prevPosRef.current = smoothed;
+        return;
+      }
+
+      // หยิบ 2 ครั้ง = ปิด overlay
+      if (raw === 'pinch') {
+        setGesture('pinch');
+        const now = performance.now();
+        if (leftPrevGestureRef.current !== 'pinch') {
+          if (now - pinchTimerRef.current < 800) {
+            pinchTimerRef.current = 0;
+            setSelectedInfo(null);
+            const cur = globe.pointOfView();
+            globe.pointOfView({ lat: cur.lat, lng: cur.lng, altitude: 0.8 }, 800);
+            globe.controls().autoRotate = false;
+          } else {
+            pinchTimerRef.current = now;
+          }
+        }
+        leftPrevGestureRef.current = raw;
+        prevPosRef.current = null;
+        return;
+      }
+
+      setGesture('none');
+      leftPrevGestureRef.current = raw;
+      prevPosRef.current = smoothed;
       return;
     }
 
@@ -517,7 +565,7 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
           pinchTimerRef.current = 0;
           if (selectedInfoRef.current) {
             setSelectedInfo(null);
-            setSelectedCustomer(null);
+        
             const cur = globe.pointOfView();
             globe.pointOfView({ lat: cur.lat, lng: cur.lng, altitude: 0.8 }, 800);
             globe.controls().autoRotate = false; // ใช้มืออยู่ ไม่เปิด autoRotate
@@ -578,10 +626,6 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
 
   // Back navigation
   const goBack = useCallback(() => {
-    if (selectedCustomer) {
-      setSelectedCustomer(null);
-      return;
-    }
     setSelectedInfo(null);
     const globe = globeRef.current;
     if (globe) {
@@ -592,7 +636,7 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
         globe.controls().autoRotateSpeed = 0.3;
       }
     }
-  }, [selectedCustomer, isTracking]);
+  }, [isTracking]);
 
   // Current region data for region-level view
   const currentRegionData = drillRegion ? regionGroups[drillRegion] : null;
@@ -602,7 +646,7 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
       <div ref={globeContainerRef} className="globe-canvas" />
 
       {/* Back button */}
-      {(selectedInfo || selectedCustomer) && (
+      {selectedInfo && (
         <button className="globe-back-btn" onClick={goBack}>
           ← กลับ
         </button>
@@ -625,6 +669,8 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
               gesture === 'zoomOut' ? '✊ ซูมออก' :
               gesture === 'move' ? '☝️ เลื่อน' :
               gesture === 'rotate' ? '✌️ หมุน' :
+              gesture === 'scrollUp' ? '🖐️ เลื่อนขึ้น' :
+              gesture === 'scrollDown' ? '☝️ เลื่อนลง' :
               gesture === 'pinch' ? '🤏 เลือก' : ''
             }</span>
           </div>
@@ -638,76 +684,51 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
         <div className="globe-crosshair">+</div>
       )}
 
-      {/* PROVINCE: Winner cards panel — only shows when a province/country is selected */}
-      {selectedInfo && !selectedCustomer && (
-        <div className="province-panel">
-          <div className="province-panel-header">
-            <div className="province-panel-title">{selectedInfo.label}</div>
-            <div className="province-panel-sub">
-              {drillRegion && drillRegion !== 'intl' ? regionColors[drillRegion]?.label : 'ต่างประเทศ'}
+      {/* Winner grid overlay — fullscreen */}
+      {selectedInfo && (
+        <div className="winners-overlay" onPointerDown={e => e.stopPropagation()} onWheel={e => e.stopPropagation()} onTouchStart={e => e.stopPropagation()} onTouchMove={e => e.stopPropagation()}>
+          <div className="winners-overlay-header">
+            <div className="winners-overlay-title">
+              {selectedInfo.label}
+              <span className="winners-overlay-sub">
+                {drillRegion && drillRegion !== 'intl' ? ` · ${regionColors[drillRegion]?.label}` : ' · ต่างประเทศ'}
+              </span>
             </div>
-            <div className="province-panel-stats">
+            <div className="winners-overlay-summary">
               <span>{selectedInfo.count} คน</span>
               <span>{selectedInfo.tickets} ใบ</span>
               <span className="green">฿{selectedInfo.amount.toLocaleString('th-TH')}</span>
             </div>
+            <button className="winners-overlay-close" onClick={goBack}>&times;</button>
           </div>
-          <div className="province-panel-list">
+          <div className={`winners-grid${selectedInfo.customers.length <= 3 ? ' few-items' : ''}`} ref={winnersGridRef}>
             {selectedInfo.customers.map((c, i) => (
-              <div key={c.id || i} className="winner-card" onClick={() => setSelectedCustomer(c)}>
-                <img
-                  className="winner-card-photo"
-                  src={c.avatar}
-                  alt={c.name}
-                  onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${c.name}&background=1a1a2e&color=ff6b6b&size=100`; }}
-                />
-                <div className="winner-card-body">
-                  <div className="winner-card-name">{c.name} {c.surname}</div>
-                  <div className="winner-card-row">
-                    <span className="winner-tag red">{c.tickets} ใบ</span>
-                    <span className="winner-tag green">฿{c.amount.toLocaleString('th-TH')}</span>
+              <div key={c.id || i} className="winner-grid-card">
+                <div className="winner-grid-img-wrap">
+                  <img
+                    src={c.avatar}
+                    alt={c.name}
+                    onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=1a1a2e&color=ff6b6b&size=200`; }}
+                  />
+                </div>
+                <div className="winner-grid-body">
+                  <div className="winner-grid-name">{c.name} {c.surname}</div>
+                  <div className="winner-grid-province">{c.province}</div>
+                  {c.id && <div className="winner-grid-id">{c.id}</div>}
+                  <div className="winner-grid-stats">
+                    <div className="winner-grid-stat">
+                      <div className="winner-grid-stat-val red">{c.tickets}</div>
+                      <div className="winner-grid-stat-lbl">ใบ</div>
+                    </div>
+                    <div className="winner-grid-stat">
+                      <div className="winner-grid-stat-val green">{c.amount.toLocaleString('th-TH')}</div>
+                      <div className="winner-grid-stat-lbl">ล้านบาท</div>
+                    </div>
                   </div>
-                  {c.drawDate && <div className="winner-card-date">งวด {c.drawDate}</div>}
+                  {c.drawDate && <div className="winner-grid-date">งวดวันที่ {c.drawDate}</div>}
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      )}
-
-      {/* CUSTOMER DETAIL popup */}
-      {selectedCustomer && (
-        <div className="winner-popup-overlay" onClick={() => setSelectedCustomer(null)}>
-          <div className="winner-popup" onClick={(e) => e.stopPropagation()}>
-            <button className="winner-popup-close" onClick={() => setSelectedCustomer(null)}>&times;</button>
-            <div className="winner-popup-img-area">
-              <img
-                className="winner-popup-img"
-                src={selectedCustomer.avatar}
-                alt={selectedCustomer.name}
-                onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${selectedCustomer.name}&background=1a1a2e&color=ff6b6b&size=200`; }}
-              />
-            </div>
-            <div className="winner-popup-body">
-              <div className="winner-popup-name">{selectedCustomer.name} {selectedCustomer.surname}</div>
-              <div className="winner-popup-location">
-                {selectedInfo?.label}
-                {drillRegion && drillRegion !== 'intl' && ` · ${regionColors[drillRegion]?.label}`}
-              </div>
-              <div className="winner-popup-stats">
-                <div className="winner-popup-stat">
-                  <div className="winner-popup-stat-val red">{selectedCustomer.tickets}</div>
-                  <div className="winner-popup-stat-lbl">ใบ</div>
-                </div>
-                <div className="winner-popup-stat">
-                  <div className="winner-popup-stat-val">฿{selectedCustomer.amount.toLocaleString('th-TH')}</div>
-                  <div className="winner-popup-stat-lbl">บาท</div>
-                </div>
-              </div>
-              {selectedCustomer.drawDate && (
-                <div className="winner-popup-date">งวดวันที่ {selectedCustomer.drawDate}</div>
-              )}
-            </div>
           </div>
         </div>
       )}
