@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react'
 import Header from './components/Header';
 import Breadcrumb from './components/Breadcrumb';
 import MapboxMap from './components/MapboxMap';
-import HandGestureLayer from './components/HandGestureLayer';
 import { getRegionById, loadPrizeData } from './data/prizeData';
 import { provinceMap } from './data/provinceMapping';
 import './App.css';
@@ -15,9 +14,6 @@ function App() {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [viewMode, setViewMode] = useState('TH'); // 'TH' | 'INTL'
   const [displayMode, setDisplayMode] = useState('map'); // 'map' | 'globe'
-  const gestureMapRef = useRef(null);
-  const gestureContainerRef = useRef(null);
-  const gestureClickRef = useRef(null);
 
   // Async data loading
   const [customers, setCustomers] = useState([]);
@@ -83,12 +79,23 @@ function App() {
       )}
       <div className="breadcrumb-bar">
         <Breadcrumb items={breadcrumbItems} />
-        <button
-          className="display-mode-btn"
-          onClick={() => setDisplayMode(d => d === 'map' ? 'globe' : 'map')}
-        >
-          {displayMode === 'map' ? '3D Globe' : '2D Map'}
-        </button>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <button
+            className="display-mode-btn"
+            onClick={() => setDisplayMode(d => d === 'map' ? 'globe' : 'map')}
+          >
+            {displayMode === 'map' ? '3D Globe' : '2D Map'}
+          </button>
+          <button
+            className="fullscreen-btn"
+            onClick={() => {
+              if (document.fullscreenElement) document.exitFullscreen();
+              else document.documentElement.requestFullscreen();
+            }}
+          >
+            ⛶
+          </button>
+        </div>
       </div>
       {loading ? (
         <div className="loading-overlay">กำลังโหลดข้อมูล...</div>
@@ -114,22 +121,9 @@ function App() {
             onSelectRegion={handleSelectRegion}
             onSelectProvince={handleSelectProvince}
             onSelectCountry={setSelectedCountry}
-            gestureMapRef={gestureMapRef}
-            gestureContainerRef={gestureContainerRef}
-            onGestureClick={gestureClickRef}
           />
-          <HandGestureLayer mapRef={gestureMapRef} containerRef={gestureContainerRef} onClickRef={gestureClickRef} />
         </div>
       )}
-      <button
-        className="fullscreen-btn"
-        onClick={() => {
-          if (document.fullscreenElement) document.exitFullscreen();
-          else document.documentElement.requestFullscreen();
-        }}
-      >
-        ⛶
-      </button>
     </div>
   );
 }
