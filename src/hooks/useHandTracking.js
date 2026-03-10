@@ -23,12 +23,21 @@ export default function useHandTracking() {
     }
 
     const result = landmarker.detectForVideo(video, performance.now());
+    // Single hand (backwards compat)
     landmarksRef.current = result.landmarks && result.landmarks.length > 0
       ? result.landmarks[0]
       : null;
 
     if (onFrameRef.current) {
-      onFrameRef.current(landmarksRef.current);
+      // Pass all hands with handedness info
+      const hands = [];
+      if (result.landmarks) {
+        for (let i = 0; i < result.landmarks.length; i++) {
+          const label = result.handednesses?.[i]?.[0]?.categoryName || 'Unknown';
+          hands.push({ landmarks: result.landmarks[i], label });
+        }
+      }
+      onFrameRef.current(landmarksRef.current, hands);
     }
 
     rafRef.current = requestAnimationFrame(detect);
@@ -45,7 +54,7 @@ export default function useHandTracking() {
       handLandmarkerRef.current = await HandLandmarker.createFromOptions(vision, {
         baseOptions: { modelAssetPath: MODEL_URL, delegate: 'GPU' },
         runningMode: 'VIDEO',
-        numHands: 1,
+        numHands: 2,
       });
 
       // Start webcam

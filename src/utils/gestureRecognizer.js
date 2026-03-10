@@ -1,4 +1,6 @@
 // Landmark indices
+const THUMB_TIP = 4;
+const THUMB_IP = 3;
 const INDEX_TIP = 8;
 const INDEX_PIP = 6;
 const MIDDLE_TIP = 12;
@@ -9,8 +11,11 @@ const PINKY_TIP = 20;
 const PINKY_PIP = 18;
 const WRIST = 0;
 
+function dist(a, b) {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
 function isFingerExtended(landmarks, tipIdx, pipIdx) {
-  // finger tip is higher (smaller y) than PIP = extended
   return landmarks[tipIdx].y < landmarks[pipIdx].y - 0.02;
 }
 
@@ -22,31 +27,63 @@ export function classifyGesture(landmarks) {
   const ringExt = isFingerExtended(landmarks, RING_TIP, RING_PIP);
   const pinkyExt = isFingerExtended(landmarks, PINKY_TIP, PINKY_PIP);
 
-  // Count extended fingers (not counting thumb — too unreliable)
+  // Pinch: thumb tip close to index tip, other fingers relaxed
+  const pinchDist = dist(landmarks[THUMB_TIP], landmarks[INDEX_TIP]);
+  if (pinchDist < 0.06) {
+    return 'pinch';
+  }
+
   const extCount = [indexExt, middleExt, ringExt, pinkyExt].filter(Boolean).length;
 
-  // Fist / click: 0-1 fingers extended
+  // Fist: 0-1 fingers extended and index not extended
   if (extCount <= 1 && !indexExt) {
     return 'fist';
   }
 
-  // Open hand / move: 2+ fingers extended
-  if (extCount >= 2) {
+  // Point: index extended, others curled
+  if (indexExt && !middleExt && !ringExt) {
+    return 'point';
+  }
+
+  // Victory/Peace (2 fingers): index + middle extended, ring + pinky curled → rotate
+  if (indexExt && middleExt && !ringExt && !pinkyExt) {
+    return 'rotate';
+  }
+
+  // Open hand: 3+ fingers extended
+  if (extCount >= 3) {
     return 'open';
   }
 
-  return 'open'; // default to move so cursor always works
+  return 'none';
 }
 
 export function getCursorPosition(landmarks) {
   if (!landmarks || landmarks.length < 21) return null;
-  // Use wrist for more stable tracking, mirror X
-  const wrist = landmarks[WRIST];
-  return { x: 1 - wrist.x, y: wrist.y };
+  return { x: 1 - landmarks[INDEX_TIP].x, y: landmarks[INDEX_TIP].y };
 }
 
-// Exponential moving average for cursor smoothing
-export function smoothPosition(current, previous, alpha = 0.4) {
+export function getHandCenter(landmarks) {
+  if (!landmarks || landmarks.length < 21) return null;
+  return { x: 1 - landmarks[WRIST].x, y: landmarks[WRIST].y };
+}
+
+export function getPinchDistance(landmarks) {
+  if (!landmarks || landmarks.length < 21) return 0;
+  return dist(landmarks[THUMB_TIP], landmarks[INDEX_TIP]);
+}
+
+// Compute hand roll angle (rotation around wrist axis) in radians
+// Uses index MCP (5) and pinky MCP (17) to detect hand tilt/twist
+export function getHandRollAngle(landmarks) {
+  if (!landmarks || landmarks.length < 21) return null;
+  const indexMCP = landmarks[5];
+  const pinkyMCP = landmarks[17];
+  // Angle of the line from pinky to index knuckle relative to horizontal
+  return Math.atan2(pinkyMCP.y - indexMCP.y, pinkyMCP.x - indexMCP.x);
+}
+
+export function smoothPosition(current, previous, alpha = 0.35) {
   if (!previous) return current;
   return {
     x: previous.x + alpha * (current.x - previous.x),

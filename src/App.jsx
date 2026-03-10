@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Breadcrumb from './components/Breadcrumb';
 import MapboxMap from './components/MapboxMap';
@@ -7,11 +7,14 @@ import { getRegionById, loadPrizeData } from './data/prizeData';
 import { provinceMap } from './data/provinceMapping';
 import './App.css';
 
+const GlobeView = lazy(() => import('./components/GlobeView'));
+
 function App() {
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [viewMode, setViewMode] = useState('TH'); // 'TH' | 'INTL'
+  const [displayMode, setDisplayMode] = useState('map'); // 'map' | 'globe'
   const gestureMapRef = useRef(null);
   const gestureContainerRef = useRef(null);
   const gestureClickRef = useRef(null);
@@ -80,9 +83,25 @@ function App() {
       )}
       <div className="breadcrumb-bar">
         <Breadcrumb items={breadcrumbItems} />
+        <button
+          className="display-mode-btn"
+          onClick={() => setDisplayMode(d => d === 'map' ? 'globe' : 'map')}
+        >
+          {displayMode === 'map' ? '3D Globe' : '2D Map'}
+        </button>
       </div>
       {loading ? (
         <div className="loading-overlay">กำลังโหลดข้อมูล...</div>
+      ) : displayMode === 'globe' ? (
+        <div className="map-fullscreen globe-bg">
+          <Suspense fallback={<div className="loading-overlay">กำลังโหลด 3D Globe...</div>}>
+            <GlobeView
+              customers={customers}
+              onSelectRegion={handleSelectRegion}
+              onSelectProvince={handleSelectProvince}
+            />
+          </Suspense>
+        </div>
       ) : (
         <div className="map-fullscreen">
           <MapboxMap

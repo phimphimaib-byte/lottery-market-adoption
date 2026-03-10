@@ -36,6 +36,18 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:
 .breadcrumb-bar {
   padding: 8px 28px; background: #fafafa;
   border-bottom: 1px solid #e8e8e8; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.display-mode-btn {
+  background: linear-gradient(135deg, #DC0000, #ff4444);
+  border: none; border-radius: 8px;
+  padding: 6px 16px; color: #fff; font-size: 12px;
+  font-weight: 700; cursor: pointer; font-family: inherit;
+  transition: all 0.2s; box-shadow: 0 2px 8px rgba(220,0,0,0.2);
+}
+.display-mode-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220,0,0,0.3);
 }
 .breadcrumb { font-size: 13px; color: #888; }
 .breadcrumb-link { background: none; border: none; color: #DC0000; cursor: pointer; font-size: 13px; padding: 0; font-weight: 600; }
@@ -684,4 +696,304 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:
 .hand-cursor.pinch .hand-cursor-dot {
   background: #0066cc;
   box-shadow: 0 0 10px rgba(0, 102, 204, 0.6);
+}
+
+/* ===== 3D Globe ===== */
+.globe-bg { background: #000810; }
+.globe-wrapper {
+  width: 100%; height: 100%; position: relative;
+}
+.globe-canvas {
+  width: 100%; height: 100%;
+}
+.globe-canvas canvas { display: block; }
+
+/* Globe detail panel */
+.globe-detail-panel {
+  position: absolute; top: 12px; right: 14px; z-index: 30;
+  width: 320px; max-height: calc(100% - 40px);
+  background: rgba(10, 12, 20, 0.92); backdrop-filter: blur(16px);
+  border: 1px solid rgba(220, 0, 0, 0.25);
+  border-radius: 14px; padding: 16px;
+  color: #fff; display: flex; flex-direction: column; gap: 10px;
+  overflow-y: auto; overflow-x: hidden;
+  animation: slideFromRight 0.4s ease both;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+.globe-detail-panel::-webkit-scrollbar { width: 4px; }
+.globe-detail-panel::-webkit-scrollbar-thumb { background: rgba(220, 0, 0, 0.3); border-radius: 4px; }
+.globe-detail-close {
+  position: absolute; top: 10px; right: 14px;
+  background: rgba(255,255,255,0.1); border: none; color: #aaa;
+  width: 28px; height: 28px; border-radius: 50%;
+  font-size: 16px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; transition: all 0.2s;
+}
+.globe-detail-close:hover { background: rgba(255,255,255,0.2); color: #fff; }
+.globe-detail-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.globe-detail-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+.globe-detail-summary {
+  display: flex; gap: 14px; font-size: 13px; font-weight: 600; color: #aaa;
+}
+.globe-detail-list { display: flex; flex-direction: column; gap: 6px; }
+.globe-detail-card {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 8px 10px;
+  transition: all 0.2s;
+}
+.globe-detail-card:hover {
+  background: rgba(220, 0, 0, 0.1);
+  border-color: rgba(220, 0, 0, 0.3);
+}
+.globe-detail-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0;
+  border: 1.5px solid rgba(255,255,255,0.15);
+}
+.globe-detail-info { flex: 1; min-width: 0; }
+.globe-detail-name {
+  font-size: 14px; font-weight: 700; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.globe-detail-meta { display: flex; gap: 6px; }
+.globe-badge {
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 700;
+  padding: 2px 7px; border-radius: 5px;
+}
+.globe-badge.tickets {
+  background: rgba(220, 0, 0, 0.15); color: #ff6b6b;
+  border: 1px solid rgba(220, 0, 0, 0.25);
+}
+.globe-badge.money {
+  background: rgba(0, 200, 100, 0.1); color: #66ffaa;
+  border: 1px solid rgba(0, 200, 100, 0.2);
+}
+.globe-detail-date {
+  font-size: 10px; color: #666; margin-top: 2px;
+}
+.globe-detail-more {
+  text-align: center; padding: 8px;
+  color: #888; font-size: 12px; font-weight: 600;
+}
+.globe-detail-card-clickable {
+  cursor: pointer;
+}
+.globe-detail-card-clickable:hover {
+  background: rgba(220, 0, 0, 0.15);
+  border-color: rgba(220, 0, 0, 0.4);
+  transform: translateX(2px);
+}
+.globe-region-color {
+  width: 8px; height: 36px; border-radius: 4px; flex-shrink: 0;
+}
+.globe-drill-arrow {
+  margin-left: auto; font-size: 20px; color: #666; font-weight: 700; flex-shrink: 0;
+}
+.globe-back-btn {
+  position: absolute; top: 16px; left: 16px; z-index: 30;
+  background: rgba(10, 12, 20, 0.85); backdrop-filter: blur(10px);
+  border: 1px solid rgba(220, 0, 0, 0.3); border-radius: 10px;
+  padding: 8px 18px; color: #ff6b6b; font-size: 14px;
+  font-weight: 700; cursor: pointer; font-family: inherit;
+  transition: all 0.2s;
+}
+.globe-back-btn:hover {
+  background: rgba(220, 0, 0, 0.15);
+  border-color: rgba(220, 0, 0, 0.5);
+}
+.globe-flag {
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: transform 0.15s;
+}
+.globe-flag img {
+  width: 28px; height: 20px;
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  object-fit: cover;
+}
+.globe-flag:hover {
+  transform: translate(-50%, -50%) scale(1.3);
+}
+.globe-flag:hover img {
+  border-color: #ff6b6b;
+  box-shadow: 0 2px 12px rgba(255,107,107,0.5);
+}
+.globe-crosshair {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 28px; color: rgba(255,255,255,0.4);
+  pointer-events: none; z-index: 25;
+  text-shadow: 0 0 8px rgba(0,0,0,0.5);
+  font-weight: 300;
+}
+.gesture-hint {
+  position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.7); color: #fff;
+  padding: 8px 18px; border-radius: 20px;
+  font-size: 13px; font-weight: 600;
+  backdrop-filter: blur(6px); z-index: 30;
+  white-space: nowrap;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ================================================================
+   Province Panel — Winner Cards (Globe right panel)
+   ================================================================ */
+.province-panel {
+  position: absolute; top: 12px; right: 14px; bottom: 12px; z-index: 30;
+  width: 340px;
+  background: rgba(10, 12, 20, 0.92); backdrop-filter: blur(16px);
+  border: 1px solid rgba(220, 0, 0, 0.2);
+  border-radius: 16px;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  animation: slideFromRight 0.4s ease both;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+.province-panel-header {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+.province-panel-title {
+  font-size: 20px; font-weight: 800; color: #fff;
+  margin-bottom: 2px;
+}
+.province-panel-sub {
+  font-size: 12px; color: #888; font-weight: 600;
+  margin-bottom: 10px;
+}
+.province-panel-stats {
+  display: flex; gap: 14px; font-size: 13px; font-weight: 700; color: #aaa;
+}
+.province-panel-stats .green { color: #4ade80; }
+.province-panel-list {
+  flex: 1; overflow-y: auto; padding: 10px 12px 16px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.province-panel-list::-webkit-scrollbar { width: 4px; }
+.province-panel-list::-webkit-scrollbar-thumb { background: rgba(220,0,0,0.25); border-radius: 4px; }
+
+/* Winner card */
+.winner-card {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px; padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.winner-card:hover {
+  background: rgba(220, 0, 0, 0.1);
+  border-color: rgba(220, 0, 0, 0.3);
+  transform: scale(1.02);
+}
+.winner-card-photo {
+  width: 48px; height: 48px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.1);
+}
+.winner-card:hover .winner-card-photo {
+  border-color: rgba(220, 0, 0, 0.4);
+}
+.winner-card-body { flex: 1; min-width: 0; }
+.winner-card-name {
+  font-size: 14px; font-weight: 700; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.winner-card-row { display: flex; gap: 6px; }
+.winner-tag {
+  font-size: 11px; font-weight: 700;
+  padding: 2px 8px; border-radius: 6px;
+}
+.winner-tag.red {
+  background: rgba(220, 0, 0, 0.15); color: #ff6b6b;
+  border: 1px solid rgba(220, 0, 0, 0.2);
+}
+.winner-tag.green {
+  background: rgba(0, 200, 100, 0.08); color: #4ade80;
+  border: 1px solid rgba(0, 200, 100, 0.15);
+}
+.winner-card-date {
+  font-size: 10px; color: #666; margin-top: 3px;
+}
+
+/* ================================================================
+   Winner Detail Popup (Globe)
+   ================================================================ */
+.winner-popup-overlay {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 50;
+  animation: fadeIn 0.2s ease;
+  backdrop-filter: blur(3px);
+}
+.winner-popup {
+  position: relative;
+  width: 340px;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: gamePopupIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.winner-popup-close {
+  position: absolute; top: 10px; right: 14px;
+  background: rgba(0,0,0,0.08); border: none;
+  width: 30px; height: 30px; border-radius: 50%;
+  color: rgba(0,0,0,0.3); font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2; transition: all 0.2s;
+}
+.winner-popup-close:hover { background: rgba(0,0,0,0.12); color: rgba(0,0,0,0.6); }
+.winner-popup-img-area {
+  height: 220px; overflow: hidden; position: relative;
+}
+.winner-popup-img-area::after {
+  content: '';
+  position: absolute; bottom: -1px; left: 0; right: 0; height: 30px;
+  background: linear-gradient(to top, #fff, transparent);
+}
+.winner-popup-img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.winner-popup-body {
+  padding: 18px 24px 24px;
+}
+.winner-popup-name {
+  font-size: 22px; font-weight: 800; color: #1a1a2e;
+  margin-bottom: 4px;
+}
+.winner-popup-location {
+  font-size: 13px; color: #DC0000; font-weight: 600;
+  margin-bottom: 16px;
+}
+.winner-popup-stats {
+  display: flex; gap: 12px; margin-bottom: 16px;
+}
+.winner-popup-stat {
+  flex: 1; text-align: center;
+  background: #f7f7f8; border-radius: 14px;
+  padding: 14px 8px;
+}
+.winner-popup-stat-val {
+  font-size: 24px; font-weight: 800; color: #1a1a2e;
+}
+.winner-popup-stat-val.red { color: #DC0000; }
+.winner-popup-stat-lbl {
+  font-size: 12px; color: #aaa; margin-top: 2px; font-weight: 600;
+}
+.winner-popup-date {
+  font-size: 13px; color: #aaa;
 }
