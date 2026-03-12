@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สลากดิจิทัล — รายงานวิเคราะห์</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Sarabun',sans-serif;background:#f5f0e8;color:#2d2a26;overflow-x:hidden}
+
+    /* NAV */
+    .nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;gap:0;
+      background:linear-gradient(90deg,#ede8dfee,#e8e2d8ee);backdrop-filter:blur(12px);
+      border-bottom:1px solid #d5cfc4;padding:0 24px;height:52px}
+    .nav-brand{font-size:13px;font-weight:800;color:#6d5c3e;margin-right:24px;white-space:nowrap}
+    .nav-btn{padding:10px 20px;font-size:13px;font-weight:700;color:#8a7e6e;background:none;border:none;
+      cursor:pointer;font-family:inherit;border-bottom:3px solid transparent;transition:.2s}
+    .nav-btn.active{color:#3d3529;border-bottom-color:#8b7355}
+    .nav-btn:hover{color:#5c4d38}
+
+    /* PAGES */
+    .page{display:none;min-height:100vh;padding:72px 32px 48px}
+    .page.active{display:block}
+
+    /* SLIDE SECTION */
+    .slide{position:relative;min-height:85vh;display:flex;flex-direction:column;justify-content:center;
+      padding:48px 0;margin-bottom:40px}
+    .slide-title{font-size:14px;letter-spacing:5px;color:#8b7355;font-weight:700;text-transform:uppercase;margin-bottom:8px}
+    .slide-h1{font-size:clamp(28px,4vw,42px);font-weight:800;line-height:1.3;margin-bottom:8px;color:#2d2a26}
+    .slide-sub{font-size:16px;color:#7a7164;margin-bottom:32px}
+    .grad-text{background:linear-gradient(90deg,#6d5c3e,#a0845c,#c4956a);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .yellow-text{color:#a0845c}
+    .cyan-text{color:#4a8b7f}
+
+    /* BUBBLE ROW */
+    .bubble-row{display:flex;align-items:flex-end;gap:clamp(12px,2vw,28px);flex-wrap:wrap;justify-content:center;padding:20px 0}
+    .bubble{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      border-radius:50%;transition:transform .3s;box-shadow:0 4px 20px #00000012}
+    .bubble:hover{transform:scale(1.08)}
+    .bubble .b-val{font-weight:800;line-height:1.1}
+    .bubble .b-unit{font-size:11px;color:#ffffffcc;font-weight:600}
+    .bubble .b-label{position:absolute;bottom:-28px;font-size:12px;color:#7a7164;font-weight:700;white-space:nowrap}
+    .bubble .b-growth{position:absolute;top:-20px;font-size:11px;font-weight:700;color:#8b7355}
+
+    /* CURVE LINE (decorative) */
+    .curve-line{position:absolute;pointer-events:none}
+
+    /* KPI ROW */
+    .kpi-row{display:flex;gap:16px;flex-wrap:wrap;margin:24px 0}
+    .kpi-card{flex:1;min-width:160px;background:#fff;border-radius:16px;padding:20px;border:1px solid #e0d9ce;box-shadow:0 2px 8px #00000008}
+    .kpi-card .k-label{font-size:12px;color:#8a7e6e;font-weight:600}
+    .kpi-card .k-val{font-size:32px;font-weight:800;margin:4px 0}
+    .kpi-card .k-detail{font-size:12px;color:#8a7e6e}
+
+    /* CHART */
+    .chart-section{background:#fff;border-radius:20px;padding:28px;margin:24px 0;border:1px solid #e0d9ce;box-shadow:0 2px 12px #00000006}
+    .chart-section h3{font-size:16px;font-weight:800;color:#6d5c3e;margin-bottom:16px}
+    .chart-wrap{position:relative;width:100%;height:340px}
+
+    /* DONUT / PIE AREA */
+    .donut-row{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin:20px 0}
+    .donut-box{width:280px;height:280px;position:relative}
+
+    /* TABLE */
+    .tbl-wrap{overflow-x:auto;margin:16px 0}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    th{background:#f0ebe2;color:#6d5c3e;font-weight:700;text-align:left;padding:10px 12px;position:sticky;top:0}
+    td{padding:8px 12px;border-bottom:1px solid #e8e2d8}
+    tr:hover td{background:#faf6f0}
+    .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+    .b-xl{background:#dbeafe;color:#2563eb}
+    .b-news{background:#dcfce7;color:#16a34a}
+    .b-est{background:#f3f4f6;color:#6b7280}
+
+    /* INSIGHT CARDS */
+    .insight-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:24px 0}
+    .insight-card{background:#faf8f4;border-radius:16px;padding:24px;
+      border:1px solid #e0d9ce;position:relative;overflow:hidden}
+    .insight-card .i-num{position:absolute;top:12px;right:16px;font-size:48px;font-weight:800;color:#e8e2d8}
+    .insight-card h4{font-size:15px;font-weight:800;margin-bottom:8px}
+    .insight-card p{font-size:13px;color:#7a7164;line-height:1.7}
+
+    /* FOOTER */
+    .footer{text-align:center;padding:32px 0;color:#a39888;font-size:12px;border-top:1px solid #e0d9ce;margin-top:40px}
+
+    /* SOURCE LABEL */
+    .src-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+
+    @media(max-width:768px){
+      .slide{min-height:auto;padding:24px 0}
+      .bubble-row{gap:8px}
+      .nav{padding:0 8px}
+      .page{padding:60px 16px 32px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">สลากดิจิทัล</div>
+  <button class="nav-btn active" onclick="showPage('p1',this)">เป๋าตัง</button>
+  <button class="nav-btn" onclick="showPage('p2',this)">LotteryPlus</button>
+  <button class="nav-btn" onclick="showPage('p3',this)">เปรียบเทียบ</button>
+  <button class="nav-btn" onclick="showPage('p4',this)">Insights</button>
+  <button class="nav-btn" onclick="showPage('p5',this)">สมมติฐาน 5 ปี</button>
+</nav>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 1: เป๋าตัง -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="p1" class="page active">
+
+  <!-- HERO -->
+  <div class="slide">
+    <div class="slide-title">สลากดิจิทัล เป๋าตัง</div>
+    <div class="slide-h1">
+      ยอดขายรายงวด<br>
+      <span class="grad-text">มิ.ย. 2565 — มี.ค. 2569</span>
+    </div>
+    <div class="slide-sub">จาก <strong style="color:#60a5fa;font-size:20px">5M</strong> ใบ สู่ <strong style="color:#f472b6;font-size:20px">29M</strong> ใบ · เติบโต <strong style="color:#fbbf24;font-size:20px">480%</strong></div>
+
+    <!-- BUBBLE TIMELINE -->
+    <div class="bubble-row" id="ptBubbles"></div>
+    <div style="text-align:center;margin-top:36px;color:#a39888;font-size:11px">* ขนาดวงกลมตามสัดส่วนยอดขายเฉลี่ยแต่ละปี</div>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-row" id="ptKpi"></div>
+
+  <!-- CHART: Volume Trend -->
+  <div class="chart-section">
+    <h3>ยอดขายรายงวด (ล้านใบ)</h3>
+    <div class="chart-wrap"><canvas id="ptChartVol"></canvas></div>
+  </div>
+
+  <!-- CHART: Growth -->
+  <div class="chart-section">
+    <h3>อัตราเติบโตงวดต่องวด (%)</h3>
+    <div class="chart-wrap"><canvas id="ptChartGrowth"></canvas></div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="chart-section">
+    <h3>ตารางข้อมูลเป๋าตังทุกงวด</h3>
+    <div class="tbl-wrap" style="max-height:500px;overflow-y:auto">
+      <table id="ptTable"><thead><tr>
+        <th>#</th><th>งวด</th><th>ปี</th><th>ยอดขาย</th><th>โควตา</th><th>ผู้ซื้อ</th><th>เติบโต</th><th>แหล่ง</th><th>หมายเหตุ</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 2: LotteryPlus -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="p2" class="page">
+
+  <div class="slide">
+    <div class="slide-title">LotteryPlus (L6)</div>
+    <div class="slide-h1">
+      สลากดิจิทัล ลอตเตอรี่พลัส<br>
+      <span class="cyan-text">ธ.ค. 2567 — มี.ค. 2569</span>
+    </div>
+    <div class="slide-sub">จาก <strong style="color:#22d3ee;font-size:20px">5.5M</strong> สู่ <strong style="color:#22d3ee;font-size:20px">7.1M</strong> ใบ/งวด · ข้อมูลจาก Excel ทั้งหมด</div>
+    <div class="bubble-row" id="lpBubbles"></div>
+  </div>
+
+  <div class="kpi-row" id="lpKpi"></div>
+
+  <div class="chart-section">
+    <h3>L6 — ยอดขาย vs โควตา รายงวด</h3>
+    <div class="chart-wrap"><canvas id="lpChartVol"></canvas></div>
+  </div>
+
+  <div class="chart-section">
+    <h3>L6 — Sell-through Rate (%)</h3>
+    <div class="chart-wrap"><canvas id="lpChartRate"></canvas></div>
+  </div>
+
+  <div class="chart-section">
+    <h3>ตารางข้อมูล LotteryPlus ทุกงวด</h3>
+    <div class="tbl-wrap" style="max-height:500px;overflow-y:auto">
+      <table id="lpTable"><thead><tr>
+        <th>#</th><th>งวด</th><th>โควตา</th><th>ขายได้</th><th>คงเหลือ</th><th>Sell-through</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 3: เปรียบเทียบ -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="p3" class="page">
+
+  <div class="slide">
+    <div class="slide-title">เปรียบเทียบ</div>
+    <div class="slide-h1">
+      เป๋าตัง <span class="grad-text">vs</span> LotteryPlus<br>
+      <span class="yellow-text">ส่วนแบ่งและแนวโน้ม</span>
+    </div>
+    <div class="slide-sub">ข้อมูลงวดที่มีทั้ง 2 ระบบ (ธ.ค. 67 — มี.ค. 69)</div>
+    <div class="bubble-row" id="cmpBubbles"></div>
+  </div>
+
+  <div class="kpi-row" id="cmpKpi"></div>
+
+  <div class="chart-section">
+    <h3>ยอดขายรวม เป๋าตัง + L6 (Stacked)</h3>
+    <div class="chart-wrap"><canvas id="cmpChartStack"></canvas></div>
+  </div>
+
+  <div class="chart-section">
+    <h3>สัดส่วน เป๋าตัง vs L6 (%)</h3>
+    <div class="chart-wrap"><canvas id="cmpChartShare"></canvas></div>
+  </div>
+
+  <div class="donut-row">
+    <div class="chart-section" style="flex:1;min-width:280px">
+      <h3>สัดส่วนรวมทุกงวด</h3>
+      <div class="donut-box" style="margin:0 auto"><canvas id="cmpPie"></canvas></div>
+    </div>
+    <div class="chart-section" style="flex:1;min-width:280px">
+      <h3>ยอดขายเฉลี่ยต่องวด</h3>
+      <div class="donut-box" style="margin:0 auto"><canvas id="cmpAvgPie"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 4: Insights -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="p4" class="page">
+
+  <div class="slide" style="min-height:auto;padding-bottom:0">
+    <div class="slide-title">Key Insights</div>
+    <div class="slide-h1">
+      สรุปข้อค้นพบสำคัญ<br>
+      <span class="yellow-text">จากข้อมูลจริง + ประมาณการ</span>
+    </div>
+    <div class="slide-sub">
+      <span class="src-dot" style="background:#3b82f6"></span>Excel จริง
+      <span class="src-dot" style="background:#22c55e;margin-left:12px"></span>แหล่งข่าว
+      <span class="src-dot" style="background:#6b7280;margin-left:12px"></span>ประมาณการ
+    </div>
+  </div>
+
+  <div class="insight-grid" id="insightGrid"></div>
+
+  <!-- Summary bubbles -->
+  <div class="chart-section" style="text-align:center;padding:40px">
+    <h3 style="margin-bottom:24px">แนวโน้มยอดขายรวม (เป๋าตัง + L6)</h3>
+    <div class="bubble-row" id="summaryBubbles"></div>
+    <p style="color:#a39888;font-size:11px;margin-top:36px">* คาดการณ์จากเทรนด์ข้อมูลจริง</p>
+  </div>
+
+  <div class="footer">
+    รายงานนี้รวมข้อมูลจาก Excel (เป๋าตัง.xlsx) + ข้อมูลแหล่งข่าว + ประมาณการ<br>
+    สร้างเมื่อ <span id="genDate"></span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 5: สมมติฐาน 5 ปี -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="p5" class="page">
+
+  <!-- HERO -->
+  <div class="slide" style="min-height:60vh">
+    <div class="slide-title">Hypothesis — 5-Year Outlook</div>
+    <div class="slide-h1">
+      กระดาษ vs ดิจิทัล<br>
+      <span class="yellow-text">ตลาดสลากไทยจะเปลี่ยนอย่างไรใน 5 ปี?</span>
+    </div>
+    <div class="slide-sub">วิเคราะห์จากข้อมูล GLO + Excel จริง + นโยบายรัฐ + เทรนด์ดิจิทัลไทย</div>
+  </div>
+
+  <!-- ── SECTION 1: ภาพรวมตลาดสลากไทย ปัจจุบัน ── -->
+  <div class="chart-section" style="text-align:center;padding:40px 28px">
+    <h3 style="margin-bottom:8px">ภาพรวมตลาดสลากไทย — ปัจจุบัน (พ.ศ. 2569)</h3>
+    <p style="color:#7a7164;font-size:13px;margin-bottom:28px">GLO รายได้รวม <strong style="color:#fbbf24">174,000</strong> ล้านบาท/ปี · รัฐวิสาหกิจรายได้สูงสุด 9 ปีซ้อน</p>
+    <div class="bubble-row" id="mktOverviewBubbles"></div>
+    <p style="color:#a39888;font-size:11px;margin-top:32px">* ยอดต่องวด · สลากทั้งหมด ~116M ใบ/งวด</p>
+  </div>
+
+  <!-- ── SECTION 2: สลากกระดาษ — ข้อมูล + แนวโน้ม ── -->
+  <div class="chart-section" style="text-align:center;padding:40px 28px">
+    <h3 style="margin-bottom:8px">สลากกระดาษ — แนวโน้มย้อนหลัง + คาดการณ์ 5 ปี</h3>
+    <p style="color:#7a7164;font-size:13px;margin-bottom:28px">จาก <strong style="color:#f97316">100%</strong> ของตลาด (ก่อน 2565) สู่ <strong style="color:#f97316">~69%</strong> ปัจจุบัน → คาดว่าลดเหลือ <strong style="color:#ef4444">50-60%</strong></p>
+    <div class="bubble-row" id="paperBubbles"></div>
+    <p style="color:#a39888;font-size:11px;margin-top:32px">สลากกระดาษปัจจุบัน ~78M ใบ/งวด แนวโน้มลดลงเมื่อผู้ค้ารายย่อยเข้าร่วมขายในระบบดิจิทัลมากขึ้น</p>
+  </div>
+
+  <!-- ── SECTION 3: สัดส่วน กระดาษ vs ดิจิทัล ── -->
+  <div class="chart-section" style="padding:40px 28px">
+    <h3 style="margin-bottom:20px">สัดส่วน กระดาษ vs ดิจิทัล (2565–2574)</h3>
+    <div class="chart-wrap tall"><canvas id="shareChart"></canvas></div>
+  </div>
+
+  <!-- ── SECTION 4: Stacked volume timeline ── -->
+  <div class="chart-section" style="padding:40px 28px">
+    <h3 style="margin-bottom:20px">ยอดขายรวมทุกช่องทาง (M ใบ/งวด)</h3>
+    <div class="chart-wrap tall"><canvas id="stackAllChart"></canvas></div>
+  </div>
+
+  <!-- ── SECTION 5: Key Drivers ── -->
+  <div class="chart-section" style="padding:28px">
+    <h3 style="margin-bottom:20px">ปัจจัยเร่งการเติบโต ดิจิทัล (Growth Drivers)</h3>
+    <div class="insight-grid" id="driversGrid"></div>
+  </div>
+
+  <!-- ── SECTION 6: ทำไมกระดาษยังไม่หายไป ── -->
+  <div class="chart-section" style="padding:28px">
+    <h3 style="margin-bottom:20px">ทำไมสลากกระดาษยังอยู่?</h3>
+    <div class="insight-grid" id="paperDriversGrid"></div>
+  </div>
+
+  <!-- ── SECTION 7: Barriers ── -->
+  <div class="chart-section" style="padding:28px">
+    <h3 style="margin-bottom:20px">อุปสรรค / ความเสี่ยง</h3>
+    <div class="insight-grid" id="barriersGrid"></div>
+  </div>
+
+  <!-- ── SECTION 8: 3 Scenarios ── -->
+  <div class="chart-section" style="text-align:center;padding:40px 28px">
+    <h3 style="margin-bottom:8px">3 สถานการณ์จำลอง — ดิจิทัล vs กระดาษ (2569–2574)</h3>
+    <p style="color:#7a7164;font-size:13px;margin-bottom:32px">ยอดขายรวมทุกช่องทาง (M ใบ/งวด)</p>
+    <div class="chart-wrap tall"><canvas id="scenarioChart"></canvas></div>
+  </div>
+
+  <!-- ── SECTION 9: Hypothesis Conclusion ── -->
+  <div class="chart-section" style="padding:40px 28px;border:1px solid #fbbf2440">
+    <h3 style="color:#fbbf24;margin-bottom:20px">สรุปสมมติฐาน</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px" id="hypothesisCards"></div>
+  </div>
+
+  <!-- ── Sources ── -->
+  <div class="chart-section" style="padding:20px 28px">
+    <h3 style="margin-bottom:12px">แหล่งอ้างอิง</h3>
+    <div style="font-size:11px;color:#6b7280;line-height:2;columns:2;column-gap:32px" id="sourcesList"></div>
+  </div>
+
+  <div class="footer">
+    สมมติฐานนี้อ้างอิงจากข้อมูลจริง GLO + Excel + นโยบายรัฐ · ไม่ใช่คำแนะนำในการลงทุน<br>
+    สร้างเมื่อ <span id="genDate2"></span>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const PT = [
+  {draw:"16 มิ.ย. 65",vol:5.0,src:"news",note:"งวดแรก — เปิดตัว",year:2565,milestone:"เปิดตัว"},
+  {draw:"1 ก.ค. 65",vol:5.17,src:"news",note:"งวด 2",year:2565},
+  {draw:"16 ก.ค. 65",vol:7.0,src:"news",note:"ขายหมดเร็วสุด 29 ชม.",year:2565},
+  {draw:"1 ส.ค. 65",vol:7.1,src:"news",note:"งวด 4",year:2565},
+  {draw:"16 ส.ค. 65",vol:9.09,src:"news",note:"ขายหมดใน 3 วัน 14 ชม.",year:2565},
+  {draw:"1 ก.ย. 65",vol:10.3,src:"news",note:"เพิ่มเมนูลดราคาใน app ถุงเงิน",year:2565},
+  {draw:"16 ก.ย. 65",vol:11.0,src:"news",note:"เพิ่มอีก 1 ล้านใบ",year:2565},
+  {draw:"1 ต.ค. 65",vol:11.5,src:"est",note:"ประมาณ",year:2565},
+  {draw:"16 ต.ค. 65",vol:13.96,src:"news",note:"ขายหมดวันที่ 13 ต.ค.",year:2565},
+  {draw:"1 พ.ย. 65",vol:14.96,src:"news",note:"เพิ่มอีก 1 ล้านใบ",year:2565},
+  {draw:"16 พ.ย. 65",vol:15.0,src:"est",note:"ประมาณ",year:2565},
+  {draw:"1 ธ.ค. 65",vol:15.62,src:"news",note:"ตัวแทน 31,240 ราย",year:2565},
+  {draw:"16 ธ.ค. 65",vol:16.0,src:"news",note:"โอนรางวัลเข้าทุกธนาคาร",year:2565,milestone:"ทุกธนาคาร"},
+  {draw:"30 ธ.ค. 65",vol:16.2,src:"news",note:"งวดใหญ่สุดปี 65",year:2565},
+  {draw:"17 ม.ค. 66",vol:17.13,src:"news",note:"ตัวแทน 34,258 ราย",year:2566,milestone:"ทะลุ 17M"},
+  {draw:"1 ก.พ. 66",vol:17.3,src:"est",note:"ประมาณ",year:2566},
+  {draw:"16 ก.พ. 66",vol:17.5,src:"est",note:"ประมาณ",year:2566},
+  {draw:"1 มี.ค. 66",vol:17.0,src:"news",note:"ถูกรางวัลที่ 1 คนเดียว 17 ใบ",year:2566},
+  {draw:"16 มี.ค. 66",vol:17.29,src:"news",note:"ตัวแทน 34,577 ราย",year:2566},
+  {draw:"1 เม.ย. 66",vol:17.5,src:"est",note:"ประมาณ",year:2566},
+  {draw:"16 เม.ย. 66",vol:18.0,src:"est",note:"ประมาณ",year:2566},
+  {draw:"2 พ.ค. 66",vol:18.0,src:"est",note:"ประมาณ",year:2566},
+  {draw:"16 พ.ค. 66",vol:18.5,src:"est",note:"ประมาณ",year:2566},
+  {draw:"1 มิ.ย. 66",vol:19.0,src:"est",note:"ประมาณ",year:2566},
+  {draw:"16 มิ.ย. 66",vol:19.5,src:"est",note:"ครบ 1 ปี",year:2566,milestone:"ครบ 1 ปี"},
+  {draw:"1 ก.ค. 66",vol:20.0,src:"est",note:"ประมาณ",year:2566},
+  {draw:"16 ก.ค. 66",vol:20.0,src:"est",note:"ประมาณ",year:2566},
+  {draw:"31 ก.ค. 66",vol:20.5,src:"est",note:"งวดพิเศษ",year:2566},
+  {draw:"16 ส.ค. 66",vol:20.5,src:"est",note:"ประมาณ",year:2566},
+  {draw:"1 ก.ย. 66",vol:21.0,src:"est",note:"ประมาณ",year:2566},
+  {draw:"1 ต.ค. 66",vol:21.0,src:"news",note:"เปิดตัว L6",year:2566,milestone:"L6 งวดแรก"},
+  {draw:"16 ต.ค. 66",vol:21.5,src:"est",note:"ประมาณ",year:2566},
+  {draw:"1 พ.ย. 66",vol:22.0,src:"est",note:"ประมาณ",year:2566},
+  {draw:"16 พ.ย. 66",vol:22.0,src:"est",note:"ประมาณ",year:2566},
+  {draw:"1 ธ.ค. 66",vol:22.0,src:"est",note:"ประมาณ",year:2566},
+  {draw:"16 ธ.ค. 66",vol:22.0,src:"news",note:"รางวัลที่ 1 ผ่านแอป",year:2566,milestone:"รางวัลที่ 1 ผ่านแอป"},
+  {draw:"30 ธ.ค. 66",vol:22.0,src:"est",note:"ส่งท้ายปี",year:2566},
+  {draw:"17 ม.ค. 67",vol:22.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"1 ก.พ. 67",vol:22.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"16 ก.พ. 67",vol:22.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"1 มี.ค. 67",vol:22.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"16 มี.ค. 67",vol:22.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"1 เม.ย. 67",vol:22.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"16 เม.ย. 67",vol:22.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"2 พ.ค. 67",vol:22.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"16 พ.ค. 67",vol:22.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"1 มิ.ย. 67",vol:22.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"16 มิ.ย. 67",vol:22.0,src:"est",note:"ครบ 2 ปี",year:2567,milestone:"ครบ 2 ปี"},
+  {draw:"1 ก.ค. 67",vol:22.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"16 ก.ค. 67",vol:23.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"1 ส.ค. 67",vol:23.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"16 ส.ค. 67",vol:23.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"16 ก.ย. 67",vol:24.0,src:"news",note:"top-up ระหว่างงวด +2M",year:2567,milestone:"top-up"},
+  {draw:"1 ต.ค. 67",vol:24.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"16 ต.ค. 67",vol:24.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"1 พ.ย. 67",vol:24.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"16 พ.ย. 67",vol:25.0,src:"est",note:"ประมาณ",year:2567},
+  {draw:"1 ธ.ค. 67",vol:25.85,src:"xlsx",note:"ถูกรางวัล 1 คนเดียว 12 ใบ",year:2567,avail:26,buyers:2.84,lp:6.53},
+  {draw:"16 ธ.ค. 67",vol:25.62,src:"xlsx",note:"หวยมี 26M",year:2567,avail:26,buyers:2.82,lp:6.08},
+  {draw:"2 ม.ค. 68",vol:26.0,src:"xlsx",note:"งวดปีใหม่ ขายหมด",year:2568,avail:26,buyers:2.68,lp:6.51},
+  {draw:"17 ม.ค. 68",vol:26.0,src:"xlsx",note:"ขายหมด 26M",year:2568,avail:26,buyers:2.9,lp:6.51},
+  {draw:"1 ก.พ. 68",vol:27.0,src:"xlsx",note:"เพิ่มโควตาเป็น 27M",year:2568,avail:27,buyers:2.9,lp:6.38,milestone:"27M/งวด"},
+  {draw:"16 ก.พ. 68",vol:26.76,src:"xlsx",note:"ขายได้ 26.76M",year:2568,avail:27,buyers:2.95,lp:6.26},
+  {draw:"1 มี.ค. 68",vol:26.6,src:"xlsx",note:"ขายได้ 26.6M",year:2568,avail:27,buyers:2.96,lp:5.82},
+  {draw:"16 มี.ค. 68",vol:26.83,src:"xlsx",note:"ขายได้ 26.83M",year:2568,avail:27,buyers:2.95,lp:6.47},
+  {draw:"1 เม.ย. 68",vol:27.0,src:"xlsx",note:"ขายหมด 27M",year:2568,avail:27,buyers:2.99,lp:6.71},
+  {draw:"16 เม.ย. 68",vol:26.85,src:"xlsx",note:"ผู้ซื้อ 3.02M",year:2568,avail:27,buyers:3.02,lp:6.58},
+  {draw:"2 พ.ค. 68",vol:27.0,src:"xlsx",note:"ขายหมด",year:2568,avail:27,lp:5.49},
+  {draw:"16 พ.ค. 68",vol:26.56,src:"xlsx",note:"ขายได้ 26.56M",year:2568,avail:27,lp:6.50},
+  {draw:"1 มิ.ย. 68",vol:27.0,src:"xlsx",note:"ขายหมด",year:2568,avail:27,lp:6.80},
+  {draw:"16 มิ.ย. 68",vol:26.65,src:"xlsx",note:"ครบ 3 ปี",year:2568,avail:27,lp:6.89,milestone:"ครบ 3 ปี"},
+  {draw:"1 ก.ค. 68",vol:27.0,src:"xlsx",note:"ขายเกือบหมด",year:2568,avail:27,lp:7.01},
+  {draw:"16 ก.ค. 68",vol:26.97,src:"xlsx",note:"ขายได้ 26.97M",year:2568,avail:27,lp:7.09},
+  {draw:"1 ส.ค. 68",vol:27.0,src:"xlsx",note:"ขายหมด",year:2568,avail:27,lp:7.11},
+  {draw:"16 ส.ค. 68",vol:26.39,src:"xlsx",note:"ขายได้ 26.39M",year:2568,avail:27,lp:6.80},
+  {draw:"1 ก.ย. 68",vol:26.97,src:"xlsx",note:"ขายได้ 26.97M",year:2568,avail:27,lp:7.09},
+  {draw:"16 ก.ย. 68",vol:26.48,src:"xlsx",note:"ขายได้ 26.48M",year:2568,avail:27,lp:6.49},
+  {draw:"1 ต.ค. 68",vol:27.0,src:"xlsx",note:"ขายเกือบหมด",year:2568,avail:27,lp:6.07},
+  {draw:"16 ต.ค. 68",vol:26.95,src:"xlsx",note:"ขายได้ 26.95M",year:2568,avail:27,lp:6.26},
+  {draw:"1 พ.ย. 68",vol:27.0,src:"xlsx",note:"ขายหมด",year:2568,avail:27,lp:6.41},
+  {draw:"16 พ.ย. 68",vol:27.0,src:"xlsx",note:"ขายเกือบหมด",year:2568,avail:27,lp:6.49},
+  {draw:"1 ธ.ค. 68",vol:27.0,src:"xlsx",note:"ขายหมด",year:2568,avail:27,lp:6.47},
+  {draw:"16 ธ.ค. 68",vol:28.0,src:"xlsx",note:"เพิ่มโควตา 28M",year:2568,avail:28,lp:5.64,milestone:"28M/งวด"},
+  {draw:"2 ม.ค. 69",vol:28.0,src:"xlsx",note:"ขายหมด 28M",year:2569,avail:28,lp:6.00},
+  {draw:"17 ม.ค. 69",vol:28.0,src:"xlsx",note:"ขายหมด 28M",year:2569,avail:28,lp:6.52},
+  {draw:"1 ก.พ. 69",vol:27.38,src:"xlsx",note:"หวยมี 29M คงเหลือ 1.62M",year:2569,avail:29,lp:6.70},
+  {draw:"1 มี.ค. 69",vol:29.0,src:"xlsx",note:"ขายหมด 29M สถิติใหม่",year:2569,avail:29,lp:6.84,milestone:"29M ขายหมด"},
+];
+
+const LP = [
+  {draw:"1 ธ.ค. 67",avail:6541570,sold:6534383},
+  {draw:"16 ธ.ค. 67",avail:6545254,sold:6076686},
+  {draw:"2 ม.ค. 68",avail:6507653,sold:6507653},
+  {draw:"17 ม.ค. 68",avail:6513350,sold:6505099},
+  {draw:"1 ก.พ. 68",avail:6383573,sold:6383315},
+  {draw:"16 ก.พ. 68",avail:6503421,sold:6257798},
+  {draw:"1 มี.ค. 68",avail:5822333,sold:5822330},
+  {draw:"16 มี.ค. 68",avail:6534095,sold:6469120},
+  {draw:"1 เม.ย. 68",avail:6711906,sold:6711906},
+  {draw:"16 เม.ย. 68",avail:6738489,sold:6584471},
+  {draw:"2 พ.ค. 68",avail:5490085,sold:5490085},
+  {draw:"16 พ.ค. 68",avail:6500007,sold:6499999},
+  {draw:"1 มิ.ย. 68",avail:6800096,sold:6797392},
+  {draw:"16 มิ.ย. 68",avail:7065558,sold:6886269},
+  {draw:"1 ก.ค. 68",avail:7048605,sold:7007479},
+  {draw:"16 ก.ค. 68",avail:7115069,sold:7091001},
+  {draw:"1 ส.ค. 68",avail:7116115,sold:7112993},
+  {draw:"16 ส.ค. 68",avail:7202758,sold:6802968},
+  {draw:"1 ก.ย. 68",avail:7108426,sold:7094075},
+  {draw:"16 ก.ย. 68",avail:7158299,sold:6485093},
+  {draw:"1 ต.ค. 68",avail:6200434,sold:6071198},
+  {draw:"16 ต.ค. 68",avail:6300340,sold:6263378},
+  {draw:"1 พ.ย. 68",avail:6408484,sold:6408484},
+  {draw:"16 พ.ย. 68",avail:6581899,sold:6492887},
+  {draw:"1 ธ.ค. 68",avail:6551356,sold:6465432},
+  {draw:"16 ธ.ค. 68",avail:5641359,sold:5641293},
+  {draw:"2 ม.ค. 69",avail:6004088,sold:6004047},
+  {draw:"17 ม.ค. 69",avail:6516218,sold:6516174},
+  {draw:"1 ก.พ. 69",avail:6703162,sold:6703162},
+  {draw:"1 มี.ค. 69",avail:6927528,sold:6844803},
+];
+
+const YC = {2565:"#3B82F6",2566:"#8B5CF6",2567:"#10B981",2568:"#F59E0B",2569:"#EF4444"};
+const SC = {xlsx:"#3b82f6",news:"#22c55e",est:"#6b7280"};
+const SL = {xlsx:"Excel",news:"ยืนยัน",est:"ประมาณ"};
+const YRS = [2565,2566,2567,2568,2569];
+const byY = y => PT.filter(d=>d.year===y);
+const avg = a => a.length ? a.reduce((s,v)=>s+v,0)/a.length : 0;
+const f = n => n.toFixed(2);
+const chartOpt = (yLabel) => ({responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#7a7164',font:{family:'Sarabun'}}}},scales:{x:{ticks:{color:'#8a7e6e',font:{size:8,family:'Sarabun'},maxRotation:90},grid:{color:'#e0d9ce'}},y:{ticks:{color:'#7a7164',callback:v=>v+yLabel},grid:{color:'#e0d9ce'},min:0}}});
+
+// NAV
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+document.getElementById('genDate').textContent = new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+
+// ══════════════════════════════════════════════
+// HELPER: create bubble
+// ══════════════════════════════════════════════
+function makeBubble(container, items){
+  const el = document.getElementById(container);
+  items.forEach(b => {
+    const sz = b.size || 100;
+    el.innerHTML += `<div class="bubble" style="width:${sz}px;height:${sz}px;background:${b.bg}">
+      <div class="b-val" style="font-size:${sz*0.28}px;color:${b.textColor||'#fff'}">${b.val}</div>
+      <div class="b-unit">${b.unit||''}</div>
+      <div class="b-label">${b.label}</div>
+      ${b.growth?`<div class="b-growth">${b.growth}</div>`:''}
+    </div>`;
+  });
+}
+
+// ══════════════════════════════════════════════
+// PAGE 1: เป๋าตัง
+// ══════════════════════════════════════════════
+const ptYearAvg = YRS.map(y => avg(byY(y).map(d=>d.vol)));
+const bubbleColors = ['linear-gradient(135deg,#3B82F6,#1d4ed8)','linear-gradient(135deg,#8B5CF6,#6d28d9)','linear-gradient(135deg,#10B981,#059669)','linear-gradient(135deg,#F59E0B,#d97706)','linear-gradient(135deg,#EF4444,#dc2626)'];
+const maxAvg = Math.max(...ptYearAvg);
+makeBubble('ptBubbles', YRS.map((y,i) => ({
+  val: f(ptYearAvg[i]), unit:'ล้านใบ/งวด', label:'พ.ศ.'+y,
+  size: Math.max(70, (ptYearAvg[i]/maxAvg)*180),
+  bg: bubbleColors[i],
+  growth: i>0 ? (ptYearAvg[i]>ptYearAvg[i-1]?'+':'')+ ((ptYearAvg[i]-ptYearAvg[i-1])/ptYearAvg[i-1]*100).toFixed(0)+'%' : ''
+})));
+
+// KPI
+const xlC = PT.filter(d=>d.src==='xlsx').length;
+const ptLast = PT[PT.length-1];
+const ptGrowth = ((ptLast.vol - PT[0].vol)/PT[0].vol*100);
+const ptMax = PT.reduce((a,b)=>a.vol>b.vol?a:b);
+[
+  {l:"จำนวนงวด",v:PT.length,d:`Excel ${xlC} · ข่าว ${PT.filter(d=>d.src==='news').length} · ประมาณ ${PT.filter(d=>d.src==='est').length}`,c:"#818cf8"},
+  {l:"ล่าสุด",v:f(ptLast.vol)+"M",d:ptLast.draw,c:"#EF4444"},
+  {l:"เติบโตรวม",v:ptGrowth.toFixed(0)+"%",d:`${f(PT[0].vol)}M → ${f(ptLast.vol)}M`,c:"#10B981"},
+  {l:"สูงสุด",v:f(ptMax.vol)+"M",d:ptMax.draw,c:"#F59E0B"},
+  {l:"เฉลี่ย",v:f(avg(PT.map(d=>d.vol)))+"M",d:"ทุกงวด",c:"#8B5CF6"},
+].forEach(k => {
+  document.getElementById('ptKpi').innerHTML += `<div class="kpi-card"><div class="k-label">${k.l}</div><div class="k-val" style="color:${k.c}">${k.v}</div><div class="k-detail">${k.d}</div></div>`;
+});
+
+// Chart: Volume
+new Chart(document.getElementById('ptChartVol'),{type:'line',data:{labels:PT.map(d=>d.draw),datasets:[
+  {label:'ยอดขาย (M)',data:PT.map(d=>d.vol),borderColor:'#818cf8',backgroundColor:'rgba(99,102,241,0.06)',fill:true,tension:.3,borderWidth:2,pointRadius:PT.map(d=>d.src==='xlsx'?4:d.src==='news'?3:1),pointBackgroundColor:PT.map(d=>SC[d.src])},
+  {label:'โควตา',data:PT.map(d=>d.avail||null),borderColor:'#fbbf2440',borderDash:[5,5],borderWidth:1,pointRadius:0,fill:false}
+]},options:chartOpt('M')});
+
+// Chart: Growth
+const ptG = PT.map((d,i)=>i===0?0:((d.vol-PT[i-1].vol)/PT[i-1].vol*100));
+new Chart(document.getElementById('ptChartGrowth'),{type:'bar',data:{labels:PT.map(d=>d.draw),datasets:[{label:'%',data:ptG,backgroundColor:ptG.map(v=>v>=0?'#22c55e60':'#ef444460'),borderColor:ptG.map(v=>v>=0?'#22c55e':'#ef4444'),borderWidth:1}]},options:chartOpt('%')});
+
+// Table
+const ptTb = document.querySelector('#ptTable tbody');
+PT.forEach((d,i) => {
+  const g = i===0?'-':((d.vol-PT[i-1].vol)/PT[i-1].vol*100).toFixed(1)+'%';
+  const gc = i===0?'':(d.vol>=PT[i-1].vol?'color:#22c55e':'color:#ef4444');
+  const sb = d.src==='xlsx'?'b-xl':d.src==='news'?'b-news':'b-est';
+  ptTb.innerHTML += `<tr><td>${i+1}</td><td style="font-weight:700">${d.draw}</td><td style="color:${YC[d.year]};font-weight:700">${d.year}</td><td style="font-weight:700">${f(d.vol)}M</td><td>${d.avail?d.avail+'M':'-'}</td><td>${d.buyers?d.buyers+'M':'-'}</td><td style="${gc}">${g}</td><td><span class="badge ${sb}">${SL[d.src]}</span></td><td style="color:#7a7164">${d.note}</td></tr>`;
+});
+
+// ══════════════════════════════════════════════
+// PAGE 2: LotteryPlus
+// ══════════════════════════════════════════════
+const lpSoldM = LP.map(d=>d.sold/1e6);
+const lpAvailM = LP.map(d=>d.avail/1e6);
+const lpAvgSold = avg(lpSoldM);
+const lpMax = Math.max(...lpSoldM);
+const lpMin = Math.min(...lpSoldM);
+
+// Bubbles - quarterly averages
+const lpQ = [
+  {label:'ธ.ค.67-ก.พ.68', data:lpSoldM.slice(0,6)},
+  {label:'มี.ค.-พ.ค.68', data:lpSoldM.slice(6,12)},
+  {label:'มิ.ย.-ส.ค.68', data:lpSoldM.slice(12,18)},
+  {label:'ก.ย.-พ.ย.68', data:lpSoldM.slice(18,24)},
+  {label:'ธ.ค.68-มี.ค.69', data:lpSoldM.slice(24)},
+];
+const lpQAvg = lpQ.map(q=>avg(q.data));
+const lpQMax = Math.max(...lpQAvg);
+makeBubble('lpBubbles', lpQ.map((q,i) => ({
+  val:lpQAvg[i].toFixed(1), unit:'M/งวด', label:q.label,
+  size: Math.max(70,(lpQAvg[i]/lpQMax)*160),
+  bg: `linear-gradient(135deg, hsl(${180+i*20},70%,50%), hsl(${180+i*20},70%,35%))`,
+  growth: i>0?(lpQAvg[i]>lpQAvg[i-1]?'+':'')+ ((lpQAvg[i]-lpQAvg[i-1])/lpQAvg[i-1]*100).toFixed(0)+'%':''
+})));
+
+// KPI
+[
+  {l:"จำนวนงวด",v:LP.length,d:"ข้อมูลจาก Excel ทั้งหมด",c:"#22d3ee"},
+  {l:"เฉลี่ย/งวด",v:f(lpAvgSold)+"M",d:"ยอดขาย",c:"#06b6d4"},
+  {l:"สูงสุด",v:f(lpMax)+"M",d:LP[lpSoldM.indexOf(lpMax)].draw,c:"#10B981"},
+  {l:"ต่ำสุด",v:f(lpMin)+"M",d:LP[lpSoldM.indexOf(lpMin)].draw,c:"#F59E0B"},
+  {l:"Sell-through เฉลี่ย",v:(avg(LP.map(d=>d.sold/d.avail))*100).toFixed(1)+"%",d:"ขายได้/โควตา",c:"#8B5CF6"},
+].forEach(k => {
+  document.getElementById('lpKpi').innerHTML += `<div class="kpi-card"><div class="k-label">${k.l}</div><div class="k-val" style="color:${k.c}">${k.v}</div><div class="k-detail">${k.d}</div></div>`;
+});
+
+// Chart: L6 Vol vs Avail
+new Chart(document.getElementById('lpChartVol'),{type:'bar',data:{labels:LP.map(d=>d.draw),datasets:[
+  {label:'ขายได้ (M)',data:lpSoldM,backgroundColor:'#06b6d460',borderColor:'#06b6d4',borderWidth:1,borderRadius:3},
+  {label:'คงเหลือ (M)',data:LP.map(d=>(d.avail-d.sold)/1e6),backgroundColor:'#ef444430',borderColor:'#ef444480',borderWidth:1,borderRadius:3},
+]},options:{...chartOpt('M'),scales:{...chartOpt('M').scales,x:{...chartOpt('M').scales.x,stacked:true},y:{...chartOpt('M').scales.y,stacked:true}}}});
+
+// Chart: Sell-through rate
+const lpRate = LP.map(d=>(d.sold/d.avail*100));
+new Chart(document.getElementById('lpChartRate'),{type:'line',data:{labels:LP.map(d=>d.draw),datasets:[
+  {label:'Sell-through %',data:lpRate,borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,0.06)',fill:true,tension:.3,borderWidth:2,pointRadius:4,pointBackgroundColor:lpRate.map(v=>v>99?'#22c55e':v>95?'#fbbf24':'#ef4444')},
+  {label:'100%',data:LP.map(()=>100),borderColor:'#ffffff15',borderDash:[4,4],borderWidth:1,pointRadius:0}
+]},options:chartOpt('%')});
+
+// Table
+const lpTb = document.querySelector('#lpTable tbody');
+LP.forEach((d,i) => {
+  const rate = (d.sold/d.avail*100).toFixed(1);
+  const rc = rate>99?'color:#22c55e':rate>95?'color:#fbbf24':'color:#ef4444';
+  lpTb.innerHTML += `<tr><td>${i+1}</td><td style="font-weight:700">${d.draw}</td><td>${(d.avail/1e6).toFixed(2)}M</td><td style="font-weight:700">${(d.sold/1e6).toFixed(2)}M</td><td>${((d.avail-d.sold)/1e6).toFixed(2)}M</td><td style="${rc};font-weight:700">${rate}%</td></tr>`;
+});
+
+// ══════════════════════════════════════════════
+// PAGE 3: Compare
+// ══════════════════════════════════════════════
+const CMP = PT.filter(d=>d.lp);
+const cmpPtTotal = CMP.reduce((s,d)=>s+d.vol,0);
+const cmpLpTotal = CMP.reduce((s,d)=>s+(d.lp||0),0);
+
+// Bubbles
+makeBubble('cmpBubbles',[
+  {val:f(avg(CMP.map(d=>d.vol))),unit:'M/งวด',label:'เป๋าตัง เฉลี่ย',size:160,bg:'linear-gradient(135deg,#818cf8,#6366f1)'},
+  {val:f(avg(CMP.map(d=>d.lp||0))),unit:'M/งวด',label:'L6 เฉลี่ย',size:100,bg:'linear-gradient(135deg,#22d3ee,#0891b2)'},
+  {val:f(avg(CMP.map(d=>d.vol+(d.lp||0)))),unit:'M/งวด',label:'รวมเฉลี่ย',size:180,bg:'linear-gradient(135deg,#f472b6,#ec4899)'},
+]);
+
+// KPI
+const shareLP = (cmpLpTotal/(cmpPtTotal+cmpLpTotal)*100);
+[
+  {l:"งวดที่มีทั้งคู่",v:CMP.length,d:"ธ.ค.67 — มี.ค.69",c:"#818cf8"},
+  {l:"เป๋าตังเฉลี่ย",v:f(avg(CMP.map(d=>d.vol)))+"M",d:(100-shareLP).toFixed(1)+"% ของรวม",c:"#6366f1"},
+  {l:"L6 เฉลี่ย",v:f(avg(CMP.map(d=>d.lp||0)))+"M",d:shareLP.toFixed(1)+"% ของรวม",c:"#22d3ee"},
+  {l:"รวมเฉลี่ย",v:f(avg(CMP.map(d=>d.vol+(d.lp||0))))+"M",d:"ต่องวด",c:"#f472b6"},
+  {l:"สัดส่วน เป๋าตัง:L6",v:`${(100-shareLP).toFixed(0)}:${shareLP.toFixed(0)}`,d:"โดยเฉลี่ย",c:"#fbbf24"},
+].forEach(k => {
+  document.getElementById('cmpKpi').innerHTML += `<div class="kpi-card"><div class="k-label">${k.l}</div><div class="k-val" style="color:${k.c}">${k.v}</div><div class="k-detail">${k.d}</div></div>`;
+});
+
+// Chart: Stacked
+new Chart(document.getElementById('cmpChartStack'),{type:'bar',data:{labels:CMP.map(d=>d.draw),datasets:[
+  {label:'เป๋าตัง',data:CMP.map(d=>d.vol),backgroundColor:'#6366f180',borderColor:'#6366f1',borderWidth:1,borderRadius:3},
+  {label:'LotteryPlus',data:CMP.map(d=>d.lp||0),backgroundColor:'#22d3ee60',borderColor:'#22d3ee',borderWidth:1,borderRadius:3},
+]},options:{...chartOpt('M'),scales:{...chartOpt('M').scales,x:{...chartOpt('M').scales.x,stacked:true},y:{...chartOpt('M').scales.y,stacked:true}}}});
+
+// Chart: Share %
+new Chart(document.getElementById('cmpChartShare'),{type:'line',data:{labels:CMP.map(d=>d.draw),datasets:[
+  {label:'เป๋าตัง %',data:CMP.map(d=>d.vol/(d.vol+(d.lp||0))*100),borderColor:'#818cf8',backgroundColor:'rgba(129,140,248,0.06)',fill:true,tension:.3,borderWidth:2,pointRadius:3},
+  {label:'L6 %',data:CMP.map(d=>(d.lp||0)/(d.vol+(d.lp||0))*100),borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,0.06)',fill:true,tension:.3,borderWidth:2,pointRadius:3},
+]},options:chartOpt('%')});
+
+// Pie charts
+new Chart(document.getElementById('cmpPie'),{type:'doughnut',data:{labels:['เป๋าตัง','LotteryPlus'],datasets:[{data:[cmpPtTotal,cmpLpTotal],backgroundColor:['#6366f1','#22d3ee'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#7a7164'}},title:{display:true,text:'ยอดขายรวมทุกงวด',color:'#7a7164',font:{family:'Sarabun',size:13}}}}});
+
+new Chart(document.getElementById('cmpAvgPie'),{type:'doughnut',data:{labels:['เป๋าตัง','LotteryPlus'],datasets:[{data:[avg(CMP.map(d=>d.vol)),avg(CMP.map(d=>d.lp||0))],backgroundColor:['#6366f1','#22d3ee'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#7a7164'}},title:{display:true,text:'เฉลี่ยต่องวด (M)',color:'#7a7164',font:{family:'Sarabun',size:13}}}}});
+
+// ══════════════════════════════════════════════
+// PAGE 4: Insights
+// ══════════════════════════════════════════════
+const xlsxD = PT.filter(d=>d.src==='xlsx');
+const sellThru = xlsxD.filter(d=>d.avail&&(d.vol/d.avail)>0.99).length;
+const insights = [
+  {n:"01",h:"เติบโต 480%",t:`จาก 5M ใบ (มิ.ย. 65) สู่ 29M ใบ (มี.ค. 69) ภายใน ${PT.length} งวด ปี 2565 เติบโตเร็วสุดจาก 5M เป็น 16.2M (+224%) ภายในปีเดียว`,c:"#60a5fa"},
+  {n:"02",h:"Excel จริง ${xlC} งวด",t:`ยอดจริงจาก Excel เฉลี่ย ${f(avg(xlsxD.map(d=>d.vol)))}M/งวด อยู่ที่ 25.6–29M ซึ่งต่ำกว่าประมาณการเดิมที่คาดไว้ 28–29M สำหรับปี 68`,c:"#3b82f6"},
+  {n:"03",h:`Sell-through ${(sellThru/xlsxD.length*100).toFixed(0)}%`,t:`จาก ${xlsxD.length} งวดที่มีข้อมูล Excel มี ${sellThru} งวดที่ขายหมดหรือเกือบหมด (>99%) แสดงว่าดีมานด์สูงกว่าซัพพลาย`,c:"#22c55e"},
+  {n:"04",h:"L6 เฉลี่ย "+f(lpAvgSold)+"M",t:`LotteryPlus เพิ่มจาก 5.5M เป็นสูงสุด 7.1M (ส.ค. 68) ก่อนลดลงเหลือ ~6.5M ช่วงปลายปี Sell-through เฉลี่ย ${(avg(LP.map(d=>d.sold/d.avail))*100).toFixed(1)}%`,c:"#22d3ee"},
+  {n:"05",h:"รวม 2 ระบบ ~36M/งวด",t:`เป๋าตัง (~29M) + L6 (~7M) = ~36M ใบ/งวด เป๋าตังครอง ${(100-shareLP).toFixed(0)}% ส่วน L6 ครอง ${shareLP.toFixed(0)}% · LP เป้าซื้อใบมาขายดิจิทัลอีก 10M`,c:"#f472b6"},
+  {n:"06",h:"โควตาเพิ่มเป็น 29M",t:`งวด 1 ก.พ. 69 เพิ่มโควตาเป็น 29M แต่ขายได้เพียง 27.38M (คงเหลือ 1.62M) อย่างไรก็ตามงวดถัดมา 1 มี.ค. 69 ขายหมด 29M ทำสถิติใหม่`,c:"#fbbf24"},
+  {n:"07",h:"ผู้ซื้อสูงสุด 3.02M",t:`งวด 16 เม.ย. 68 มีผู้ซื้อ 3.02 ล้านคน สูงสุดที่มีข้อมูล แนวโน้มผู้ซื้อเพิ่มขึ้นต่อเนื่อง จาก 2.68M ต้นปี 68 สู่ 3.02M`,c:"#a78bfa"},
+  {n:"08",h:"แนวโน้มปี 69",t:`คาดว่าเป๋าตังจะทรงตัว 28–30M/งวด หลังโควตาเพิ่มเป็น 29M L6 น่าจะอยู่ที่ 6.5–7M รวมสลากดิจิทัล ~35M ใบ/งวด`,c:"#EF4444"},
+];
+const ig = document.getElementById('insightGrid');
+insights.forEach(i => {
+  ig.innerHTML += `<div class="insight-card"><div class="i-num">${i.n}</div><h4 style="color:${i.c}">${i.h}</h4><p>${i.t}</p></div>`;
+});
+
+// Summary bubbles timeline
+const sumData = [
+  {y:'2565',val:'11.4',unit:'M เฉลี่ย',growth:'',bg:'linear-gradient(135deg,#3B82F680,#1d4ed880)'},
+  {y:'2566',val:'19.8',unit:'M เฉลี่ย',growth:'+74%',bg:'linear-gradient(135deg,#8B5CF680,#6d28d980)'},
+  {y:'2567',val:'23.2',unit:'M เฉลี่ย',growth:'+17%',bg:'linear-gradient(135deg,#10B98180,#05966980)'},
+  {y:'2568',val:'33.4',unit:'M รวม L6',growth:'+44%',bg:'linear-gradient(135deg,#F59E0B,#d97706)'},
+  {y:'2569',val:'35.3',unit:'M รวม L6',growth:'+6%',bg:'linear-gradient(135deg,#EF4444,#dc2626)'},
+];
+const smMax = 35.3;
+makeBubble('summaryBubbles', sumData.map(s => ({
+  val:s.val, unit:s.unit, label:'พ.ศ.'+s.y,
+  size: Math.max(70,(parseFloat(s.val)/smMax)*200),
+  bg:s.bg, growth:s.growth
+})));
+
+// ══════════════════════════════════════════════
+// PAGE 5: สมมติฐาน 5 ปี
+// ══════════════════════════════════════════════
+document.getElementById('genDate2').textContent = new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+
+// ── Market Overview Bubbles ──
+makeBubble('mktOverviewBubbles',[
+  {val:'78M',unit:'ใบ/งวด',label:'สลากกระดาษ',size:170,bg:'linear-gradient(135deg,#f97316,#c2410c)',growth:'68%'},
+  {val:'29M',unit:'ใบ/งวด',label:'เป๋าตัง',size:120,bg:'linear-gradient(135deg,#818cf8,#6366f1)',growth:'25%'},
+  {val:'7M',unit:'ใบ/งวด',label:'LotteryPlus',size:75,bg:'linear-gradient(135deg,#22d3ee,#0891b2)',growth:'6%'},
+  {val:'114M',unit:'ใบ/งวด',label:'รวมทั้งหมด',size:200,bg:'linear-gradient(135deg,#fbbf24,#d97706)'},
+]);
+
+// ── Paper Lottery Bubbles ──
+const paperData = [
+  {y:'ก่อน 65',share:'100%',vol:'78M',bg:'linear-gradient(135deg,#f97316,#c2410c)',sz:180},
+  {y:'2565',share:'94%',vol:'78M',bg:'linear-gradient(135deg,#f97316cc,#c2410ccc)',sz:165,growth:'เริ่มมีดิจิทัล'},
+  {y:'2566',share:'80%',vol:'78M',bg:'linear-gradient(135deg,#f97316aa,#c2410caa)',sz:145,growth:'-14%'},
+  {y:'2567',share:'75%',vol:'78M',bg:'linear-gradient(135deg,#f9731688,#c2410c88)',sz:130,growth:'-5%'},
+  {y:'2568',share:'72%',vol:'78M',bg:'linear-gradient(135deg,#f9731666,#c2410c66)',sz:118,growth:'-3%'},
+  {y:'2569',share:'68%',vol:'78M',bg:'linear-gradient(135deg,#f9731650,#c2410c50)',sz:108,growth:'-4%'},
+  {y:'2574',share:'50-55%',vol:'70-75M',bg:'linear-gradient(135deg,#6b728080,#4b556380)',sz:85,growth:'ผู้ค้าเข้าระบบ'},
+];
+makeBubble('paperBubbles', paperData.map(p=>({
+  val:p.share,unit:p.vol+' ใบ',label:p.y==='ก่อน 65'?p.y:'พ.ศ.'+p.y,size:p.sz,bg:p.bg,growth:p.growth||''
+})));
+
+// ── Share Chart: Paper vs Digital over time ──
+const shareYears = ['2564','2565','2566','2567','2568','2569','2570','2571','2572','2573','2574'];
+const paperShare = [100,93,79,74,70,68,63,60,57,54,50];
+const digitalShare = [0,7,21,26,30,32,37,40,43,46,50];
+new Chart(document.getElementById('shareChart'),{
+  type:'line',
+  data:{
+    labels: shareYears.map(y=>'พ.ศ.'+y),
+    datasets:[
+      {label:'สลากกระดาษ %',data:paperShare,borderColor:'#f97316',backgroundColor:'rgba(249,115,22,0.08)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:shareYears.map((_,i)=>i<=5?'#f97316':'#f9731660'),borderDash:shareYears.map((_,i)=>i>5?[5,5]:undefined).includes(undefined)?[]:[5,5]},
+      {label:'สลากดิจิทัล %',data:digitalShare,borderColor:'#818cf8',backgroundColor:'rgba(129,140,248,0.08)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:shareYears.map((_,i)=>i<=5?'#818cf8':'#818cf860')},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{labels:{color:'#7a7164',font:{family:'Sarabun'}}},
+      annotation: {},
+      tooltip:{callbacks:{afterBody:(items)=>{const i=items[0].dataIndex; return i>5?'* คาดการณ์':'';}}}
+    },
+    scales:{
+      x:{ticks:{color:'#7a7164',font:{family:'Sarabun',weight:700}},grid:{color:'#e0d9ce'}},
+      y:{ticks:{color:'#7a7164',callback:v=>v+'%'},grid:{color:'#e0d9ce'},min:0,max:100}
+    }
+  }
+});
+
+// ── Stacked All Channels ──
+const stackYears = ['2564','2565','2566','2567','2568','2569','2570','2571','2572','2573','2574'];
+const sPaper   = [78,78,78,78,78,78,76,74,73,72,70];
+const sPaotang = [0,11,20,23,27,29,32,35,38,42,46];
+const sLP      = [0,0,0,0,7,7,7,8,8,8,9];
+new Chart(document.getElementById('stackAllChart'),{
+  type:'bar',
+  data:{
+    labels: stackYears.map(y=>'พ.ศ.'+y),
+    datasets:[
+      {label:'สลากกระดาษ',data:sPaper,backgroundColor:'#f9731680',borderColor:'#f97316',borderWidth:1,borderRadius:3},
+      {label:'เป๋าตัง',data:sPaotang,backgroundColor:'#6366f180',borderColor:'#6366f1',borderWidth:1,borderRadius:3},
+      {label:'LotteryPlus',data:sLP,backgroundColor:'#22d3ee60',borderColor:'#22d3ee',borderWidth:1,borderRadius:3},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{labels:{color:'#7a7164',font:{family:'Sarabun'}}},
+      tooltip:{callbacks:{afterBody:(items)=>{
+        const i=items[0].dataIndex;
+        const total=sPaper[i]+sPaotang[i]+sLP[i];
+        return `รวม: ${total}M ใบ/งวด${i>5?' (คาดการณ์)':''}`;
+      }}}
+    },
+    scales:{
+      x:{stacked:true,ticks:{color:'#7a7164',font:{family:'Sarabun',weight:700}},grid:{color:'#e0d9ce'}},
+      y:{stacked:true,ticks:{color:'#7a7164',callback:v=>v+'M'},grid:{color:'#e0d9ce'},min:0,title:{display:true,text:'ล้านใบ/งวด',color:'#6b7280',font:{family:'Sarabun'}}}
+    }
+  }
+});
+
+// ── Digital Growth Drivers ──
+const drivers = [
+  {n:'01',h:'Mobile-first Nation',t:'ไทยมี internet penetration 91.2%, mobile payment adoption 90.4% — โครงสร้างพร้อมรับสลากดิจิทัลเต็มที่',c:'#60a5fa'},
+  {n:'02',h:'ราคาคงที่ 80 บาท',t:'สลากดิจิทัลขาย 80 บาทตามกฎหมาย ไม่มีส่วนต่างจากคนกลาง ในขณะที่สลากกระดาษขาย 100–120 บาท ส่วนต่าง 20–40 บาท/ใบ',c:'#22c55e'},
+  {n:'03',h:'รับเงินรางวัลทันที',t:'โอนรางวัลเข้าบัญชีภายใน 2 ชม. อัตโนมัติ vs สลากกระดาษต้องไปขึ้นเงินเอง เสี่ยงทำหาย',c:'#fbbf24'},
+  {n:'04',h:'ดีมานด์ > ซัพพลาย',t:'สลากดิจิทัลขายหมดเกือบทุกงวด (sell-through >99%) แสดงว่ายังมี upside เหลืออีกมากถ้าเพิ่มโควตา',c:'#f472b6'},
+  {n:'05',h:'นโยบายรัฐ + GLO',t:'GLO เป็นรัฐวิสาหกิจรายได้สูงสุด 9 ปีซ้อน (174,000 ล้านบาท/ปี) นำส่งรัฐ 50,800 ล้านบาท มีแรงจูงใจขยายดิจิทัล + พิจารณา Lotto-style',c:'#a78bfa'},
+  {n:'06',h:'หวยใต้ดิน → ออนไลน์',t:'ตลาดหวยใต้ดินใหญ่ 2-3 เท่าของ GLO (~400,000 ล้านบาท) รัฐมองว่า legalization + digitization คือทางออก',c:'#ef4444'},
+];
+const dg = document.getElementById('driversGrid');
+drivers.forEach(d => {
+  dg.innerHTML += `<div class="insight-card"><div class="i-num">${d.n}</div><h4 style="color:${d.c}">${d.h}</h4><p>${d.t}</p></div>`;
+});
+
+// ── Why Paper Lottery Survives ──
+const paperDrivers = [
+  {n:'01',h:'วัฒนธรรมเลือกเลข',t:'คนไทยนิยมเลือกเลขจากความฝัน เลขทะเบียนรถ เลขวัดดัง — สลากกระดาษให้เลือก "ตัวเป็นๆ" ได้ ดิจิทัลเป็นแบบสุ่ม',c:'#f97316'},
+  {n:'02',h:'ตัวแทนจำหน่าย 200,000 ราย',t:'เครือข่ายผู้ค้าทั่วประเทศมีแรงกดดันทางการเมืองสูง การลดโควตากระดาษจะกระทบรายได้หลายแสนครอบครัว',c:'#f59e0b'},
+  {n:'03',h:'ความเคยชินผู้สูงอายุ',t:'ประชากรสูงอายุ 20%+ ของประเทศยังนิยมซื้อจากแผง ไม่ถนัดใช้แอป digital literacy gap ยังเป็นอุปสรรค',c:'#6b7280'},
+  {n:'04',h:'ซื้อเป็น "ของฝาก"',t:'สลากกระดาษมีมูลค่าทางสังคม ซื้อฝากเจ้านาย ซื้อแบ่งกันในกลุ่ม ซื้อตามร้านค้าระหว่างทาง — ไม่ได้แค่ "ซื้อหวย"',c:'#a78bfa'},
+];
+const pdg = document.getElementById('paperDriversGrid');
+paperDrivers.forEach(d => {
+  pdg.innerHTML += `<div class="insight-card"><div class="i-num">${d.n}</div><h4 style="color:${d.c}">${d.h}</h4><p>${d.t}</p></div>`;
+});
+
+// ── Barriers ──
+const barriers = [
+  {n:'01',h:'กฎหมายการพนัน',t:'พ.ร.บ.การพนัน ยังจำกัดการขยายตัว — ร่างกฎหมาย Entertainment Complex ถูกยกเลิก ก.ค. 68 แต่กระทบ lottery น้อย',c:'#ef4444'},
+  {n:'02',h:'ตัวแทนจำหน่ายต้าน',t:'ผู้ค้าสลากกระดาษ ~200,000 ราย กังวลเรื่องรายได้ส่วนต่าง หากดิจิทัลเข้ามาแทนที่ รัฐต้องหาทางชดเชย',c:'#f59e0b'},
+  {n:'03',h:'ราคากระดาษเกิน 80 บาท',t:'ปัญหาเรื้อรัง: สลากกระดาษขาย 100-120 บาท ทั้งที่กฎหมายกำหนด 80 บาท ถ้าคุมราคาได้จริง ข้อได้เปรียบดิจิทัลจะลดลง',c:'#818cf8'},
+  {n:'04',h:'ความเสี่ยงไซเบอร์',t:'แพลตฟอร์มดิจิทัลเผชิญความเสี่ยงด้านความปลอดภัย หากเกิดเหตุรั่วไหลข้อมูลใหญ่จะกระทบความเชื่อมั่น',c:'#8b5cf6'},
+];
+const brg = document.getElementById('barriersGrid');
+barriers.forEach(d => {
+  brg.innerHTML += `<div class="insight-card"><div class="i-num">${d.n}</div><h4 style="color:${d.c}">${d.h}</h4><p>${d.t}</p></div>`;
+});
+
+// ── 3 Scenarios Chart: Digital + Paper ──
+const scYears = ['2569','2570','2571','2572','2573','2574'];
+new Chart(document.getElementById('scenarioChart'),{
+  type:'line',
+  data:{
+    labels: scYears.map(y=>'พ.ศ.'+y),
+    datasets:[
+      // Digital scenarios
+      {label:'ดิจิทัล Bull (เปิด Lotto)',data:[36,42,48,55,62,70],borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,0.04)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#22c55e'},
+      {label:'ดิจิทัล Base (ตามเทรนด์)',data:[36,39,43,46,50,55],borderColor:'#fbbf24',backgroundColor:'rgba(251,191,36,0.04)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#fbbf24'},
+      {label:'ดิจิทัล Bear (ชะลอ)',data:[36,37,38,39,40,42],borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,0.04)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#ef4444'},
+      // Paper
+      {label:'กระดาษ (ลดลงตามผู้ค้าเข้าระบบ)',data:[78,77,76,74,72,70],borderColor:'#f97316',borderDash:[6,4],backgroundColor:'rgba(249,115,22,0.04)',fill:true,tension:.3,borderWidth:2,pointRadius:4,pointBackgroundColor:'#f97316'},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{labels:{color:'#7a7164',font:{family:'Sarabun',size:11}}},
+      tooltip:{callbacks:{afterLabel:(ctx)=>{
+        const notes = {0:'เปิด Lotto-style + เอกชนร่วม + เพิ่มโควตา',1:'เพิ่มโควตา 2-3M/ปี ตามดีมานด์',2:'นโยบายชะลอ โควตาเพิ่มน้อย',3:'ผู้ค้ากระดาษเข้าร่วมระบบดิจิทัล → โควตากระดาษลดลง'};
+        return notes[ctx.datasetIndex]||'';
+      }}}
+    },
+    scales:{
+      x:{ticks:{color:'#7a7164',font:{family:'Sarabun',weight:700}},grid:{color:'#e0d9ce'}},
+      y:{ticks:{color:'#7a7164',callback:v=>v+'M'},grid:{color:'#e0d9ce'},min:20,max:83,title:{display:true,text:'ล้านใบ/งวด',color:'#6b7280',font:{family:'Sarabun'}}}
+    }
+  }
+});
+
+// ── Hypothesis Conclusion Cards ──
+const hypo = [
+  {emoji:'&#x1F4C8;',h:'ดิจิทัลเติบโตแน่นอน',t:'จาก 0% (2564) สู่ 31% (2569) ภายใน 5 ปี เทรนด์ชัดเจน ดีมานด์เกินซัพพลาย โครงสร้าง mobile-first พร้อม คาดว่าจะแตะ 40-48% ภายในปี 2574',c:'#22c55e'},
+  {emoji:'&#x1F4C4;',h:'กระดาษลดลง — ผู้ค้าเข้าระบบ',t:'สลากกระดาษปัจจุบัน 78M ใบ/งวด จะลดลงเหลือ 70-75M เมื่อผู้ค้ารายย่อยเปลี่ยนมาขายในระบบดิจิทัล ส่วนแบ่งลดจาก 68% เหลือ 50-55%',c:'#f97316'},
+  {emoji:'&#x1F3AF;',h:'Base Case: ดิจิทัล 55M/งวด',t:'เป๋าตัง ~46M + L6 ~9M = ~55M ใบ/งวด ภายในปี 2574 สัดส่วนดิจิทัล ~44% ตลาดรวม ~125M ใบ/งวด (กระดาษ 70M + ดิจิทัล 55M)',c:'#fbbf24'},
+  {emoji:'&#x1F680;',h:'Bull Case: ดิจิทัล 70M+ ถ้าเปิด Lotto',t:'หากเปิด Lotto-style (rollover jackpot) + เอกชนร่วม + เพิ่มช่องทาง ดิจิทัลอาจทะลุ 70M ใบ/งวด สัดส่วนเกิน 50% = "จุดพลิก"',c:'#60a5fa'},
+  {emoji:'&#x26A0;',h:'ผู้ค้ากระดาษ = ตัวเร่งดิจิทัล',t:'เมื่อผู้ค้ารายย่อย (200,000+ ราย) เข้าร่วมขายในระบบดิจิทัล โควตากระดาษจะถูกย้ายไปเป็นดิจิทัล สลากกระดาษเหลือเป็น "premium experience" — เลือกเลข ซื้อเป็นของฝาก',c:'#a78bfa'},
+  {emoji:'&#x1F4B0;',h:'GLO รายได้เพิ่ม 20-30%',t:'ถ้า Base Case เป็นจริง ตลาดรวมโตจาก 114M เป็น 125M ใบ/งวด + ลดต้นทุนพิมพ์/กระจาย GLO อาจมีรายได้เพิ่มถึง 200,000+ ล้านบาท/ปี',c:'#f472b6'},
+];
+const hc = document.getElementById('hypothesisCards');
+hypo.forEach(h => {
+  hc.innerHTML += `<div class="insight-card" style="border-color:${h.c}30">
+    <div style="font-size:32px;margin-bottom:8px">${h.emoji}</div>
+    <h4 style="color:${h.c};font-size:16px">${h.h}</h4>
+    <p style="margin-top:8px">${h.t}</p>
+  </div>`;
+});
+
+// ── Sources ──
+const sources = [
+  'สำนักงานสลากกินแบ่งรัฐบาล (GLO) — รายงานประจำปี 2567',
+  'Bangkok Biz News — สลากดิจิทัล 30 ล้านใบ',
+  'Yogonet — Thailand Explores Private Lotto-Style Lottery (2025)',
+  'Nation Thailand — GLO Digital Lottery 30M Tickets',
+  'DataReportal — Digital 2025 Thailand (91.2% internet, 90.4% mobile payment)',
+  'Statista — Thailand National Lottery Revenue 2024 (174B THB)',
+  'AGB — Thailand Lottery Campaign Policies 2026',
+  'Thai PBS Verify — Lottery Policies Ahead of 2026 Election',
+  'ข้อมูลจาก เป๋าตัง.xlsx — ยอดขายรายวันจริง ธ.ค.67 – มี.ค.69',
+  'Research and Markets — Online Lottery Industry CAGR 9.6% (2025-2030)',
+];
+</script>
+</body>
+</html>

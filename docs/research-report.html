@@ -1,0 +1,2457 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thai Lottery Online — Market Research Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Sarabun',sans-serif;background:#f5f0e8;color:#2d2a26;overflow-x:hidden}
+
+    .nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;gap:0;
+      background:linear-gradient(90deg,#ede8dfee,#e8e2d8ee);backdrop-filter:blur(12px);
+      border-bottom:1px solid #d5cfc4;padding:0 24px;height:52px;overflow-x:auto}
+    .nav-brand{font-size:13px;font-weight:800;color:#6d5c3e;margin-right:24px;white-space:nowrap}
+    .nav-btn{padding:10px 18px;font-size:12px;font-weight:700;color:#8a7e6e;background:none;border:none;
+      cursor:pointer;font-family:inherit;border-bottom:3px solid transparent;transition:.2s;white-space:nowrap}
+    .nav-btn.active{color:#3d3529;border-bottom-color:#8b7355}
+    .nav-btn:hover{color:#5c4d38}
+
+    .page{display:none;min-height:100vh;padding:72px 32px 48px;max-width:1200px;margin:0 auto}
+    .page.active{display:block}
+
+    .slide{position:relative;min-height:70vh;display:flex;flex-direction:column;justify-content:center;padding:48px 0;margin-bottom:40px}
+    .slide-title{font-size:14px;letter-spacing:5px;color:#8b7355;font-weight:700;text-transform:uppercase;margin-bottom:8px}
+    .slide-h1{font-size:clamp(26px,4vw,40px);font-weight:800;line-height:1.3;margin-bottom:8px;color:#2d2a26}
+    .slide-sub{font-size:15px;color:#7a7164;margin-bottom:32px;line-height:1.8}
+
+    .bubble-row{display:flex;align-items:flex-end;gap:clamp(12px,2vw,28px);flex-wrap:wrap;justify-content:center;padding:20px 0}
+    .bubble{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      border-radius:50%;transition:transform .3s;box-shadow:0 4px 20px #00000012}
+    .bubble:hover{transform:scale(1.08)}
+    .bubble .b-val{font-weight:800;line-height:1.1}
+    .bubble .b-unit{font-size:11px;color:#ffffffcc;font-weight:600}
+    .bubble .b-label{position:absolute;bottom:-28px;font-size:12px;color:#7a7164;font-weight:700;white-space:nowrap}
+    .bubble .b-growth{position:absolute;top:-20px;font-size:11px;font-weight:700;color:#8b7355}
+
+    .kpi-row{display:flex;gap:16px;flex-wrap:wrap;margin:24px 0}
+    .kpi-card{flex:1;min-width:160px;background:#fff;border-radius:16px;padding:20px;border:1px solid #e0d9ce;box-shadow:0 2px 8px #00000008}
+    .kpi-card .k-label{font-size:12px;color:#8a7e6e;font-weight:600}
+    .kpi-card .k-val{font-size:28px;font-weight:800;margin:4px 0}
+    .kpi-card .k-detail{font-size:12px;color:#8a7e6e}
+
+    .chart-section{background:#fff;border-radius:20px;padding:28px;margin:24px 0;border:1px solid #e0d9ce;box-shadow:0 2px 12px #00000006}
+    .chart-section h3{font-size:16px;font-weight:800;color:#6d5c3e;margin-bottom:16px}
+    .chart-wrap{position:relative;width:100%;height:340px}
+    .chart-wrap.tall{height:400px}
+
+    .insight-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:24px 0}
+    .insight-card{background:#faf8f4;border-radius:16px;padding:24px;border:1px solid #e0d9ce;position:relative;overflow:hidden}
+    .insight-card .i-num{position:absolute;top:12px;right:16px;font-size:48px;font-weight:800;color:#e8e2d8;opacity:.35;z-index:0;pointer-events:none}
+    .insight-card h4,.insight-card p,.insight-card .i-icon{position:relative;z-index:1}
+    .insight-card .i-icon{font-size:32px;margin-bottom:8px}
+    .insight-card h4{font-size:15px;font-weight:800;margin-bottom:8px}
+    .insight-card p{font-size:13px;color:#7a7164;line-height:1.7}
+
+    .tbl-wrap{overflow-x:auto;margin:16px 0}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    th{background:#f0ebe2;color:#6d5c3e;font-weight:700;text-align:left;padding:10px 12px;position:sticky;top:0}
+    td{padding:8px 12px;border-bottom:1px solid #e8e2d8}
+    tr:hover td{background:#faf6f0}
+    .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+    .b-high{background:#dcfce7;color:#16a34a}
+    .b-med{background:#fef9c3;color:#a16207}
+    .b-low{background:#fee2e2;color:#dc2626}
+    .b-fact{background:#dbeafe;color:#2563eb}
+    .b-insight{background:#f3e8ff;color:#7c3aed}
+    .b-assume{background:#fef3c7;color:#92400e}
+
+    .section-divider{border:none;border-top:2px solid #e0d9ce;margin:48px 0}
+
+    .stat-bar{display:flex;align-items:center;gap:12px;margin:8px 0}
+    .stat-bar .bar-bg{flex:1;height:24px;background:#f0ebe2;border-radius:12px;overflow:hidden}
+    .stat-bar .bar-fill{height:100%;border-radius:12px;display:flex;align-items:center;padding:0 10px;font-size:11px;font-weight:700;color:#fff}
+    .stat-bar .bar-label{font-size:12px;font-weight:700;color:#6d5c3e;min-width:120px}
+    .stat-bar .bar-val{font-size:12px;font-weight:700;color:#2d2a26;min-width:60px;text-align:right}
+
+    .footer{text-align:center;padding:32px 0;color:#a39888;font-size:12px;border-top:1px solid #e0d9ce;margin-top:40px}
+
+    .gap-card{background:#fff;border-radius:16px;padding:20px;border:1px solid #e0d9ce;margin:8px 0}
+    .gap-card h5{font-size:13px;font-weight:800;color:#6d5c3e;margin-bottom:6px}
+    .gap-card p{font-size:12px;color:#7a7164;line-height:1.6}
+    .gap-card .proxy{font-size:11px;color:#4a8b7f;font-weight:600;margin-top:6px}
+
+    /* PRICEZA-STYLE DARK SLIDE */
+    .dark-page{background:#080a14;color:#fff;max-width:none;padding:72px 0 0}
+    .dark-page .dp-inner{max-width:1200px;margin:0 auto;padding:0 32px}
+    .dp-title{text-align:center;padding:60px 0 16px}
+    .dp-title h2{font-size:clamp(22px,3.5vw,36px);font-weight:800;line-height:1.4;color:#fff}
+    .dp-title p{font-size:14px;color:#ffffff80;margin-top:8px}
+    .timeline-wrap{position:relative;padding:60px 0 100px;overflow-x:auto}
+    .timeline-row{display:flex;align-items:flex-end;justify-content:center;gap:clamp(8px,1.5vw,24px);min-width:900px;padding:0 40px;position:relative}
+    .tl-item{display:flex;flex-direction:column;align-items:center;position:relative}
+    .tl-bubble{border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      transition:transform .3s;box-shadow:0 0 30px rgba(0,0,0,.3)}
+    .tl-bubble:hover{transform:scale(1.08)}
+    .tl-val{font-weight:800;line-height:1.1;color:#fff}
+    .tl-unit{font-size:11px;color:#ffffffbb;font-weight:600}
+    .tl-year{margin-top:16px;font-size:13px;font-weight:700;color:#ffffff90}
+    .tl-growth{font-size:11px;font-weight:700;color:#fbbf24;margin-bottom:8px}
+    .tl-label{font-size:10px;color:#ffffff60;margin-top:4px;white-space:nowrap}
+    .tl-curve{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+
+    .dark-section{background:#0e1020;border-radius:20px;padding:32px;margin:32px auto;max-width:1200px;border:1px solid #ffffff10}
+    .dark-section h3{font-size:16px;font-weight:800;color:#fbbf24;margin-bottom:20px}
+    .dark-kpi-row{display:flex;gap:16px;flex-wrap:wrap;margin:24px 0}
+    .dark-kpi{flex:1;min-width:160px;background:#ffffff08;border-radius:16px;padding:20px;border:1px solid #ffffff10}
+    .dark-kpi .dk-label{font-size:12px;color:#ffffff70;font-weight:600}
+    .dark-kpi .dk-val{font-size:28px;font-weight:800;margin:4px 0}
+    .dark-kpi .dk-detail{font-size:12px;color:#ffffff50}
+    .dark-insight{background:#ffffff08;border-radius:16px;padding:24px;border:1px solid #ffffff10;position:relative;overflow:hidden}
+    .dark-insight h4{font-size:15px;font-weight:800;margin-bottom:8px}
+    .dark-insight p{font-size:13px;color:#ffffff80;line-height:1.7}
+    .dark-footer{text-align:center;padding:32px 0;color:#ffffff40;font-size:12px;border-top:1px solid #ffffff10;margin:40px 32px 0}
+
+    @media(max-width:768px){
+      .slide{min-height:auto;padding:24px 0}
+      .bubble-row{gap:8px}
+      .nav{padding:0 8px}
+      .page{padding:60px 16px 32px}
+      .kpi-card .k-val{font-size:22px}
+      .stat-bar .bar-label{min-width:80px;font-size:11px}
+      .timeline-row{padding:0 16px}
+      .dark-page{padding:60px 0 0}
+      .dark-section{margin:16px;padding:20px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ NAV ══════════════ -->
+<nav class="nav">
+  <div class="nav-brand">RESEARCH</div>
+  <button class="nav-btn active" onclick="go(0)">ภาพรวมตลาด</button>
+  <button class="nav-btn" onclick="go(1)">สลากดิจิทัล</button>
+  <button class="nav-btn" onclick="go(2)">ผู้ซื้อหวย</button>
+  <button class="nav-btn" onclick="go(3)">Digital Readiness</button>
+  <button class="nav-btn" onclick="go(4)">LotteryPlus Model</button>
+  <button class="nav-btn" onclick="go(5)">โอกาส & อุปสรรค</button>
+  <button class="nav-btn" onclick="go(6)">Forecast</button>
+  <button class="nav-btn" onclick="go(7)">Executive Summary</button>
+  <button class="nav-btn" onclick="go(8)">Growth Strategy</button>
+</nav>
+
+<!-- ══════════════ PAGE 1: ภาพรวมตลาด ══════════════ -->
+<div class="page active" id="p0">
+  <div class="slide">
+    <div class="slide-title">Market Overview</div>
+    <div class="slide-h1">ตลาดสลาก/หวยไทย</div>
+    <div class="slide-sub">มูลค่ารวม (ถูกกฎหมาย + ใต้ดิน) ประมาณ <strong style="color:#c2410c;font-size:20px">330,000–340,000</strong> ล้านบาท/ปี<br>GLO เป็นรัฐวิสาหกิจรายได้สูงสุด <strong style="color:#6d5c3e">9 ปีซ้อน</strong></div>
+    <div class="bubble-row" id="mktBubbles"></div>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="k-label">รายได้ GLO</div>
+      <div class="k-val" style="color:#2563eb">174K</div>
+      <div class="k-detail">ล้านบาท (2567)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="k-label">กำไรสุทธิ</div>
+      <div class="k-val" style="color:#16a34a">7,040</div>
+      <div class="k-detail">ล้านบาท (+4.25% YoY)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="k-label">นำส่งรัฐ</div>
+      <div class="k-val" style="color:#f97316">50,800</div>
+      <div class="k-detail">ล้านบาท (23% ของยอดขาย)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="k-label">สลากขายทั้งปี</div>
+      <div class="k-val" style="color:#8b5cf6">2.47B</div>
+      <div class="k-detail">ใบ (2567) ↑ จาก 2.39B</div>
+    </div>
+  </div>
+
+  <!-- GLO Revenue Chart -->
+  <div class="chart-section">
+    <h3>รายได้ GLO & นำส่งรัฐ (ล้านบาท)</h3>
+    <div class="chart-wrap"><canvas id="gloRevenueChart"></canvas></div>
+  </div>
+
+  <!-- Ticket Distribution -->
+  <div class="chart-section">
+    <h3>สัดส่วนสลากต่องวด (ล้านใบ) — ปัจจุบัน (ล่าสุด 2569)</h3>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center">
+      <div style="width:280px;height:280px"><canvas id="ticketPie"></canvas></div>
+      <div style="flex:1;min-width:260px;display:flex;flex-direction:column;justify-content:center">
+        <div class="kpi-row" style="margin:0">
+          <div class="kpi-card" style="border-left:4px solid #f97316">
+            <div class="k-label">สลากกระดาษ (GLO)</div>
+            <div class="k-val" style="color:#f97316;font-size:24px">78M</div>
+            <div class="k-detail">ใบ/งวด · ตัวแทน 165,988 ราย</div>
+          </div>
+          <div class="kpi-card" style="border-left:4px solid #6366f1">
+            <div class="k-label">สลากดิจิทัล เป๋าตัง</div>
+            <div class="k-val" style="color:#6366f1;font-size:24px">29M</div>
+            <div class="k-detail">ใบ/งวด (เพิ่มจาก 27M)</div>
+          </div>
+        </div>
+        <div class="kpi-row" style="margin-top:12px">
+          <div class="kpi-card" style="border-left:4px solid #0891b2">
+            <div class="k-label">LotteryPlus (ซื้อใบ→ขายดิจิทัล)</div>
+            <div class="k-val" style="color:#0891b2;font-size:24px">10M</div>
+            <div class="k-detail">ใบ/งวด (เป้าปี 2569) · ซื้อจากโควตากระดาษ</div>
+          </div>
+          <div class="kpi-card" style="border-left:4px solid #22c55e">
+            <div class="k-label">สลาก 3 หลัก (N3)</div>
+            <div class="k-val" style="color:#22c55e;font-size:24px">~2M</div>
+            <div class="k-detail">ใบ/งวด (เพดาน 6M)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sources table -->
+  <div class="chart-section">
+    <h3>แหล่งข้อมูล — มูลค่าตลาด</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Data Point</th><th>Value</th><th>Year</th><th>Source</th><th>Confidence</th></tr>
+        <tr><td>รายได้รวม GLO</td><td>174,000 ล้านบาท</td><td>2567</td><td>Bangkok Post</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>กำไรสุทธิ GLO</td><td>7,040 ล้านบาท</td><td>2567</td><td>Bangkok Post</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>นำส่งรายได้รัฐ</td><td>50,800 ล้านบาท</td><td>2567</td><td>Bangkok Post</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>นำส่งรัฐสะสม 5 ปี</td><td>240,000 ล้านบาท</td><td>2562-2566</td><td>Wealthy Thai</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>สลากขายทั้งปี</td><td>2.47 พันล้านใบ</td><td>2567</td><td>Bangkok Post</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>สลาก L6 / งวด (GLO)</td><td>107 ล้านใบ (78+29)</td><td>2569</td><td>สำนักงานสลาก</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>สลากกระดาษ / งวด</td><td>78 ล้านใบ</td><td>2569</td><td>สำนักงานสลาก</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>สลากดิจิทัล เป๋าตัง / งวด</td><td>29 ล้านใบ</td><td>2569</td><td>สำนักงานสลาก</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>LotteryPlus เป้า / งวด</td><td>10 ล้านใบ (ซื้อใบ→ขายดิจิทัล)</td><td>2569</td><td>User data</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>ตลาดหวยใต้ดิน</td><td>~164,000 ล้านบาท</td><td>ล่าสุด</td><td>Nation Thailand</td><td><span class="badge b-med">Medium</span></td></tr>
+        <tr><td>เศรษฐกิจการพนันใต้ดินรวม</td><td>1.1 ล้านล้านบาท/ปี</td><td>2567</td><td>Nation Thailand</td><td><span class="badge b-med">Medium</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 2: สลากดิจิทัล ══════════════ -->
+<div class="page" id="p1">
+  <div class="slide">
+    <div class="slide-title">Digital Lottery</div>
+    <div class="slide-h1">การเติบโตของสลากดิจิทัล</div>
+    <div class="slide-sub">จาก <strong style="color:#6366f1;font-size:20px">0</strong> สู่ <strong style="color:#6366f1;font-size:20px">29M</strong> ใบ/งวด ภายใน 3 ปี · รวม LotteryPlus อีก <strong style="color:#0891b2;font-size:20px">10M</strong> = ดิจิทัลรวม <strong style="color:#22c55e;font-size:20px">39M</strong></div>
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="k-label">เปิดตัว</div>
+        <div class="k-val" style="color:#6366f1;font-size:22px">16 มิ.ย. 65</div>
+        <div class="k-detail">ผ่านแอปเป๋าตัง (กรุงไทย)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="k-label">ยอดสะสมปีที่ 1</div>
+        <div class="k-val" style="color:#2563eb">356M</div>
+        <div class="k-detail">ใบ (~28,000 ล้านบาท)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="k-label">ผู้ลงทะเบียน</div>
+        <div class="k-val" style="color:#22c55e">5.8M</div>
+        <div class="k-detail">คน (มิ.ย. 2566)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="k-label">Active Buyers</div>
+        <div class="k-val" style="color:#f97316">1.8M</div>
+        <div class="k-detail">คน (เป้า 2-3M)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Digital Growth Chart -->
+  <div class="chart-section">
+    <h3>เป้าหมายสลากดิจิทัล / งวด (ล้านใบ)</h3>
+    <div class="chart-wrap"><canvas id="digitalTargetChart"></canvas></div>
+  </div>
+
+  <!-- Digital Share Timeline -->
+  <div class="chart-section">
+    <h3>สัดส่วนดิจิทัลในตลาด L6</h3>
+    <div class="chart-wrap"><canvas id="digitalShareChart"></canvas></div>
+  </div>
+
+  <!-- Key Milestones -->
+  <div class="chart-section">
+    <h3>เหตุการณ์สำคัญ</h3>
+    <div class="insight-grid">
+      <div class="insight-card"><div class="i-num">01</div><h4 style="color:#6366f1">มิ.ย. 2565 — เปิดตัว</h4><p>เปิดขายสลากดิจิทัลผ่านเป๋าตัง (Krungthai) ราคา 80 บาท ตามกฎหมาย</p></div>
+      <div class="insight-card"><div class="i-num">02</div><h4 style="color:#2563eb">มิ.ย. 2566 — 356M ใบ</h4><p>ยอดสะสมปีแรก 356 ล้านใบ ผู้ลงทะเบียน 5.8 ล้านคน รายได้ ~28,000 ล้านบาท</p></div>
+      <div class="insight-card"><div class="i-num">03</div><h4 style="color:#22c55e">ต.ค. 2567 — N3 เปิดตัว</h4><p>สลาก 3 หลัก ราคา 20 บาท เปิดขาย แต่ยอดขายต่ำกว่าเป้า (~2M จากเพดาน 6M)</p></div>
+      <div class="insight-card"><div class="i-num">04</div><h4 style="color:#f97316">2569 — เป๋าตัง 29M/งวด</h4><p>สำนักงานสลากเพิ่มสลากดิจิทัลระหว่างงวดจนปัจจุบัน 29 ล้านใบ/งวด (27.1% ของ L6)</p></div>
+      <div class="insight-card"><div class="i-num">05</div><h4 style="color:#0891b2">2569 — LotteryPlus ซื้อใบ→ขายดิจิทัล</h4><p>LotteryPlus ซื้อสลากกระดาษมาขายออนไลน์ เป้า 10M ใบ/งวด เร่ง digitization โดยไม่ต้องรอ GLO เพิ่มโควตา</p></div>
+      <div class="insight-card"><div class="i-num">06</div><h4 style="color:#8b5cf6">2568 — ศึกษา Lotto</h4><p>GLO ศึกษา Lotto-style (jackpot) ต้องแก้ พ.ร.บ. อาจให้เอกชนร่วมบริหาร</p></div>
+      <div class="insight-card"><div class="i-num">07</div><h4 style="color:#059669">ดิจิทัลรวม 39M = 36.4%</h4><p>เป๋าตัง 29M + LotteryPlus 10M = 39M ใบ/งวด กระดาษเหลือขายจริง 68M → ดิจิทัลเข้าใกล้เป้า 50-50 เร็วขึ้นมาก</p></div>
+    </div>
+  </div>
+
+  <!-- Source table -->
+  <div class="chart-section">
+    <h3>แหล่งข้อมูล — สลากดิจิทัล</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Data Point</th><th>Value</th><th>Year</th><th>Source</th><th>Confidence</th></tr>
+        <tr><td>ยอดสะสมปีที่ 1</td><td>356 ล้านใบ</td><td>มิ.ย. 65-66</td><td>Pattaya Mail / GLO</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>รายได้ดิจิทัลปีที่ 1</td><td>~28,000 ล้านบาท</td><td>มิ.ย. 65-66</td><td>Pattaya Mail</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>ผู้ลงทะเบียน</td><td>5.8 ล้านคน</td><td>มิ.ย. 2566</td><td>Pattaya Mail</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>Active buyers</td><td>1.8 ล้านคน</td><td>2567-2568</td><td>Workpoint Today</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>เป้า FY66</td><td>30M ใบ/งวด</td><td>2566</td><td>Workpoint Today</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>เป้า FY67</td><td>40M ใบ/งวด</td><td>2567</td><td>Workpoint Today</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>เป้า FY68</td><td>50M ใบ/งวด</td><td>2568</td><td>Workpoint Today</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>เป๋าตัง ล่าสุด</td><td>29M ใบ/งวด</td><td>2569</td><td>สำนักงานสลาก</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>LotteryPlus เป้า (ซื้อใบ→ดิจิทัล)</td><td>10M ใบ/งวด</td><td>2569</td><td>User data</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>เป้าระยะยาว</td><td>50-50 กระดาษ-ดิจิทัล</td><td>2568+</td><td>Workpoint Today</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>ร้าน 80 บาท</td><td>1,236 แห่ง</td><td>2566</td><td>Pattaya Mail</td><td><span class="badge b-high">High</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 3: ผู้ซื้อหวย ══════════════ -->
+<div class="page" id="p2">
+  <div class="slide">
+    <div class="slide-title">Buyer Demographics</div>
+    <div class="slide-h1">พฤติกรรมการซื้อหวยของคนไทย</div>
+    <div class="slide-sub">ผู้ซื้อสลากรัฐบาล <strong style="color:#2563eb;font-size:20px">21.4M</strong> คน · หวยใต้ดิน <strong style="color:#ef4444;font-size:20px">17.3M</strong> คน · นักพนันทั้งหมด <strong style="color:#8b5cf6;font-size:20px">28.9M</strong> คน</div>
+    <div class="bubble-row" id="buyerBubbles"></div>
+  </div>
+
+  <!-- Buyer Stats -->
+  <div class="chart-section">
+    <h3>สถิติผู้ซื้อหวย</h3>
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="k-label">ซื้อทุกงวด</div>
+        <div class="k-val" style="color:#f97316">36.5%</div>
+        <div class="k-detail">~7 ล้านคน ซื้อทุก 2 สัปดาห์</div>
+      </div>
+      <div class="kpi-card">
+        <div class="k-label">ค่าใช้จ่ายเฉลี่ย</div>
+        <div class="k-val" style="color:#2563eb">275</div>
+        <div class="k-detail">บาท / งวด</div>
+      </div>
+      <div class="kpi-card">
+        <div class="k-label">จำนวนงวด/ปี</div>
+        <div class="k-val" style="color:#22c55e">9</div>
+        <div class="k-detail">จาก 24 งวด/ปี</div>
+      </div>
+      <div class="kpi-card">
+        <div class="k-label">ผู้ซื้อหน้าใหม่</div>
+        <div class="k-val" style="color:#8b5cf6">628K</div>
+        <div class="k-detail">คน/ปี (434K ซื้อสลากรัฐ)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demographics bars -->
+  <div class="chart-section">
+    <h3>Demographics</h3>
+    <div style="max-width:600px;margin:0 auto">
+      <div class="stat-bar">
+        <span class="bar-label">เพศหญิง</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:52.6%;background:linear-gradient(90deg,#ec4899,#f472b6)">52.6%</div></div>
+      </div>
+      <div class="stat-bar">
+        <span class="bar-label">เพศชาย</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:47.4%;background:linear-gradient(90deg,#3b82f6,#60a5fa)">47.4%</div></div>
+      </div>
+      <div class="stat-bar" style="margin-top:20px">
+        <span class="bar-label">รายได้ต่ำ</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:61.3%;background:linear-gradient(90deg,#f97316,#fb923c)">61.3%</div></div>
+      </div>
+      <div class="stat-bar">
+        <span class="bar-label">ไม่คิดว่าคือการพนัน</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:52.6%;background:linear-gradient(90deg,#8b5cf6,#a78bfa)">52.6%</div></div>
+      </div>
+      <div class="stat-bar">
+        <span class="bar-label">เสพติดหวย</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:21%;background:linear-gradient(90deg,#ef4444,#f87171)">21% (~5.2M คน)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlap Venn-like -->
+  <div class="chart-section">
+    <h3>ความทับซ้อนของกลุ่มผู้ซื้อ</h3>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;align-items:center;padding:20px">
+      <div style="width:300px;height:300px"><canvas id="overlapChart"></canvas></div>
+      <div style="flex:1;min-width:260px">
+        <div class="insight-grid" style="margin:0">
+          <div class="insight-card" style="border-left:4px solid #2563eb"><h4 style="color:#2563eb">ซื้อเฉพาะสลากรัฐ</h4><p>8.8 ล้านคน — กลุ่มที่ซื้อเฉพาะช่องทางถูกกฎหมาย</p></div>
+          <div class="insight-card" style="border-left:4px solid #ef4444"><h4 style="color:#ef4444">เล่นเฉพาะใต้ดิน</h4><p>4.7 ล้านคน — อาจดึงเข้าระบบได้ด้วยช่องทางดิจิทัล</p></div>
+          <div class="insight-card" style="border-left:4px solid #8b5cf6"><h4 style="color:#8b5cf6">ซื้อทั้งสองช่องทาง</h4><p>12.6 ล้านคน — กลุ่มใหญ่ที่สุด ซื้อทั้งรัฐบาลและใต้ดิน</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Source table -->
+  <div class="chart-section">
+    <h3>แหล่งข้อมูล — พฤติกรรมผู้ซื้อ</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Data Point</th><th>Value</th><th>Year</th><th>Source</th><th>Confidence</th></tr>
+        <tr><td>ผู้ซื้อสลากรัฐบาล</td><td>21.43 ล้านคน</td><td>2560</td><td>ศูนย์ศึกษาปัญหาการพนัน</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>ผู้เล่นหวยใต้ดิน</td><td>17.32 ล้านคน</td><td>2560</td><td>ศูนย์ศึกษาปัญหาการพนัน</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>ซื้อทั้ง 2 ช่องทาง</td><td>12.6 ล้านคน</td><td>2560</td><td>ThaiPublica</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>นักพนันทั้งหมด</td><td>28.93 ล้านคน</td><td>2560</td><td>ศูนย์ศึกษาปัญหาการพนัน</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>ซื้อทุกงวด</td><td>36.5%</td><td>2558</td><td>Gambling Study Center</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>ค่าใช้จ่ายเฉลี่ย/งวด</td><td>275 บาท</td><td>2560</td><td>THE STANDARD</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>ผู้ซื้อหน้าใหม่/ปี</td><td>628,000 คน</td><td>2559</td><td>ThaiPublica</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>เพศ / รายได้</td><td>หญิง 52.6%, รายได้ต่ำ 61.3%</td><td>survey</td><td>จุฬาฯ</td><td><span class="badge b-high">High</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 4: Digital Readiness ══════════════ -->
+<div class="page" id="p3">
+  <div class="slide">
+    <div class="slide-title">Digital Readiness</div>
+    <div class="slide-h1">ความพร้อมด้าน Digital Payment</div>
+    <div class="slide-sub">PromptPay <strong style="color:#2563eb;font-size:20px">90M+</strong> หมายเลข · Mobile Banking <strong style="color:#22c55e;font-size:20px">97%</strong> · QR Payment อันดับ <strong style="color:#f97316;font-size:20px">3</strong> ของโลก</div>
+  </div>
+
+  <!-- Digital Payment KPIs -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="k-label">PromptPay ลงทะเบียน</div>
+      <div class="k-val" style="color:#2563eb">90M+</div>
+      <div class="k-detail">หมายเลข (มิ.ย. 2568)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="k-label">PromptPay / วัน</div>
+      <div class="k-val" style="color:#22c55e">74M</div>
+      <div class="k-detail">รายการ / วัน</div>
+    </div>
+    <div class="kpi-card">
+      <div class="k-label">PromptPay / ปี</div>
+      <div class="k-val" style="color:#f97316">24.3B</div>
+      <div class="k-detail">รายการ (2567)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="k-label">Mobile Wallet Users</div>
+      <div class="k-val" style="color:#8b5cf6">51M</div>
+      <div class="k-detail">คน (2568)</div>
+    </div>
+  </div>
+
+  <!-- Digital bars -->
+  <div class="chart-section">
+    <h3>Digital Adoption ในไทย</h3>
+    <div style="max-width:700px;margin:0 auto">
+      <div class="stat-bar">
+        <span class="bar-label">Mobile Banking (weekly)</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:97%;background:linear-gradient(90deg,#2563eb,#3b82f6)">97%</div></div>
+        <span class="bar-val">สูงสุด ASEAN</span>
+      </div>
+      <div class="stat-bar">
+        <span class="bar-label">ใช้ Digital Payment</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:92%;background:linear-gradient(90deg,#22c55e,#4ade80)">92%</div></div>
+        <span class="bar-val"></span>
+      </div>
+      <div class="stat-bar">
+        <span class="bar-label">Internet Penetration</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:91.2%;background:linear-gradient(90deg,#8b5cf6,#a78bfa)">91.2%</div></div>
+        <span class="bar-val">65.4M คน</span>
+      </div>
+      <div class="stat-bar">
+        <span class="bar-label">ชอบจ่ายแบบทันที</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:88%;background:linear-gradient(90deg,#f97316,#fb923c)">88%</div></div>
+        <span class="bar-val"></span>
+      </div>
+      <div class="stat-bar">
+        <span class="bar-label">QR Code (monthly)</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:61.5%;background:linear-gradient(90deg,#ec4899,#f472b6)">61.5%</div></div>
+        <span class="bar-val">อันดับ 3 โลก</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PromptPay Growth Chart -->
+  <div class="chart-section">
+    <h3>PromptPay ธุรกรรมรายปี (พันล้านรายการ)</h3>
+    <div class="chart-wrap"><canvas id="promptpayChart"></canvas></div>
+  </div>
+
+  <!-- Internet & Smartphone -->
+  <div class="chart-section">
+    <h3>Internet & Mobile</h3>
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="k-label">Internet Users</div>
+        <div class="k-val" style="color:#2563eb;font-size:24px">65.4M</div>
+        <div class="k-detail">91.2% penetration (ม.ค. 2568)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="k-label">Mobile Connections</div>
+        <div class="k-val" style="color:#22c55e;font-size:24px">99.5M</div>
+        <div class="k-detail">139% ของประชากร</div>
+      </div>
+      <div class="kpi-card">
+        <div class="k-label">ใช้เน็ตผ่านมือถือ</div>
+        <div class="k-val" style="color:#f97316;font-size:24px">98%</div>
+        <div class="k-detail">ของผู้ใช้อินเทอร์เน็ต</div>
+      </div>
+      <div class="kpi-card">
+        <div class="k-label">Digital GDP</div>
+        <div class="k-val" style="color:#8b5cf6;font-size:24px">23.9%</div>
+        <div class="k-detail">4.44 ล้านล้านบาท (2567)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- E-commerce context -->
+  <div class="chart-section">
+    <h3>E-Commerce (บริบทดิจิทัล)</h3>
+    <div class="kpi-row">
+      <div class="kpi-card" style="border-left:4px solid #f97316">
+        <div class="k-label">E-Commerce 2567</div>
+        <div class="k-val" style="color:#f97316;font-size:24px">1.1T</div>
+        <div class="k-detail">ล้านล้านบาท (+14% YoY)</div>
+      </div>
+      <div class="kpi-card" style="border-left:4px solid #2563eb">
+        <div class="k-label">คาดการณ์ 2570</div>
+        <div class="k-val" style="color:#2563eb;font-size:24px">1.6T</div>
+        <div class="k-detail">ล้านล้านบาท</div>
+      </div>
+      <div class="kpi-card" style="border-left:4px solid #22c55e">
+        <div class="k-label">คาดการณ์ 2573</div>
+        <div class="k-val" style="color:#22c55e;font-size:24px">2.0T</div>
+        <div class="k-detail">ล้านล้านบาท</div>
+      </div>
+      <div class="kpi-card" style="border-left:4px solid #8b5cf6">
+        <div class="k-label">E-wallet share ใน e-com</div>
+        <div class="k-val" style="color:#8b5cf6;font-size:24px">23%</div>
+        <div class="k-detail">ของธุรกรรม e-commerce</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 5: LotteryPlus Model Analysis ══════════════ -->
+<div class="page" id="p4">
+  <div class="slide">
+    <div class="slide-title">LotteryPlus Model Analysis</div>
+    <div class="slide-h1">LotteryPlus: ซื้อสลากใบ → ขายดิจิทัล</div>
+    <div class="slide-sub">โมเดลที่เร่ง digitization โดยไม่ต้องรอ GLO เพิ่มโควตาดิจิทัล<br>เป้าปี 2569: <strong style="color:#0891b2;font-size:20px">10M</strong> ใบ/งวด จากสลากกระดาษ 78M</div>
+  </div>
+
+  <!-- How it works -->
+  <div class="chart-section">
+    <h3>โมเดลธุรกิจ LotteryPlus</h3>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin:20px 0">
+      <div class="kpi-card" style="flex:1;min-width:200px;text-align:center;border-top:4px solid #f97316">
+        <div style="font-size:28px;margin-bottom:4px">&#x1F4C4;</div>
+        <div class="k-val" style="font-size:20px;color:#f97316">สลากกระดาษ 78M</div>
+        <div class="k-detail">GLO จัดสรรให้ตัวแทน</div>
+      </div>
+      <div style="display:flex;align-items:center;font-size:28px;color:#8b7355">&#x27A1;</div>
+      <div class="kpi-card" style="flex:1;min-width:200px;text-align:center;border-top:4px solid #0891b2">
+        <div style="font-size:28px;margin-bottom:4px">&#x1F6D2;</div>
+        <div class="k-val" style="font-size:20px;color:#0891b2">LotteryPlus ซื้อมา 10M</div>
+        <div class="k-detail">ซื้อจากโควตากระดาษ</div>
+      </div>
+      <div style="display:flex;align-items:center;font-size:28px;color:#8b7355">&#x27A1;</div>
+      <div class="kpi-card" style="flex:1;min-width:200px;text-align:center;border-top:4px solid #6366f1">
+        <div style="font-size:28px;margin-bottom:4px">&#x1F4F1;</div>
+        <div class="k-val" style="font-size:20px;color:#6366f1">ขายดิจิทัล 10M</div>
+        <div class="k-detail">ผ่านแอป LotteryPlus</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Before vs After -->
+  <div class="chart-section">
+    <h3>สัดส่วน Physical vs Digital — ก่อน vs หลัง LotteryPlus Model</h3>
+    <div style="display:flex;gap:24px;flex-wrap:wrap">
+      <div style="flex:1;min-width:280px;height:320px"><canvas id="beforeAfterChart"></canvas></div>
+      <div style="flex:1;min-width:260px;display:flex;flex-direction:column;justify-content:center;gap:12px">
+        <div class="kpi-card" style="border-left:4px solid #6b7280">
+          <div class="k-label">ก่อน LotteryPlus Model (GLO อย่างเดียว)</div>
+          <div class="k-detail" style="margin-top:8px">
+            <div>กระดาษ: <strong style="color:#f97316">78M</strong> (72.9%) · ดิจิทัล: <strong style="color:#6366f1">29M</strong> (27.1%)</div>
+          </div>
+        </div>
+        <div class="kpi-card" style="border-left:4px solid #22c55e">
+          <div class="k-label">หลัง LotteryPlus Model (+ LotteryPlus 10M)</div>
+          <div class="k-detail" style="margin-top:8px">
+            <div>กระดาษจริง: <strong style="color:#f97316">68M</strong> (63.6%) · ดิจิทัลรวม: <strong style="color:#6366f1">39M</strong> (36.4%)</div>
+            <div style="color:#22c55e;font-weight:700;margin-top:4px">Digital share เพิ่ม +9.3pp โดยไม่ต้องรอ GLO</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Impact Analysis -->
+  <div class="chart-section">
+    <h3>ผลกระทบเชิงโครงสร้าง</h3>
+    <div class="insight-grid">
+      <div class="insight-card" style="border-left:4px solid #22c55e">
+        <div class="i-num">01</div>
+        <h4 style="color:#22c55e">Bypass GLO Bottleneck</h4>
+        <p>LotteryPlus ไม่ต้องรอ GLO อนุมัติเพิ่มโควตาดิจิทัล สามารถซื้อสลากใบจากตัวแทนแล้วนำมาขายออนไลน์ได้เลย — เร่ง digitization จาก supply side</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #2563eb">
+        <div class="i-num">02</div>
+        <h4 style="color:#2563eb">กระดาษ "หดตัวเร็วขึ้น"</h4>
+        <p>สลากกระดาษ GLO ยังคง 78M แต่ที่ขายเป็นใบจริงๆ เหลือ 68M เพราะ LotteryPlus ดึง 10M ไปขายดิจิทัล = กระดาษลดโดยไม่ต้องตัดโควตา</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #f97316">
+        <div class="i-num">03</div>
+        <h4 style="color:#f97316">ตัวแทนกระดาษ = Supplier ให้ LotteryPlus</h4>
+        <p>ตัวแทนกระดาษ 165,988 ราย บางส่วนจะเปลี่ยนจาก "ขายเอง" เป็น "ขายให้ LotteryPlus" — รายได้ไม่หาย แต่เปลี่ยนบทบาท</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #8b5cf6">
+        <div class="i-num">04</div>
+        <h4 style="color:#8b5cf6">แข่งด้วยราคา 80 บาท</h4>
+        <p>LotteryPlus ขายราคา 80 บาท เท่ากับเป๋าตัง แต่แข่งกับตลาดกระดาษที่ขาย 100-120 บาท — ดึงคนจากกระดาษสู่ดิจิทัล</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #ec4899">
+        <div class="i-num">05</div>
+        <h4 style="color:#ec4899">เป้า 50-50 เข้าใกล้เร็วขึ้น</h4>
+        <p>ถ้า LotteryPlus แตะ 10M: ดิจิทัลรวม 39M (36.4%) เทียบกับเป้า GLO 50-50 = เหลืออีกแค่ ~14pp ไม่ใช่ ~23pp</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #059669">
+        <div class="i-num">06</div>
+        <h4 style="color:#059669">Scalable Model</h4>
+        <p>ถ้า LotteryPlus ขยายจาก 10M → 15M → 20M ดิจิทัลรวมจะแตะ 49M (45.8%) ใกล้ 50-50 โดยไม่ต้องรอ GLO เลย</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projection Chart -->
+  <div class="chart-section">
+    <h3>Projection: ดิจิทัลรวม (เป๋าตัง + LotteryPlus) ถ้า LotteryPlus Scale Up</h3>
+    <div class="chart-wrap tall"><canvas id="lpProjectionChart"></canvas></div>
+  </div>
+
+  <!-- Effective Distribution Table -->
+  <div class="chart-section">
+    <h3>สัดส่วนการกระจายจริง (Effective Distribution)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>ช่องทาง</th><th>GLO Allocation</th><th>LotteryPlus ซื้อไป</th><th>ขายจริง</th><th>% ของตลาด</th><th>ช่องทางขาย</th></tr>
+        <tr><td style="font-weight:700;color:#f97316">สลากกระดาษ</td><td>78M</td><td style="color:#ef4444">-10M</td><td style="font-weight:700">68M</td><td>63.6%</td><td>แผงขาย/ร้านค้า</td></tr>
+        <tr><td style="font-weight:700;color:#6366f1">เป๋าตัง (GLO Digital)</td><td>29M</td><td>—</td><td style="font-weight:700">29M</td><td>27.1%</td><td>แอปเป๋าตัง</td></tr>
+        <tr><td style="font-weight:700;color:#0891b2">LotteryPlus</td><td>—</td><td style="color:#22c55e">+10M</td><td style="font-weight:700">10M</td><td>9.3%</td><td>แอป LotteryPlus</td></tr>
+        <tr style="background:#f0ebe2"><td style="font-weight:800">รวม</td><td style="font-weight:700">107M</td><td>—</td><td style="font-weight:800">107M</td><td style="font-weight:800">100%</td><td></td></tr>
+        <tr style="background:#dbeafe20"><td style="font-weight:800;color:#6366f1" colspan="3">Digital รวม (เป๋าตัง + LotteryPlus)</td><td style="font-weight:800;color:#6366f1">39M</td><td style="font-weight:800;color:#6366f1">36.4%</td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── LP ACTUAL DATA ANALYTICS ── -->
+  <hr class="section-divider">
+  <div class="chart-section">
+    <h3>LotteryPlus — ข้อมูลจริงรายงวด (ก.ค. 2566 – มี.ค. 2569)</h3>
+    <div class="kpi-row" id="lpKpiRow"></div>
+  </div>
+
+  <div style="display:flex;gap:24px;flex-wrap:wrap">
+    <div class="chart-section" style="flex:1;min-width:320px">
+      <h3>ผู้ซื้อ (Users) ต่องวด</h3>
+      <div class="chart-wrap tall"><canvas id="lpUsersChart"></canvas></div>
+    </div>
+    <div class="chart-section" style="flex:1;min-width:320px">
+      <h3>สลากขาย (Items) ต่องวด</h3>
+      <div class="chart-wrap tall"><canvas id="lpItemsChart"></canvas></div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:24px;flex-wrap:wrap">
+    <div class="chart-section" style="flex:1;min-width:320px">
+      <h3>ใบ/คน (AOV) ต่องวด</h3>
+      <div class="chart-wrap"><canvas id="lpAovChart"></canvas></div>
+    </div>
+    <div class="chart-section" style="flex:1;min-width:320px">
+      <h3>Orders ต่องวด</h3>
+      <div class="chart-wrap"><canvas id="lpOrdersChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- LP Insights from data -->
+  <div class="chart-section">
+    <h3>วิเคราะห์จากข้อมูลจริง</h3>
+    <div class="insight-grid" id="lpInsightsGrid"></div>
+  </div>
+
+  <!-- LP Data Table -->
+  <div class="chart-section">
+    <h3>ข้อมูลรายงวด (ล่าสุด 12 งวด)</h3>
+    <div class="tbl-wrap">
+      <table id="lpDataTable">
+        <tr><th>งวด</th><th>Users</th><th>Orders</th><th>Items</th><th>ใบ/คน</th><th>Orders/User</th><th>Items Growth</th></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Key Insight -->
+  <div class="chart-section" style="background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:2px solid #bae6fd">
+    <h3 style="color:#0369a1">Key Insight: LotteryPlus Model = Market Accelerator</h3>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <div class="insight-card" style="flex:1;min-width:260px;border-left:4px solid #0891b2">
+        <h4 style="color:#0891b2">ทำไม Model นี้สำคัญ</h4>
+        <p>LotteryPlus ทำให้ digitization ไม่ขึ้นอยู่กับ GLO คนเดียว — เอกชนสามารถเร่ง digital shift ได้เอง โดยใช้ supply ที่มีอยู่แล้ว (สลากกระดาษ) แปลงเป็นดิจิทัล<br><br>
+        ถ้ากระดาษ 78M ยังคงเท่าเดิม แต่ LotteryPlus ซื้อไปเพิ่มทุกปี → สลากกระดาษที่ "ขายเป็นใบ" จะลดลงเรื่อยๆ โดยอัตโนมัติ</p>
+      </div>
+      <div class="insight-card" style="flex:1;min-width:260px;border-left:4px solid #059669">
+        <h4 style="color:#059669">ผลต่อ Forecast</h4>
+        <p><strong>Bull Case:</strong> LotteryPlus 20M + เป๋าตัง 40M = ดิจิทัล 60M (56%) ภายปี 2572<br>
+        <strong>Base Case:</strong> LotteryPlus 15M + เป๋าตัง 35M = ดิจิทัล 50M (47%) ภายปี 2572<br>
+        <strong>Bear Case:</strong> LotteryPlus 10M + เป๋าตัง 32M = ดิจิทัล 42M (39%) ภายปี 2572<br><br>
+        <span style="color:#059669;font-weight:700">LotteryPlus Model ทำให้ทุก scenario เร็วขึ้น 1-2 ปี</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 6: โอกาส & อุปสรรค ══════════════ -->
+<div class="page" id="p5">
+  <div class="slide">
+    <div class="slide-title">Opportunities & Barriers</div>
+    <div class="slide-h1">โอกาสและอุปสรรค</div>
+    <div class="slide-sub">วิเคราะห์ปัจจัยที่ส่งผลต่อการเติบโตของ Lottery Online ในไทย</div>
+  </div>
+
+  <!-- Opportunities -->
+  <div class="chart-section">
+    <h3 style="color:#16a34a">โอกาส (Opportunities)</h3>
+    <div class="insight-grid" id="oppGrid"></div>
+  </div>
+
+  <!-- Barriers -->
+  <div class="chart-section">
+    <h3 style="color:#dc2626">อุปสรรค (Barriers)</h3>
+    <div class="insight-grid" id="barGrid"></div>
+  </div>
+
+  <!-- Policy Timeline -->
+  <div class="chart-section">
+    <h3>นโยบายและกฎหมายที่เกี่ยวข้อง</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>เรื่อง</th><th>รายละเอียด</th><th>สถานะ</th><th>ปี</th><th>Source</th><th>Confidence</th></tr>
+        <tr><td>เปิดสลากดิจิทัล</td><td>ขายผ่านเป๋าตัง (Krungthai) ราคา 80 บาท</td><td style="color:#16a34a;font-weight:700">ดำเนินการแล้ว</td><td>2565</td><td>GLO</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>สลาก 3 หลัก (N3)</td><td>ราคา 20 บาท เปิด pilot</td><td style="color:#f97316;font-weight:700">ขายต่ำกว่าเป้า</td><td>2567</td><td>Nation Thailand</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>Lotto-style Jackpot</td><td>อยู่ระหว่างศึกษา ต้องแก้ พ.ร.บ.</td><td style="color:#2563eb;font-weight:700">กำลังศึกษา</td><td>2568</td><td>Bangkok Post</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>เอกชนร่วมบริหาร</td><td>อาจให้เอกชนบริหาร Lotto-style</td><td style="color:#8b5cf6;font-weight:700">พิจารณา</td><td>2568</td><td>Bangkok Post</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>Entertainment Complex Bill</td><td>ครม. อนุมัติ → ถอนออก → อาจกลับมา</td><td style="color:#ef4444;font-weight:700">ถอนออก</td><td>2568</td><td>หลายสื่อ</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td>พ.ร.บ. GLO</td><td>กฎหมายหลักอายุ 50+ ปี</td><td style="color:#6b7280;font-weight:700">ต้องแก้ไข</td><td>2517</td><td>ThaiPublica</td><td><span class="badge b-high">High</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Underground conversion opportunity -->
+  <div class="chart-section">
+    <h3>โอกาสจากหวยใต้ดิน — Conversion Potential</h3>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center">
+      <div style="flex:1;min-width:280px">
+        <div class="chart-wrap"><canvas id="undergroundChart"></canvas></div>
+      </div>
+      <div style="flex:1;min-width:260px">
+        <div class="insight-card" style="border-left:4px solid #ef4444">
+          <h4 style="color:#ef4444">ตลาดหวยใต้ดิน ~164,000 ล้านบาท/ปี</h4>
+          <p>ผู้เล่น 17-20 ล้านคน ถ้าดึงเข้าระบบได้ 10-20% = เพิ่มผู้ซื้อดิจิทัล 2-4 ล้านคน<br><br>
+          Lotto-style jackpot อาจเป็น product ที่ตอบโจทย์กลุ่มนี้ได้ดีกว่า N3</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 7: Forecast ══════════════ -->
+<div class="page" id="p6">
+  <div class="slide">
+    <div class="slide-title">Forecast Framework</div>
+    <div class="slide-h1">ตัวแปรสำหรับ Forecast 5-10 ปี</div>
+    <div class="slide-sub">สิ่งที่เรารู้ · ช่องว่างข้อมูล · Assumptions</div>
+  </div>
+
+  <!-- What we know -->
+  <div class="chart-section">
+    <h3><span style="color:#16a34a">A.</span> ข้อมูลที่หาเจอแน่นอน (Facts)</h3>
+    <div class="insight-grid">
+      <div class="insight-card" style="border-left:4px solid #16a34a"><h4 style="color:#16a34a">รายได้/กำไร GLO</h4><p>จากรายงานประจำปี GLO — มีข้อมูลรายปี ครบถ้วน</p></div>
+      <div class="insight-card" style="border-left:4px solid #16a34a"><h4 style="color:#16a34a">ปริมาณสลากดิจิทัล/งวด</h4><p>เป้าหมายและยอดจริง จาก GLO/กรุงไทย</p></div>
+      <div class="insight-card" style="border-left:4px solid #16a34a"><h4 style="color:#16a34a">พฤติกรรมผู้ซื้อหวย</h4><p>จำนวน, demographics จากศูนย์ศึกษาปัญหาการพนัน จุฬาฯ</p></div>
+      <div class="insight-card" style="border-left:4px solid #16a34a"><h4 style="color:#16a34a">สถิติ Digital Payment</h4><p>PromptPay, mobile banking จาก ธปท./NITMX/DataReportal</p></div>
+      <div class="insight-card" style="border-left:4px solid #16a34a"><h4 style="color:#16a34a">ทิศทางนโยบาย</h4><p>N3, Lotto-style, Entertainment Complex Bill</p></div>
+    </div>
+  </div>
+
+  <!-- Data gaps -->
+  <div class="chart-section">
+    <h3><span style="color:#dc2626">B.</span> ช่องว่างข้อมูล (Data Gaps)</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+      <div class="gap-card">
+        <h5>Conversion Rate ดิจิทัล</h5>
+        <p>ไม่มีข้อมูล real-time ว่า registered → active → ซื้อต่องวด เป็นเท่าไร</p>
+        <div class="proxy">Proxy: เปรียบเทียบ 5.8M registered vs 1.8M active = ~31% conversion</div>
+      </div>
+      <div class="gap-card">
+        <h5>สำรวจพฤติกรรมล่าสุด</h5>
+        <p>สำรวจแห่งชาติล่าสุดปี 2564 — ข้อมูลอายุ 5+ ปี</p>
+        <div class="proxy">Proxy: ใช้ trend จากสำรวจ 2558/2560/2564 + ข้อมูล GLO ใหม่</div>
+      </div>
+      <div class="gap-card">
+        <h5>ขนาดหวยใต้ดินที่แม่นยำ</h5>
+        <p>ประมาณการ 100-300 พันล้าน แล้วแต่แหล่ง</p>
+        <div class="proxy">Proxy: ใช้ตัวเลขจากศูนย์ศึกษาฯ จุฬา (~164,000 ล้าน)</div>
+      </div>
+      <div class="gap-card">
+        <h5>ต้นทุน/กำไร แยกช่องทาง</h5>
+        <p>ไม่มี breakdown ดิจิทัล vs กระดาษ</p>
+        <div class="proxy">Proxy: ไม่พบข้อมูลตรง — ต้องใช้ revenue/ticket เป็น proxy</div>
+      </div>
+      <div class="gap-card">
+        <h5>MAU แอปเป๋าตัง</h5>
+        <p>มีแค่ตัวเลข lottery-specific (5.8M registered)</p>
+        <div class="proxy">Proxy: ใช้ Krungthai NEXT/เป๋าตัง download stats</div>
+      </div>
+      <div class="gap-card">
+        <h5>Forecast Model เฉพาะ</h5>
+        <p>ไม่มีสถาบันวิจัยไทยทำ forecast model lottery online</p>
+        <div class="proxy">Proxy: สร้างจากตัวแปรไทยด้านล่าง</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assumptions -->
+  <div class="chart-section">
+    <h3><span style="color:#f97316">C.</span> สมมติฐาน (Assumptions)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>สมมติฐาน</th><th>เหตุผล</th><th>Thai Proxy</th><th>Type</th></tr>
+        <tr><td>ดิจิทัลแตะ 50% ภายปี 2570-2571</td><td>เป๋าตัง 29M + LotteryPlus 10M = 39M (36.4%) แล้ว; LotteryPlus scale up + GLO เพิ่มโควตา</td><td>รายงาน GLO + LotteryPlus statistics</td><td><span class="badge b-assume">Assumption</span></td></tr>
+        <tr><td>LotteryPlus ขยายจาก 10M → 15-20M/งวด</td><td>Model scalable ซื้อจากตัวแทนกระดาษ ไม่มีเพดาน GLO</td><td>LotteryPlus business reports</td><td><span class="badge b-assume">Assumption</span></td></tr>
+        <tr><td>Active buyers เพิ่มเป็น 5-8M ภายปี 2570</td><td>จาก 1.8M active/5.8M registered</td><td>Krungthai app statistics</td><td><span class="badge b-assume">Assumption</span></td></tr>
+        <tr><td>Underground conversion 10-20% ใน 5 ปี</td><td>N3 underperform แต่ Lotto-style อาจดีกว่า</td><td>สำรวจศูนย์ศึกษาฯ ทุก 2 ปี</td><td><span class="badge b-assume">Assumption</span></td></tr>
+        <tr><td>TAM ดิจิทัล 80-100K ล้านบาท ภายปี 2573</td><td>50M × 80 บาท × 24 งวด = ~96,000 ล้าน</td><td>GLO annual revenue</td><td><span class="badge b-assume">Assumption</span></td></tr>
+        <tr><td>Lotto-style เพิ่ม 20-50K ล้านบาท/ปี</td><td>ยังไม่มีข้อมูลตรง ต้องรอผลศึกษา</td><td>Bangkok Post / GLO announcements</td><td><span class="badge b-assume">Assumption</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 10 Key Variables -->
+  <div class="chart-section">
+    <h3>ตัวแปรสำคัญ 10 ตัว สำหรับ Forecast</h3>
+    <div class="insight-grid">
+      <div class="insight-card"><div class="i-num">01</div><h4 style="color:#2563eb">GLO Digital Allocation</h4><p>เป๋าตังปัจจุบัน 29M, เป้า 50M · LotteryPlus ซื้อใบ→ดิจิทัลอีก 10M · เพดานรวมอาจสูงกว่า</p></div>
+      <div class="insight-card"><div class="i-num">02</div><h4 style="color:#22c55e">New Products + LotteryPlus Scale</h4><p>Lotto-style jackpot, N3 ปรับปรุง, LotteryPlus ขยายจาก 10M → 15-20M</p></div>
+      <div class="insight-card"><div class="i-num">03</div><h4 style="color:#f97316">กฎหมาย/นโยบาย</h4><p>แก้ พ.ร.บ. GLO, Casino Bill, เปิดให้เอกชนร่วม</p></div>
+      <div class="insight-card"><div class="i-num">04</div><h4 style="color:#ef4444">Underground Conversion</h4><p>17-20M คนเล่นใต้ดิน แปลงมาได้กี่ %</p></div>
+      <div class="insight-card"><div class="i-num">05</div><h4 style="color:#8b5cf6">Active Buyer Growth</h4><p>จาก 1.8M สู่เพดาน 21M+ ที่ซื้อสลากรัฐ</p></div>
+      <div class="insight-card"><div class="i-num">06</div><h4 style="color:#ec4899">Avg Tickets/Buyer</h4><p>Volume effect จากความสะดวกดิจิทัล — ปัจจุบัน avg 275 บาท/งวด</p></div>
+      <div class="insight-card"><div class="i-num">07</div><h4 style="color:#0891b2">Digital Payment Growth</h4><p>PromptPay, e-wallet adoption trajectory</p></div>
+      <div class="insight-card"><div class="i-num">08</div><h4 style="color:#059669">GDP & Income</h4><p>กำลังซื้อโดยรวม, disposable income</p></div>
+      <div class="insight-card"><div class="i-num">09</div><h4 style="color:#d97706">Demographics</h4><p>ผู้ซื้อหน้าใหม่ ~400-600K/ปี, เจนใหม่ digital-native</p></div>
+      <div class="insight-card"><div class="i-num">10</div><h4 style="color:#6d5c3e">Private Sector</h4><p>ถ้า Lotto-style ให้เอกชนบริหาร → เร่ง innovation</p></div>
+    </div>
+  </div>
+
+  <!-- Final Insight -->
+  <div class="chart-section" style="background:linear-gradient(135deg,#faf8f4,#f0ebe2);border:2px solid #d5cfc4">
+    <h3 style="font-size:20px;margin-bottom:20px">สรุป: ศักยภาพตลาด Lottery Online ไทย</h3>
+    <div class="insight-grid">
+      <div class="insight-card" style="border-left:4px solid #22c55e">
+        <div class="i-icon">&#x1F4C8;</div>
+        <h4 style="color:#22c55e">Supply-Constrained, Not Demand-Constrained</h4>
+        <p>สลากดิจิทัลขายหมดเกือบทุกงวด (sell-through >99%) — ปัญหาคือ GLO เพิ่มโควตาไม่ทัน ไม่ใช่คนไม่ซื้อ</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #0891b2">
+        <div class="i-icon">&#x1F504;</div>
+        <h4 style="color:#0891b2">LotteryPlus Model = Game Changer</h4>
+        <p>LotteryPlus ซื้อสลากใบมาขายดิจิทัล เป้า 10M/งวด ทำให้ดิจิทัลรวม 39M (36.4%) โดยไม่ต้องรอ GLO — เร่ง 50-50 เร็วขึ้น 1-2 ปี</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #2563eb">
+        <div class="i-icon">&#x1F4B0;</div>
+        <h4 style="color:#2563eb">TAM ดิจิทัล: 80,000-120,000 ล้านบาท</h4>
+        <p>เป๋าตัง 40M + LotteryPlus 15M = 55M × 80 บาท × 24 งวด = ~106,000 ล้านบาท/ปี ยังไม่รวม Lotto-style อีก 20,000-50,000 ล้าน</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #f97316">
+        <div class="i-icon">&#x1F30F;</div>
+        <h4 style="color:#f97316">โครงสร้างพื้นฐานพร้อม 100%</h4>
+        <p>Internet 91.2%, Mobile Banking 97%, PromptPay 90M+, QR อันดับ 3 โลก — ไม่มี friction ด้านเทคโนโลยี</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #8b5cf6">
+        <div class="i-icon">&#x1F3AF;</div>
+        <h4 style="color:#8b5cf6">จุดเปลี่ยน: GLO + LotteryPlus + Lotto</h4>
+        <p>ตัวแปรสำคัญ: GLO เพิ่มโควตา + LotteryPlus ขยาย scale + เปิด Lotto-style เมื่อไร = triple growth engine</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Thai Lottery Online — Market Research Report</p>
+    <p>ข้อมูลจาก: GLO, Bangkok Post, ThaiPublica, ศูนย์ศึกษาปัญหาการพนัน จุฬาฯ, ธปท., DataReportal, Statista, Nation Thailand</p>
+    <p id="genDate" style="margin-top:8px"></p>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 8: Executive Summary (Priceza-style) ══════════════ -->
+<div class="page dark-page" id="p7">
+
+  <!-- ── SLIDE 1: มูลค่าตลาดสลากดิจิทัล ── -->
+  <div class="dp-title">
+    <h2>คาดการณ์มูลค่าตลาด<br>สลากดิจิทัลไทย ปี 2565 ไปถึงปี 2574</h2>
+    <p>เป๋าตัง + LotteryPlus · Base Case Scenario</p>
+  </div>
+  <div class="timeline-wrap">
+    <svg class="tl-curve" viewBox="0 0 1000 350" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%">
+      <path d="M60,290 C150,270 200,240 280,220 S400,170 480,145 S600,90 700,65 S830,25 940,10" fill="none" stroke="#fbbf2440" stroke-width="2" stroke-dasharray="6,4"/>
+    </svg>
+    <div class="timeline-row" id="mktTimeline"></div>
+  </div>
+
+  <!-- ── SLIDE 2: สัดส่วน Digital vs กระดาษ ── -->
+  <div class="dp-title" style="padding-top:20px">
+    <h2>สัดส่วนดิจิทัล vs กระดาษ<br>ปี 2565 → 2574</h2>
+    <p>กระดาษ 78M คงที่ แต่ส่วนแบ่งลดลง เพราะผู้ค้าเข้าร่วมระบบดิจิทัล + LotteryPlus ซื้อใบมาขายออนไลน์</p>
+  </div>
+  <div class="timeline-wrap">
+    <div class="timeline-row" id="shareTimeline"></div>
+  </div>
+
+  <!-- ── SLIDE 2.5: Paper Decline Stacked Area ── -->
+  <div class="dark-section">
+    <h3>สลากใบที่ "ขายเป็นกระดาษจริง" ลดลงไปแค่ไหน?</h3>
+    <p style="font-size:13px;color:#ffffff70;margin-bottom:16px;line-height:1.7">
+      LotteryPlus ซื้อสลากใบจาก GLO มาสแกนขายออนไลน์ → สลากเหล่านั้นไม่ได้ขายเป็นกระดาษอีกต่อไป<br>
+      ยิ่ง LotteryPlus scale + GLO ลดโควตากระดาษ → สลากใบจริงในตลาดยิ่งลด
+    </p>
+    <div style="position:relative;width:100%;height:400px">
+      <canvas id="paperDeclineChart"></canvas>
+    </div>
+    <div class="dark-kpi-row" style="margin-top:20px">
+      <div class="dark-kpi">
+        <div class="dk-label">สลากใบจริง (2565)</div>
+        <div class="dk-val" style="color:#f97316">80M</div>
+        <div class="dk-detail">100% ของกระดาษ · LP ยังไม่เริ่ม</div>
+      </div>
+      <div class="dark-kpi">
+        <div class="dk-label">สลากใบจริง (2569)</div>
+        <div class="dk-val" style="color:#fb923c">71.2M</div>
+        <div class="dk-detail">78M − LP 6.8M · ลดไป 11%</div>
+      </div>
+      <div class="dark-kpi">
+        <div class="dk-label">สลากใบจริง (2572)</div>
+        <div class="dk-val" style="color:#fbbf24">57M</div>
+        <div class="dk-detail">72M − LP 15M · ลดไป 29%</div>
+      </div>
+      <div class="dark-kpi">
+        <div class="dk-label">สลากใบจริง (2574)</div>
+        <div class="dk-val" style="color:#ef4444">52M</div>
+        <div class="dk-detail">68M − LP 16M · ลดไป <strong>35%</strong></div>
+      </div>
+    </div>
+    <div style="margin-top:20px;padding:16px;background:#ffffff08;border-radius:12px;border:1px solid #ffffff10">
+      <p style="font-size:13px;color:#ffffffbb;line-height:1.8">
+        <span style="color:#ef4444;font-weight:700">สลากใบจริงลดจาก 80M → 52M ภายปี 2574 (−35%)</span><br>
+        ลดจาก 2 ทาง พร้อมกัน:<br>
+        <span style="color:#f97316">&#9632;</span> <strong>GLO ลดโควตากระดาษ</strong> — จาก 80M → 68M (−12M) เพราะเพิ่มสลากดิจิทัลแทน<br>
+        <span style="color:#0891b2">&#9632;</span> <strong>LotteryPlus ดึงสลากใบไปสแกนขายออนไลน์</strong> — จาก 0 → 16M ใบ/งวด<br><br>
+        <span style="color:#fbbf24;font-weight:700">จุดพลิก ~ปี 2573:</span> สลากใบจริงจะเหลือ ~54M = น้อยกว่าดิจิทัลรวม (55M) เป็นครั้งแรก
+      </p>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 3: Key Numbers ── -->
+  <div class="dark-section">
+    <h3>ตัวเลขสำคัญ — สถานะปัจจุบัน (2569) · ข้อมูลจริง</h3>
+    <div class="dark-kpi-row">
+      <div class="dark-kpi">
+        <div class="dk-label">เป๋าตัง</div>
+        <div class="dk-val" style="color:#818cf8">29M</div>
+        <div class="dk-detail">ใบ/งวด (GLO เพิ่มระหว่างงวด)</div>
+      </div>
+      <div class="dark-kpi">
+        <div class="dk-label">LotteryPlus (ข้อมูลจริง)</div>
+        <div class="dk-val" style="color:#22d3ee">6.8M</div>
+        <div class="dk-detail">ใบ/งวด · เป้าปีนี้ 10M · peak 7.1M</div>
+      </div>
+      <div class="dark-kpi">
+        <div class="dk-label">Digital รวม (actual)</div>
+        <div class="dk-val" style="color:#4ade80">35.8M</div>
+        <div class="dk-detail">ใบ/งวด (33.5% ของ 107M)</div>
+      </div>
+      <div class="dark-kpi">
+        <div class="dk-label">กระดาษจริง</div>
+        <div class="dk-val" style="color:#fb923c">71.2M</div>
+        <div class="dk-detail">ใบ/งวด (66.5%)</div>
+      </div>
+    </div>
+    <div class="dark-kpi-row">
+      <div class="dark-kpi">
+        <div class="dk-label">GLO Revenue</div>
+        <div class="dk-val" style="color:#fbbf24">174K</div>
+        <div class="dk-detail">ล้านบาท/ปี · SOE #1 9 ปีซ้อน</div>
+      </div>
+      <div class="dark-kpi">
+        <div class="dk-label">ผู้ซื้อสลากรัฐ</div>
+        <div class="dk-val" style="color:#f472b6">21.4M</div>
+        <div class="dk-detail">คน · Active digital เพียง 1.8M</div>
+      </div>
+      <div class="dark-kpi">
+        <div class="dk-label">หวยใต้ดิน</div>
+        <div class="dk-val" style="color:#f87171">164K</div>
+        <div class="dk-detail">ล้านบาท · 17-20M คนเล่น</div>
+      </div>
+      <div class="dark-kpi">
+        <div class="dk-label">PromptPay</div>
+        <div class="dk-val" style="color:#60a5fa">90M+</div>
+        <div class="dk-detail">หมายเลข · 74M ธุรกรรม/วัน</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 3.5: LP Actual Performance ── -->
+  <div class="dark-section">
+    <h3>LotteryPlus — ข้อมูลจริง (ก.ค. 66 – มี.ค. 69)</h3>
+    <div class="dark-kpi-row">
+      <div class="dark-kpi">
+        <div class="dk-label">เริ่มต้น (ก.ค. 66)</div>
+        <div class="dk-val" style="color:#818cf8;font-size:22px">79K</div>
+        <div class="dk-detail">users · 549K ใบ · AOV 6.9</div>
+      </div>
+      <div class="dark-kpi">
+        <div class="dk-label">Peak Users (ก.ค. 68)</div>
+        <div class="dk-val" style="color:#22d3ee;font-size:22px">947K</div>
+        <div class="dk-detail">users · 7.0M ใบ · AOV 7.4</div>
+      </div>
+      <div class="dark-kpi">
+        <div class="dk-label">Peak Items (ส.ค. 68)</div>
+        <div class="dk-val" style="color:#4ade80;font-size:22px">7.1M</div>
+        <div class="dk-detail">ใบ · 881K users · AOV 8.1</div>
+      </div>
+      <div class="dark-kpi">
+        <div class="dk-label">ล่าสุด (1 มี.ค. 69)</div>
+        <div class="dk-val" style="color:#fbbf24;font-size:22px">6.8M</div>
+        <div class="dk-detail">ใบ · 594K users · AOV 11.5</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:16px">
+      <div class="dark-insight" style="border-left:3px solid #22d3ee">
+        <h4 style="color:#22d3ee">Users 12x แต่ลดจาก peak</h4>
+        <p>79K → peak 947K → ปัจจุบัน ~600K<br>Users ลดแต่ volume คงที่เพราะ AOV เพิ่ม</p>
+      </div>
+      <div class="dark-insight" style="border-left:3px solid #4ade80">
+        <h4 style="color:#4ade80">Items 13x โตต่อเนื่อง</h4>
+        <p>549K → peak 7.1M → ปัจจุบัน 6.8M<br>คงที่ ~6.5-7M/งวด ตั้งแต่ปลาย 67</p>
+      </div>
+      <div class="dark-insight" style="border-left:3px solid #fbbf24">
+        <h4 style="color:#fbbf24">AOV เปลี่ยน 3 Phase</h4>
+        <p>Phase 1: AOV 10-16 (heavy buyers)<br>Phase 2: AOV 7-8 (mass adoption)<br>Phase 3: AOV 10-11 (loyal retention)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 4: 3 Scenarios ── -->
+  <div class="dp-title" style="padding-top:20px">
+    <h2>3 Scenarios — ดิจิทัลรวม (เป๋าตัง + LotteryPlus) ปี 2574</h2>
+  </div>
+  <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;padding:0 32px 40px;max-width:1200px;margin:0 auto">
+    <div class="dark-kpi" style="flex:1;min-width:260px;text-align:center;border-top:3px solid #ef4444">
+      <div class="dk-label" style="color:#f87171">Bear Case</div>
+      <div class="dk-val" style="color:#ef4444;font-size:36px">42M</div>
+      <div class="dk-detail" style="color:#ffffff60">ใบ/งวด (39%)<br>เป๋าตัง 32M + LotteryPlus 10M<br>นโยบายชะลอ LotteryPlus โตช้า</div>
+    </div>
+    <div class="dark-kpi" style="flex:1;min-width:260px;text-align:center;border-top:3px solid #fbbf24;transform:scale(1.05)">
+      <div class="dk-label" style="color:#fcd34d">Base Case</div>
+      <div class="dk-val" style="color:#fbbf24;font-size:44px">56M</div>
+      <div class="dk-detail" style="color:#ffffff60">ใบ/งวด (52%)<br>เป๋าตัง 40M + LotteryPlus 16M<br>LotteryPlus จาก 6.8M → 16M (scale ×2.4)</div>
+    </div>
+    <div class="dark-kpi" style="flex:1;min-width:260px;text-align:center;border-top:3px solid #22c55e">
+      <div class="dk-label" style="color:#4ade80">Bull Case</div>
+      <div class="dk-val" style="color:#22c55e;font-size:36px">76M+</div>
+      <div class="dk-detail" style="color:#ffffff60">ใบ/งวด (71%+)<br>เป๋าตัง 50M + LotteryPlus 25M+<br>+ Lotto-style → "จุดพลิก"</div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 5: TAM ── -->
+  <div class="dp-title" style="padding-top:0">
+    <h2>Total Addressable Market — ดิจิทัล</h2>
+    <p>มูลค่าตลาดสลากดิจิทัล ถ้า Base Case เป็นจริง</p>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:center;gap:clamp(16px,3vw,40px);padding:20px 32px 60px;flex-wrap:wrap;max-width:1000px;margin:0 auto">
+    <div style="text-align:center">
+      <div style="width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,#818cf8,#6366f1);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 40px #6366f140">
+        <div style="font-size:24px;font-weight:800;color:#fff">6.9 หมื่น</div>
+        <div style="font-size:11px;color:#ffffffbb">ล้านบาท</div>
+      </div>
+      <div style="font-size:12px;color:#ffffff60;margin-top:12px">ปัจจุบัน (2569)</div>
+      <div style="font-size:10px;color:#ffffff40">29M+6.8M = 35.8M</div>
+    </div>
+    <div style="font-size:32px;color:#fbbf24">&#x27A1;</div>
+    <div style="text-align:center">
+      <div style="width:200px;height:200px;border-radius:50%;background:linear-gradient(135deg,#fbbf24,#d97706);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 50px #fbbf2440">
+        <div style="font-size:32px;font-weight:800;color:#fff">1.08 แสน</div>
+        <div style="font-size:12px;color:#ffffffcc">ล้านบาท/ปี</div>
+      </div>
+      <div style="font-size:12px;color:#ffffff60;margin-top:12px">Base Case (2574)</div>
+      <div style="font-size:10px;color:#ffffff40">40M+16M = 56M</div>
+    </div>
+    <div style="font-size:32px;color:#22c55e">&#x27A1;</div>
+    <div style="text-align:center">
+      <div style="width:240px;height:240px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 60px #22c55e40">
+        <div style="font-size:32px;font-weight:800;color:#fff">1.46 แสน+</div>
+        <div style="font-size:12px;color:#ffffffcc">ล้านบาท/ปี</div>
+      </div>
+      <div style="font-size:12px;color:#ffffff60;margin-top:12px">Bull Case (2574)</div>
+      <div style="font-size:10px;color:#ffffff40">50M+25M+Lotto = 76M+</div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 6: Key Takeaways ── -->
+  <div class="dark-section">
+    <h3>Key Takeaways</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+      <div class="dark-insight" style="border-left:3px solid #4ade80">
+        <h4 style="color:#4ade80">&#x2460; Supply-Constrained</h4>
+        <p>สลากดิจิทัลขายหมดทุกงวด (sell-through >99%) ปัญหาคือ supply ไม่พอ ไม่ใช่ demand ไม่มี</p>
+      </div>
+      <div class="dark-insight" style="border-left:3px solid #22d3ee">
+        <h4 style="color:#22d3ee">&#x2461; LotteryPlus ขาย 6.8M จริง — เป้า 10M</h4>
+        <p>LotteryPlus ซื้อสลากใบมาขายดิจิทัล ปัจจุบัน 6.8M/งวด (peak 7.1M) เป้าปี 69 = 10M — เร่ง digital shift โดยไม่ต้องรอ GLO</p>
+      </div>
+      <div class="dark-insight" style="border-left:3px solid #818cf8">
+        <h4 style="color:#818cf8">&#x2462; Digital ถึง 33.5% (actual)</h4>
+        <p>เป๋าตัง 29M + LotteryPlus 6.8M = 35.8M (33.5% ของ 107M) LotteryPlus users peak 947K แต่ AOV เพิ่มจาก 7 → 11.5 ใบ/คน</p>
+      </div>
+      <div class="dark-insight" style="border-left:3px solid #fbbf24">
+        <h4 style="color:#fbbf24">&#x2463; TAM 1.08 แสนล้านบาท (Base)</h4>
+        <p>Base Case: ดิจิทัล 56M × 80 บาท × 24 งวด = 107,520 ล้านบาท/ปี ภายปี 2574</p>
+      </div>
+      <div class="dark-insight" style="border-left:3px solid #f472b6">
+        <h4 style="color:#f472b6">&#x2464; Underground = Blue Ocean</h4>
+        <p>หวยใต้ดิน 164,000 ล้านบาท ผู้เล่น 17-20M คน ถ้า Lotto-style ดึงมาได้ = ตลาดโตอีกเท่าตัว</p>
+      </div>
+      <div class="dark-insight" style="border-left:3px solid #fb923c">
+        <h4 style="color:#fb923c">&#x2465; Infra พร้อม 100%</h4>
+        <p>Mobile Banking 97% · PromptPay 90M+ · QR อันดับ 3 โลก · Internet 91.2% — ไม่มี friction</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 7: Growth Drivers Bubbles ── -->
+  <div class="dp-title" style="padding-top:20px">
+    <h2>Triple Growth Engine</h2>
+    <p>3 แรงขับเคลื่อนที่ทำให้ดิจิทัลโตเร็วกว่าที่คาด</p>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:center;gap:clamp(20px,4vw,50px);padding:20px 32px 60px;flex-wrap:wrap;max-width:1000px;margin:0 auto">
+    <div style="text-align:center">
+      <div style="width:180px;height:180px;border-radius:50%;background:linear-gradient(135deg,#818cf8,#6366f1);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 40px #6366f140;padding:16px">
+        <div style="font-size:18px;font-weight:800;color:#fff">GLO</div>
+        <div style="font-size:13px;color:#ffffffbb;margin-top:4px">เพิ่มโควตาดิจิทัล<br>29M → 50M</div>
+      </div>
+    </div>
+    <div style="font-size:28px;color:#fbbf24">+</div>
+    <div style="text-align:center">
+      <div style="width:180px;height:180px;border-radius:50%;background:linear-gradient(135deg,#22d3ee,#0891b2);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 40px #0891b240;padding:16px">
+        <div style="font-size:18px;font-weight:800;color:#fff">LotteryPlus</div>
+        <div style="font-size:13px;color:#ffffffbb;margin-top:4px">ซื้อใบ→ดิจิทัล<br>6.8M → 16M+</div>
+      </div>
+    </div>
+    <div style="font-size:28px;color:#fbbf24">+</div>
+    <div style="text-align:center">
+      <div style="width:180px;height:180px;border-radius:50%;background:linear-gradient(135deg,#f472b6,#ec4899);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 40px #ec489940;padding:16px">
+        <div style="font-size:18px;font-weight:800;color:#fff">Lotto-style</div>
+        <div style="font-size:13px;color:#ffffffbb;margin-top:4px">Jackpot ใหม่<br>ดึงหวยใต้ดิน</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dark-footer">
+    <p>Thai Lottery Online — Executive Summary</p>
+    <p style="margin-top:4px">ข้อมูล: GLO, สำนักงานสลาก, Bangkok Post, ThaiPublica, ศูนย์ศึกษาปัญหาการพนัน จุฬาฯ, ธปท., DataReportal</p>
+    <p id="genDate2" style="margin-top:8px"></p>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 9: Growth Strategy ══════════════ -->
+<div class="page" id="p8">
+  <div class="slide" style="min-height:auto;padding:24px 0">
+    <div class="slide-title">Growth Strategy</div>
+    <div class="slide-h1">LotteryPlus: เส้นทางสู่ 10M ใบ/งวด</div>
+    <div class="slide-sub">ปัจจุบัน <strong style="color:#dc2626;font-size:20px">6.4M</strong> ใบ/งวด → เป้าหมาย <strong style="color:#22c55e;font-size:20px">10M</strong> ใบ/งวด = ต้องเพิ่มอีก <strong style="color:#f97316;font-size:20px">+55%</strong><br>วิเคราะห์จากข้อมูลจริง 65 งวด (ก.ค. 2566 – มี.ค. 2569) เพื่อหาทางเดินที่เป็นไปได้มากที่สุด</div>
+  </div>
+
+  <!-- ── COMPETITIVE LANDSCAPE ── -->
+  <h2 style="font-size:22px;font-weight:800;color:#6d5c3e;margin:0 0 16px">เปรียบเทียบ LotteryPlus vs เป๋าตัง — รู้จักสนามก่อนวางแผน</h2>
+
+  <div class="chart-section" style="margin-top:0">
+    <h3>Head-to-Head Comparison</h3>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;line-height:1.8">
+        <thead>
+          <tr style="background:#f5f0e8">
+            <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6d5c3e;border-bottom:2px solid #d5cfc4;width:22%"></th>
+            <th style="padding:12px 16px;text-align:center;font-weight:800;color:#0891b2;border-bottom:2px solid #d5cfc4;width:39%">LotteryPlus</th>
+            <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6366f1;border-bottom:2px solid #d5cfc4;width:39%">เป๋าตัง (GLO)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:10px 16px;font-weight:700;color:#6d5c3e;border-bottom:1px solid #e8e2d8">ราคา</td>
+            <td style="padding:10px 16px;text-align:center;border-bottom:1px solid #e8e2d8"><span style="color:#dc2626;font-weight:700">~105 บาท</span><br><span style="font-size:11px;color:#8a7e6e">80 + ค่าตู้เซฟ 25 บาท</span></td>
+            <td style="padding:10px 16px;text-align:center;border-bottom:1px solid #e8e2d8"><span style="color:#059669;font-weight:700">80 บาท</span><br><span style="font-size:11px;color:#8a7e6e">ราคาตามกฎหมาย</span></td></tr>
+          <tr style="background:#faf8f4"><td style="padding:10px 16px;font-weight:700;color:#6d5c3e;border-bottom:1px solid #e8e2d8">เลือกเลข</td>
+            <td style="padding:10px 16px;text-align:center;border-bottom:1px solid #e8e2d8"><span style="color:#059669;font-weight:700">เลือกได้สะดวก</span><br><span style="font-size:11px;color:#8a7e6e">เห็นภาพสลากจริง ไม่ต้องแย่งกด</span></td>
+            <td style="padding:10px 16px;text-align:center;border-bottom:1px solid #e8e2d8"><span style="color:#f97316;font-weight:700">ได้ แต่แย่งกด</span><br><span style="font-size:11px;color:#8a7e6e">เลขดังหมดในไม่กี่วินาที ระบบค้าง</span></td></tr>
+          <tr><td style="padding:10px 16px;font-weight:700;color:#6d5c3e;border-bottom:1px solid #e8e2d8">ความน่าเชื่อถือ</td>
+            <td style="padding:10px 16px;text-align:center;border-bottom:1px solid #e8e2d8"><span style="color:#f97316;font-weight:700">ปานกลาง</span><br><span style="font-size:11px;color:#8a7e6e">เอกชน · เคยถูกสั่งปิด (กองสลากพลัส)</span></td>
+            <td style="padding:10px 16px;text-align:center;border-bottom:1px solid #e8e2d8"><span style="color:#059669;font-weight:700">สูงมาก</span><br><span style="font-size:11px;color:#8a7e6e">GLO + กรุงไทย · รัฐค้ำประกัน</span></td></tr>
+          <tr style="background:#faf8f4"><td style="padding:10px 16px;font-weight:700;color:#6d5c3e;border-bottom:1px solid #e8e2d8">ขึ้นเงินรางวัล</td>
+            <td style="padding:10px 16px;text-align:center;border-bottom:1px solid #e8e2d8"><span style="color:#059669;font-weight:700">โอนเข้าบัญชี ≤2 ชม.</span><br><span style="font-size:11px;color:#8a7e6e">โอนภายใน 2 ชม. หลังผลออก · ไม่หักค่าธรรมเนียม</span></td>
+            <td style="padding:10px 16px;text-align:center;border-bottom:1px solid #e8e2d8"><span style="color:#059669;font-weight:700">อัตโนมัติ</span><br><span style="font-size:11px;color:#8a7e6e">เงินเข้าเป๋าตังเลย (เสีย 1%)</span></td></tr>
+          <tr><td style="padding:10px 16px;font-weight:700;color:#6d5c3e;border-bottom:1px solid #e8e2d8">ขยาย Supply</td>
+            <td style="padding:10px 16px;text-align:center;border-bottom:1px solid #e8e2d8"><span style="color:#059669;font-weight:700">ขยายเองได้</span><br><span style="font-size:11px;color:#8a7e6e">ซื้อสลากใบจากตัวแทน · ไม่มีเพดาน GLO</span></td>
+            <td style="padding:10px 16px;text-align:center;border-bottom:1px solid #e8e2d8"><span style="color:#dc2626;font-weight:700">ขึ้นกับ GLO</span><br><span style="font-size:11px;color:#8a7e6e">ต้องรอนโยบายเพิ่มโควตา</span></td></tr>
+          <tr style="background:#faf8f4"><td style="padding:10px 16px;font-weight:700;color:#6d5c3e;border-bottom:1px solid #e8e2d8">Volume ปัจจุบัน</td>
+            <td style="padding:10px 16px;text-align:center;border-bottom:1px solid #e8e2d8"><span style="color:#0891b2;font-weight:700">~6.8M ใบ/งวด</span><br><span style="font-size:11px;color:#8a7e6e">611K users · AOV 10.5</span></td>
+            <td style="padding:10px 16px;text-align:center;border-bottom:1px solid #e8e2d8"><span style="color:#6366f1;font-weight:700">29M ใบ/งวด</span><br><span style="font-size:11px;color:#8a7e6e">ผู้ใช้หลายล้านคน</span></td></tr>
+          <tr><td style="padding:10px 16px;font-weight:700;color:#6d5c3e;border-bottom:1px solid #e8e2d8">ช่องทางชำระ</td>
+            <td style="padding:10px 16px;text-align:center;border-bottom:1px solid #e8e2d8"><span style="color:#059669;font-weight:700">ทุกธนาคาร</span><br><span style="font-size:11px;color:#8a7e6e">โอนจากบัญชีไหนก็ได้</span></td>
+            <td style="padding:10px 16px;text-align:center;border-bottom:1px solid #e8e2d8"><span style="color:#f97316;font-weight:700">กรุงไทยเท่านั้น</span><br><span style="font-size:11px;color:#8a7e6e">ต้องผูกบัญชี KTB กับเป๋าตัง</span></td></tr>
+          <tr style="background:#faf8f4"><td style="padding:10px 16px;font-weight:700;color:#6d5c3e">ความเร็ว UX/Marketing</td>
+            <td style="padding:10px 16px;text-align:center"><span style="color:#059669;font-weight:700">เร็ว (เอกชน)</span><br><span style="font-size:11px;color:#8a7e6e">ปรับ UX, ทำโปรโมชั่นได้ทันที</span></td>
+            <td style="padding:10px 16px;text-align:center"><span style="color:#dc2626;font-weight:700">ช้า (ราชการ)</span><br><span style="font-size:11px;color:#8a7e6e">ต้องผ่านกระบวนการราชการ</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── SWOT LotteryPlus ── -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:16px 0">
+    <div class="chart-section" style="margin:0;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:2px solid #86efac">
+      <h3 style="color:#059669;margin-bottom:12px">Strengths — จุดแข็ง LotteryPlus</h3>
+      <ul style="font-size:13px;color:#374151;line-height:2.2;padding-left:18px">
+        <li><strong>เลือกเลขได้อิสระ</strong> — เห็นภาพสลากจริง เลือกเลขมงคลได้ไม่ต้องแย่งกด คนไทยชอบ "เลือกเลขเอง"</li>
+        <li><strong>ขยาย supply ได้เอง</strong> — ไม่ต้องรอ GLO อนุมัติ ซื้อจากตัวแทน 165,988 รายได้เลย</li>
+        <li><strong>Agile</strong> — เปลี่ยน UX, ทำโปรโมชั่น, ปรับราคาได้ภายในวัน</li>
+        <li><strong>ทุกธนาคาร</strong> — ไม่ล็อคกรุงไทย เข้าถึงคนได้กว้างกว่า</li>
+        <li><strong>First mover</strong> — เป็นเอกชนรายแรกที่ทำ model ซื้อใบ→ขายดิจิทัล</li>
+        <li><strong>ขึ้นเงินเร็ว ≤2 ชม. ไม่หักค่าธรรมเนียม</strong> — โอนเงินรางวัลเข้าบัญชีภายใน 2 ชม. หลังผลออก ไม่หักค่าธรรมเนียมใดๆ</li>
+      </ul>
+    </div>
+    <div class="chart-section" style="margin:0;background:linear-gradient(135deg,#fef2f2,#fee2e2);border:2px solid #fca5a5">
+      <h3 style="color:#dc2626;margin-bottom:12px">Weaknesses — จุดอ่อน LotteryPlus</h3>
+      <ul style="font-size:13px;color:#374151;line-height:2.2;padding-left:18px">
+        <li><strong>ราคาแพงกว่า +31%</strong> — 105 vs 80 บาท เป็นเหตุผลหลักที่คนไม่ซื้อ</li>
+        <li><strong>ความน่าเชื่อถือ</strong> — เคยถูกสั่งปิด (กองสลากพลัส) ยังมีภาพลบ</li>
+        <li><strong>Margin บาง</strong> — ค่าบริการ 25 บาท/ใบ ต้อง cover ต้นทุนทั้งหมด</li>
+        <li><strong>Users กำลังลด</strong> — จาก 947K → 611K ลดลง 35% ใน 8 เดือน</li>
+      </ul>
+    </div>
+    <div class="chart-section" style="margin:0;background:linear-gradient(135deg,#eff6ff,#dbeafe);border:2px solid #93c5fd">
+      <h3 style="color:#2563eb;margin-bottom:12px">Opportunities — โอกาส</h3>
+      <ul style="font-size:13px;color:#374151;line-height:2.2;padding-left:18px">
+        <li><strong>ผู้ซื้อสลาก 21.4M คน</strong> — digital penetration แค่ 8% ตลาดยังเปิดกว้าง</li>
+        <li><strong>คนซื้อกระดาษ 100-120 บาท</strong> — 105 บาทยัง "ถูกกว่า" แผงทั่วไป</li>
+        <li><strong>ตัวแทนต่างจังหวัดขายยาก</strong> — เป็น supplier ที่พร้อมขายให้ LotteryPlus</li>
+        <li><strong>GLO ยังไม่ทำ Lotto/Jackpot</strong> — ถ้า LotteryPlus ทำ value-added ก่อน จะได้เปรียบ</li>
+        <li><strong>Subscription model</strong> — ยังไม่มีใครทำ auto-buy สลากในไทย</li>
+      </ul>
+    </div>
+    <div class="chart-section" style="margin:0;background:linear-gradient(135deg,#fffbeb,#fef3c7);border:2px solid #fcd34d">
+      <h3 style="color:#d97706;margin-bottom:12px">Threats — ภัยคุกคาม</h3>
+      <ul style="font-size:13px;color:#374151;line-height:2.2;padding-left:18px">
+        <li><strong>GLO อาจจำกัดการซื้อใบไปขาย</strong> — เปลี่ยนกฎได้ทุกเมื่อ</li>
+        <li><strong>เป๋าตังเพิ่มโควตาเรื่อยๆ</strong> — จาก 5M → 29M ถ้าเพิ่มอีก คนอาจเลือกของถูกกว่า</li>
+        <li><strong>คู่แข่งเอกชนรายอื่น</strong> — model เดียวกันทำตามได้ง่าย</li>
+        <li><strong>ภาพลักษณ์ "ขายเกินราคา"</strong> — สื่อและภาครัฐอาจกดดัน</li>
+        <li><strong>เศรษฐกิจชะลอ</strong> — คนอาจลดการซื้อสลาก หรือเลือกช่องทางถูกกว่า</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── WHAT SWOT TELLS US ── -->
+  <div class="chart-section" style="background:linear-gradient(135deg,#faf5ff,#f3e8ff);border:2px solid #c4b5fd">
+    <h3 style="color:#7c3aed">SWOT บอกอะไร? — จุดอ่อนที่ต้องแก้เพื่อไป 10M</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:12px">
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #dc2626">
+        <div style="font-size:13px;font-weight:800;color:#dc2626;margin-bottom:4px">ปัญหา #1: ราคา 105 บาท → แพงกว่าเป๋าตัง 31%</div>
+        <p style="font-size:13px;color:#64748b;line-height:1.7"><strong>แต่</strong> กระดาษตามแผงขาย 100-120 บาท → LotteryPlus ยัง "ถูกกว่าแผง" เพราะคน 80% ของตลาดยังซื้อจากแผงอยู่<br>
+        <strong>กลยุทธ์:</strong> ไม่ต้องสู้กับเป๋าตัง (80 บาท) — สู้กับ "แผงกระดาษ" (100-120 บาท) แทน<br>
+        <strong>Message:</strong> "ถูกกว่าแผง เลือกเลขได้ ส่งถึงบ้าน"</p>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #f97316">
+        <div style="font-size:13px;font-weight:800;color:#f97316;margin-bottom:4px">ปัญหา #2: Users ลดจาก 947K → 611K</div>
+        <p style="font-size:13px;color:#64748b;line-height:1.7"><strong>แต่</strong> AOV เพิ่มจาก 7 → 10.5 = คนที่เหลือซื้อเยอะขึ้น กลุ่ม loyal ชัดเจน<br>
+        <strong>กลยุทธ์:</strong> 2 แนวรบ — (1) รักษา loyal ด้วย subscription + rewards (2) ดึง churned users กลับด้วย re-engagement<br>
+        <strong>เป้า:</strong> กลับมา 800K users = เพิ่มอีก 190K คน</p>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #0891b2">
+        <div style="font-size:13px;font-weight:800;color:#0891b2;margin-bottom:4px">จุดแข็ง #2: ขึ้นเงินเร็ว ≤2 ชม. — ต้องสื่อสารให้ดัง</div>
+        <p style="font-size:13px;color:#64748b;line-height:1.7"><strong>ข้อเท็จจริง:</strong> LotteryPlus โอนเงินรางวัลเข้าบัญชีภายใน 2 ชม. หลังผลออก และไม่หักค่าธรรมเนียม เทียบเป๋าตังที่หัก 1%<br>
+        <strong>กลยุทธ์:</strong> ใช้เป็น key message — "ถูกรางวัล เงินเข้าใน 2 ชม. ไม่หัก 1%"<br>
+        <strong>Impact:</strong> ลดความกังวลเรื่องความน่าเชื่อถือ + สร้างจุดขายที่ชัดเจนเหนือเป๋าตัง</p>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #059669">
+        <div style="font-size:13px;font-weight:800;color:#059669;margin-bottom:4px">จุดแข็งที่ต้อง Double Down</div>
+        <p style="font-size:13px;color:#64748b;line-height:1.7"><strong>"เลือกเลขได้"</strong> คือ competitive advantage #1 — เป๋าตังแย่งกดเลขดัง LotteryPlus ไม่ต้อง<br>
+        <strong>กลยุทธ์:</strong> เน้น marketing บน "สิทธิ์เลือก" — เลขมงคล, เลขเด็ด, เลขวันเกิด<br>
+        <strong>Message:</strong> "เป๋าตังกดไม่ทัน? ที่นี่มีเลขให้เลือก"</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COMPETITIVE POSITIONING CHART ── -->
+  <div class="chart-section">
+    <h3>Competitive Positioning: LotteryPlus อยู่ตรงไหนในตลาด</h3>
+    <div class="chart-wrap" style="height:380px">
+      <canvas id="positionChart"></canvas>
+    </div>
+  </div>
+
+  <!-- ── GAP ANALYSIS ── -->
+  <div class="chart-section" style="background:linear-gradient(135deg,#fef2f2,#fff1f2);border:2px solid #fecaca">
+    <h3 style="color:#dc2626">Gap Analysis: จาก 6.4M สู่ 10M</h3>
+    <div class="kpi-row">
+      <div class="kpi-card" style="border-left:4px solid #dc2626">
+        <div class="k-label">ปัจจุบัน (2569 avg)</div>
+        <div class="k-val" style="color:#dc2626">6.4M</div>
+        <div class="k-detail">ใบ/งวด · 611K users · AOV 10.5</div>
+      </div>
+      <div class="kpi-card" style="border-left:4px solid #f97316">
+        <div class="k-label">Gap ที่ต้องปิด</div>
+        <div class="k-val" style="color:#f97316">+3.6M</div>
+        <div class="k-detail">ใบ/งวด (+55% จากปัจจุบัน)</div>
+      </div>
+      <div class="kpi-card" style="border-left:4px solid #22c55e">
+        <div class="k-label">เป้าหมาย</div>
+        <div class="k-val" style="color:#22c55e">10M</div>
+        <div class="k-detail">ใบ/งวด (ขั้นต่ำ)</div>
+      </div>
+      <div class="kpi-card" style="border-left:4px solid #6366f1">
+        <div class="k-label">สูตร Items</div>
+        <div class="k-val" style="color:#6366f1;font-size:18px">Users × AOV</div>
+        <div class="k-detail">ต้องดัน Users หรือ AOV หรือทั้งคู่</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── KEY FINDING ── -->
+  <div class="chart-section" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:2px solid #86efac">
+    <h3 style="color:#059669">Key Finding: เคยเกือบถึง 10M แล้ว!</h3>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <div class="insight-card" style="flex:1;min-width:260px;border-left:4px solid #059669">
+        <h4 style="color:#059669">Peak Users × AOV ปัจจุบัน = 10.1M</h4>
+        <p>เคยมี users สูงสุด <strong>947K</strong> (ก.ค. 68) ถ้า users กลับมาระดับนั้นพร้อม AOV 10.7 ปัจจุบัน → ได้ <strong style="color:#059669">10.1M ใบ</strong> ทันที<br><br>
+        แปลว่า <strong>ไม่ต้องสร้างอะไรใหม่ — แค่ดึง users เก่ากลับมาก็เพียงพอ</strong></p>
+      </div>
+      <div class="insight-card" style="flex:1;min-width:260px;border-left:4px solid #0891b2">
+        <h4 style="color:#0891b2">Best Draw: 7.14M (เม.ย. 67)</h4>
+        <p>งวดที่ขายดีที่สุด: <strong>7.14M ใบ</strong> แต่มีแค่ 452K users (AOV 15.8)<br><br>
+        ถ้าได้ users ระดับ 900K + AOV 15.8 = <strong style="color:#0891b2">14.2M ใบ</strong><br>
+        → headroom ยังเหลืออีกมาก ไม่ได้ติดเพดาน</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 4 PATHS TO 10M ── -->
+  <h2 style="font-size:22px;font-weight:800;color:#6d5c3e;margin:32px 0 16px">4 เส้นทางสู่ 10M ใบ/งวด</h2>
+
+  <div class="chart-section">
+    <h3>Scenario Matrix: Users × AOV = 10M</h3>
+    <div class="chart-wrap tall">
+      <canvas id="scenarioMatrix"></canvas>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin:16px 0">
+    <div class="chart-section" style="margin:0;background:linear-gradient(135deg,#eff6ff,#dbeafe);border:2px solid #93c5fd">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="width:36px;height:36px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">A</div>
+        <h3 style="color:#2563eb;margin:0">Win Back Users</h3>
+      </div>
+      <div style="font-size:28px;font-weight:800;color:#2563eb;margin:8px 0">950K users × AOV 10.5</div>
+      <p style="font-size:13px;color:#64748b;line-height:1.7">ดึง users เก่ากลับมา ~340K คน เคยมี 947K users แล้วใน ก.ค. 68 พิสูจน์ว่าทำได้<br><br>
+      <strong>ความยาก: ★★☆☆☆</strong> — users เคยมาแล้ว ปัญหาคือ retention<br>
+      <strong>Action:</strong> Re-engagement campaign, Push notification, ลดขั้นตอนการซื้อ</p>
+    </div>
+
+    <div class="chart-section" style="margin:0;background:linear-gradient(135deg,#fdf4ff,#fae8ff);border:2px solid #d8b4fe">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="width:36px;height:36px;border-radius:50%;background:#8b5cf6;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">B</div>
+        <h3 style="color:#7c3aed;margin:0">Push AOV</h3>
+      </div>
+      <div style="font-size:28px;font-weight:800;color:#7c3aed;margin:8px 0">610K users × AOV 16.4</div>
+      <p style="font-size:13px;color:#64748b;line-height:1.7">เพิ่ม AOV จาก 10.5 → 16.4 โดยไม่ต้องเพิ่ม users ช่วง เม.ย. 67 เคยทำ AOV 16.2 ได้<br><br>
+      <strong>ความยาก: ★★★★☆</strong> — ต้องเปลี่ยนพฤติกรรมซื้อ<br>
+      <strong>Action:</strong> Bundle deals, loyalty program, ส่วนลดซื้อเยอะ</p>
+    </div>
+
+    <div class="chart-section" style="margin:0;background:linear-gradient(135deg,#f0fdfa,#ccfbf1);border:2px solid #5eead4">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="width:36px;height:36px;border-radius:50%;background:#0d9488;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">C</div>
+        <h3 style="color:#0d9488;margin:0">Balanced Growth</h3>
+      </div>
+      <div style="font-size:28px;font-weight:800;color:#0d9488;margin:8px 0">800K users × AOV 12.5</div>
+      <p style="font-size:13px;color:#64748b;line-height:1.7">เพิ่มทั้ง users (+31%) และ AOV (+19%) พร้อมกัน ทั้งสองตัวเลขเคยทำได้จริงในอดีต<br><br>
+      <strong>ความยาก: ★★★☆☆</strong> — realistic ที่สุด<br>
+      <strong>Action:</strong> ขยาย supply + เพิ่ม feature กระตุ้นซื้อเพิ่ม</p>
+    </div>
+
+    <div class="chart-section" style="margin:0;background:linear-gradient(135deg,#fffbeb,#fef3c7);border:2px solid #fcd34d">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="width:36px;height:36px;border-radius:50%;background:#d97706;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">D</div>
+        <h3 style="color:#d97706;margin:0">Power Users Focus</h3>
+      </div>
+      <div style="font-size:28px;font-weight:800;color:#d97706;margin:8px 0">770K users × AOV 13</div>
+      <p style="font-size:13px;color:#64748b;line-height:1.7">โฟกัสสร้าง power users — คนที่ซื้อ 13+ ใบ/งวด เคยมี users ช่วง 700K+ อยู่แล้ว<br><br>
+      <strong>ความยาก: ★★★☆☆</strong> — กลยุทธ์ loyalty-driven<br>
+      <strong>Action:</strong> Tier rewards, exclusive picks, auto-buy subscription</p>
+    </div>
+  </div>
+
+  <!-- ── RECOMMENDED STRATEGY ── -->
+  <div class="chart-section" style="background:linear-gradient(135deg,#fefce8,#fef9c3);border:2px solid #fde047;margin-top:24px">
+    <h3 style="color:#a16207">แนะนำ: Path C — Balanced Growth (800K × 12.5 = 10M)</h3>
+    <p style="font-size:14px;color:#78716c;line-height:1.8;margin-bottom:16px">เส้นทาง C เป็น path ที่ realistic ที่สุด เพราะทุกตัวเลขเคยทำได้จริงในอดีต ไม่ต้องพึ่ง extreme scenario ด้านใดด้านเดียว</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:180px;background:#fff;border-radius:12px;padding:16px;border-left:4px solid #059669">
+        <div style="font-size:12px;color:#059669;font-weight:700">Users: 611K → 800K</div>
+        <div style="font-size:24px;font-weight:800;color:#059669">+31%</div>
+        <div style="font-size:12px;color:#6b7280">เคยแตะ 800K+ ถึง 14 งวด (ก.พ.–ธ.ค. 68)<br>→ พิสูจน์แล้วว่าทำได้</div>
+      </div>
+      <div style="flex:1;min-width:180px;background:#fff;border-radius:12px;padding:16px;border-left:4px solid #0891b2">
+        <div style="font-size:12px;color:#0891b2;font-weight:700">AOV: 10.5 → 12.5</div>
+        <div style="font-size:24px;font-weight:800;color:#0891b2">+19%</div>
+        <div style="font-size:12px;color:#6b7280">ค่าเฉลี่ย AOV ปี 67 = 11.7 ใบ/คน<br>→ แค่ดันขึ้นอีกนิดจากที่เคยทำ</div>
+      </div>
+      <div style="flex:1;min-width:180px;background:#fff;border-radius:12px;padding:16px;border-left:4px solid #6366f1">
+        <div style="font-size:12px;color:#6366f1;font-weight:700">Items Result</div>
+        <div style="font-size:24px;font-weight:800;color:#6366f1">10M</div>
+        <div style="font-size:12px;color:#6b7280">800K × 12.5 = 10,000,000 ใบ/งวด<br>→ ปิด gap 3.6M</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 6 STRATEGIC LEVERS ── -->
+  <h2 style="font-size:22px;font-weight:800;color:#6d5c3e;margin:32px 0 16px">6 กลยุทธ์หลักที่ต้องทำ</h2>
+
+  <div class="insight-grid">
+    <div class="insight-card" style="border-left:4px solid #dc2626">
+      <div class="i-num" style="background:#dc2626">01</div>
+      <h4 style="color:#dc2626">Re-engage Churned Users</h4>
+      <p><strong>ปัญหา:</strong> Users ลดจาก 947K → 610K = หายไป ~337K คน<br>
+      <strong>โอกาส:</strong> คนเหล่านี้เคยลงทะเบียนและซื้อแล้ว ต้นทุน re-engage ต่ำกว่า acquire ใหม่<br><br>
+      <strong>Action:</strong><br>
+      — Push notification ก่อนงวด 3 วัน "สลากพร้อมแล้ว"<br>
+      — Win-back offer: ซื้อครั้งแรกหลังห่าง 3 งวด ได้สิทธิ์ลุ้นรางวัลพิเศษ<br>
+      — สรุปผลรางวัลที่ตรงกับเลขที่เคยซื้อ ("เลขที่คุณชอบ XX ถูกรางวัล")<br><br>
+      <strong>เป้า:</strong> ดึงกลับ 190K คน (56% ของ churned) = 800K users<br>
+      <strong>Impact:</strong> +190K × 10.5 AOV = <strong>+2.0M ใบ</strong></p>
+    </div>
+
+    <div class="insight-card" style="border-left:4px solid #2563eb">
+      <div class="i-num" style="background:#2563eb">02</div>
+      <h4 style="color:#2563eb">ขยาย Supply — ซื้อสลากใบจากตัวแทนเพิ่ม</h4>
+      <p><strong>ปัญหา:</strong> ขายได้ ~6.8M แต่ต้องมีของพอขาย 10M+ = ต้องจัดซื้อเพิ่ม 47%<br>
+      <strong>โอกาส:</strong> ตัวแทนกระดาษ 165,988 ราย ไม่ได้ขายหมดทุกใบ มี surplus<br><br>
+      <strong>Action:</strong><br>
+      — เพิ่มจำนวน suppliers (ตัวแทนที่ขายให้ LotteryPlus)<br>
+      — Guarantee purchase agreement — รับซื้อขั้นต่ำแลกส่วนลด<br>
+      — ขยายพื้นที่จัดซื้อจากต่างจังหวัด (ตัวแทนต่างจังหวัดขายยากกว่า)<br><br>
+      <strong>เป้า:</strong> Supply พร้อมรองรับ 10M+ ใบ/งวด<br>
+      <strong>Impact:</strong> ปลดล็อค supply constraint</p>
+    </div>
+
+    <div class="insight-card" style="border-left:4px solid #059669">
+      <div class="i-num" style="background:#059669">03</div>
+      <h4 style="color:#059669">เพิ่ม AOV ด้วย Bundle & Incentive</h4>
+      <p><strong>ปัญหา:</strong> AOV ปี 68 ตกเหลือ 7-8 (mass adoption) → ปี 69 ขึ้นมา 10-11 แต่ยังไม่พอ<br>
+      <strong>โอกาส:</strong> เคยทำ AOV 14-16 ได้ (มี.ค.–เม.ย. 67) ด้วย users เพียง 450K<br><br>
+      <strong>Action:</strong><br>
+      — Bundle "ซื้อ 10 แถม สิทธิ์ลุ้นเพิ่ม" / "ซื้อ 15 ได้ส่วนลด"<br>
+      — แสดง "คนส่วนใหญ่ซื้อ 12 ใบ" (social proof + anchor สูง)<br>
+      — Auto-suggestion: "เลขที่คุณสนใจยังมีอีก 5 ใบ เพิ่มเลย?"<br><br>
+      <strong>เป้า:</strong> AOV จาก 10.5 → 12.5 (+19%)<br>
+      <strong>Impact:</strong> 800K × (+2 AOV) = <strong>+1.6M ใบ</strong></p>
+    </div>
+
+    <div class="insight-card" style="border-left:4px solid #8b5cf6">
+      <div class="i-num" style="background:#8b5cf6">04</div>
+      <h4 style="color:#8b5cf6">Subscription / Auto-buy</h4>
+      <p><strong>ปัญหา:</strong> Users ต้องกลับมาเลือกเลขใหม่ทุกงวด → ลืม/ขี้เกียจ → churn<br>
+      <strong>โอกาส:</strong> Orders/user = 1.63 = ซื้อเฉลี่ย 1.6 ครั้ง/งวด แสดงว่าซื้อหลายรอบอยู่แล้ว<br><br>
+      <strong>Action:</strong><br>
+      — "เลขประจำ" — ระบบซื้อเลขที่ชอบให้อัตโนมัติทุกงวด<br>
+      — "แพ็คเกจงวดละ X ใบ" — ตัดเงินอัตโนมัติ<br>
+      — "สมัครสมาชิก VIP" — ได้สิทธิ์เลือกเลขก่อน<br><br>
+      <strong>เป้า:</strong> Subscription users 100K คน × 15 ใบ/งวด<br>
+      <strong>Impact:</strong> Lock-in <strong>1.5M ใบ/งวด</strong> แบบ recurring</p>
+    </div>
+
+    <div class="insight-card" style="border-left:4px solid #ec4899">
+      <div class="i-num" style="background:#ec4899">05</div>
+      <h4 style="color:#ec4899">ขยายฐานลูกค้าใหม่ — ต่างจังหวัด & Gen Z</h4>
+      <p><strong>ปัญหา:</strong> ฐานลูกค้าปัจจุบันอาจ saturated ในกรุงเทพ/เมืองใหญ่<br>
+      <strong>โอกาส:</strong> ผู้ซื้อสลากรัฐ 21.4M คน แต่ active digital เพียง 1.8M = penetration แค่ 8%<br><br>
+      <strong>Action:</strong><br>
+      — Partnership กับ TikTok/LINE: "ซื้อสลากผ่าน LINE" (คนต่างจังหวัดใช้ LINE ทุกวัน)<br>
+      — Influencer campaign: รีวิวซื้อสลากออนไลน์ เน้นความสะดวก<br>
+      — Agent referral: ตัวแทนกระดาษแนะนำลูกค้าซื้อ online ได้คอมมิชชั่น<br><br>
+      <strong>เป้า:</strong> New users 150K/ปี<br>
+      <strong>Impact:</strong> 150K × 8 AOV (new user) = <strong>+1.2M ใบ</strong></p>
+    </div>
+
+    <div class="insight-card" style="border-left:4px solid #f97316">
+      <div class="i-num" style="background:#f97316">06</div>
+      <h4 style="color:#f97316">UX & Conversion Optimization</h4>
+      <p><strong>ปัญหา:</strong> ผู้ใช้เข้ามาแต่ไม่ซื้อ หรือซื้อน้อยกว่าที่ตั้งใจ<br>
+      <strong>โอกาส:</strong> เพิ่ม conversion rate จาก visit → purchase และ items per cart<br><br>
+      <strong>Action:</strong><br>
+      — Quick-buy: ซื้อใน 2 tap (เลือกเลข → จ่าย) ลดขั้นตอน<br>
+      — "เลขมงคล" / "เลขเด็ด" curated list — ช่วยเลือกเร็วขึ้น<br>
+      — Cart upsell: "เพิ่มอีก 2 ใบ ครบ 10 ใบ ได้สิทธิ์ลุ้น"<br>
+      — Payment variety: ผ่อนชำระ / เครดิต / True Wallet<br><br>
+      <strong>เป้า:</strong> Conversion +15%, cart size +10%<br>
+      <strong>Impact:</strong> อ้อม ≈ <strong>+0.5-1.0M ใบ</strong></p>
+    </div>
+  </div>
+
+  <!-- ── WATERFALL CHART ── -->
+  <div class="chart-section">
+    <h3>Waterfall: จาก 6.4M สู่ 10M+ ถ้าทำครบทุกกลยุทธ์</h3>
+    <div class="chart-wrap tall">
+      <canvas id="waterfallChart"></canvas>
+    </div>
+  </div>
+
+  <!-- ── TIMELINE ROADMAP ── -->
+  <div class="chart-section" style="background:linear-gradient(135deg,#f8fafc,#f1f5f9);border:2px solid #cbd5e1">
+    <h3 style="color:#475569">Roadmap: แผนปฏิบัติ 4 ไตรมาส</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:16px">
+      <div style="background:#fff;border-radius:12px;padding:20px;border-top:4px solid #3b82f6">
+        <div style="font-size:11px;font-weight:700;color:#3b82f6;letter-spacing:2px">Q1 — FOUNDATION</div>
+        <div style="font-size:20px;font-weight:800;color:#1e293b;margin:8px 0">เป้า: 7.5M</div>
+        <ul style="font-size:13px;color:#64748b;line-height:2;padding-left:16px">
+          <li>Re-engage campaign → ดึงกลับ 50K users</li>
+          <li>ขยาย supplier network ต่างจังหวัด</li>
+          <li>เปิด "เลขประจำ" auto-buy MVP</li>
+          <li>A/B test bundle pricing</li>
+        </ul>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:20px;border-top:4px solid #8b5cf6">
+        <div style="font-size:11px;font-weight:700;color:#8b5cf6;letter-spacing:2px">Q2 — SCALE</div>
+        <div style="font-size:20px;font-weight:800;color:#1e293b;margin:8px 0">เป้า: 8.5M</div>
+        <ul style="font-size:13px;color:#64748b;line-height:2;padding-left:16px">
+          <li>Push notification system เต็มรูปแบบ</li>
+          <li>Launch subscription tiers</li>
+          <li>Bundle "ซื้อ 10 แถม" campaign</li>
+          <li>Partnership LINE / social</li>
+        </ul>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:20px;border-top:4px solid #059669">
+        <div style="font-size:11px;font-weight:700;color:#059669;letter-spacing:2px">Q3 — OPTIMIZE</div>
+        <div style="font-size:20px;font-weight:800;color:#1e293b;margin:8px 0">เป้า: 9.5M</div>
+        <ul style="font-size:13px;color:#64748b;line-height:2;padding-left:16px">
+          <li>VIP tier launch → power users</li>
+          <li>Agent referral program เริ่มวัดผล</li>
+          <li>UX optimization จาก data Q1-Q2</li>
+          <li>เพิ่ม payment options</li>
+        </ul>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:20px;border-top:4px solid #f97316">
+        <div style="font-size:11px;font-weight:700;color:#f97316;letter-spacing:2px">Q4 — HIT 10M</div>
+        <div style="font-size:20px;font-weight:800;color:#1e293b;margin:8px 0">เป้า: 10M+</div>
+        <ul style="font-size:13px;color:#64748b;line-height:2;padding-left:16px">
+          <li>Full-scale ทุกกลยุทธ์</li>
+          <li>Subscription base 100K+ users</li>
+          <li>AOV target 12.5+ ใบ/คน</li>
+          <li>ประเมินเป้าถัดไป: 15M</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RISK & DEPENDENCY ── -->
+  <div class="chart-section">
+    <h3>ความเสี่ยง & สิ่งที่ต้องระวัง</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+      <div class="insight-card" style="border-left:4px solid #dc2626">
+        <h4 style="color:#dc2626">Supply Constraint</h4>
+        <p>ถ้าขยาย users/AOV ได้แต่ไม่มีสลากใบพอขาย → คอขวด<br><strong>แก้:</strong> ขยาย supplier network ล่วงหน้า ก่อน demand มา</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #f97316">
+        <h4 style="color:#f97316">นโยบาย GLO</h4>
+        <p>GLO อาจปรับกฎจำกัดการซื้อสลากใบไปขายดิจิทัล<br><strong>แก้:</strong> สร้างความสัมพันธ์กับ GLO แสดงว่า win-win (ช่วยลดราคาเกิน 80 บาท)</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #8b5cf6">
+        <h4 style="color:#8b5cf6">คู่แข่ง</h4>
+        <p>Platform อื่นอาจใช้ model เดียวกัน (ซื้อใบ→ขายดิจิทัล)<br><strong>แก้:</strong> First-mover advantage + lock-in suppliers ด้วย exclusive deals</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #059669">
+        <h4 style="color:#059669">Margin Pressure</h4>
+        <p>ซื้อสลากใบ 80 บาท ขาย 80 บาท → margin จาก commission เท่านั้น<br><strong>แก้:</strong> Volume play + ข้อตกลงซื้อขั้นต่ำจากตัวแทนในราคาพิเศษ</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM LINE ── -->
+  <div class="chart-section" style="background:linear-gradient(135deg,#0f172a,#1e293b);border:none;color:#fff">
+    <h3 style="color:#fbbf24;font-size:18px">Bottom Line</h3>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center;margin-top:16px">
+      <div style="flex:1;min-width:300px">
+        <p style="font-size:15px;color:#e2e8f0;line-height:2">
+          LotteryPlus ไม่ได้ติดเพดาน — ข้อมูลจริงบอกว่า<br>
+          <span style="color:#fbbf24;font-weight:700">• Users เคยแตะ 947K</span> (ก.ค. 68)<br>
+          <span style="color:#22d3ee;font-weight:700">• AOV เคยแตะ 16.2</span> (เม.ย. 67)<br>
+          <span style="color:#4ade80;font-weight:700">• Items เคยแตะ 7.14M</span> (เม.ย. 67)<br><br>
+          ถ้า users กลับมา 950K ที่ AOV 10.5 ปัจจุบัน = <strong style="color:#fbbf24">10M ทันที</strong><br>
+          ถ้าเพิ่มทั้งคู่ (800K × 12.5) = <strong style="color:#4ade80">10M แบบยั่งยืน</strong><br><br>
+          <span style="color:#fb923c;font-weight:700">กุญแจสำคัญ: Retention > Acquisition</span><br>
+          ลูกค้าเก่าที่หายไป 337K คน คือ "เงินที่วางอยู่บนโต๊ะ"
+        </p>
+      </div>
+      <div style="text-align:center">
+        <div style="width:180px;height:180px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#059669);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 40px #22c55e40">
+          <div style="font-size:42px;font-weight:800;color:#fff">10M</div>
+          <div style="font-size:13px;color:#ffffffcc;font-weight:600">ใบ/งวด</div>
+          <div style="font-size:11px;color:#ffffffaa;margin-top:4px">เป้าขั้นต่ำ — ทำได้</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:24px;color:#8a7e6e;font-size:12px;margin-top:16px">
+    <p>LotteryPlus Growth Strategy — วิเคราะห์จากข้อมูลจริง 65 งวด</p>
+    <p id="genDate3" style="margin-top:4px"></p>
+  </div>
+</div>
+
+<!-- ══════════════ SCRIPTS ══════════════ -->
+<script>
+// ── Navigation ──
+function go(i){
+  document.querySelectorAll('.page').forEach((p,j)=>{p.classList.toggle('active',j===i)});
+  document.querySelectorAll('.nav-btn').forEach((b,j)=>{b.classList.toggle('active',j===i)});
+  window.scrollTo(0,0);
+}
+
+// ── Date ──
+document.getElementById('genDate').textContent = 'Generated: ' + new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+
+// ── Bubble helper ──
+function makeBubble(id, items){
+  const el = document.getElementById(id);
+  items.forEach(b=>{
+    el.innerHTML += `<div class="bubble" style="width:${b.size}px;height:${b.size}px;background:${b.bg};color:#fff">
+      <div class="b-val" style="font-size:${Math.max(14,b.size/5)}px">${b.val}</div>
+      <div class="b-unit">${b.unit}</div>
+      <div class="b-label">${b.label}</div>
+      ${b.growth?`<div class="b-growth">${b.growth}</div>`:''}
+    </div>`;
+  });
+}
+
+// ── PAGE 1: Market Bubbles ──
+makeBubble('mktBubbles',[
+  {val:'174K',unit:'ล้านบาท',label:'GLO Revenue',size:190,bg:'linear-gradient(135deg,#f97316,#c2410c)'},
+  {val:'~164K',unit:'ล้านบาท',label:'หวยใต้ดิน',size:170,bg:'linear-gradient(135deg,#ef4444,#b91c1c)'},
+  {val:'50.8K',unit:'ล้านบาท',label:'นำส่งรัฐ',size:120,bg:'linear-gradient(135deg,#22c55e,#16a34a)'},
+  {val:'~340K',unit:'ล้านบาท/ปี',label:'ตลาดรวม',size:220,bg:'linear-gradient(135deg,#fbbf24,#d97706)'},
+]);
+
+// ── GLO Revenue Chart ──
+new Chart(document.getElementById('gloRevenueChart'),{
+  type:'bar',
+  data:{
+    labels:['2562','2563','2564','2565','2566','2567'].map(y=>'พ.ศ.'+y),
+    datasets:[
+      {label:'รายได้รวม (พันล้านบาท)',data:[140,130,145,158,169,174],backgroundColor:'#f9731680',borderColor:'#f97316',borderWidth:1,borderRadius:4},
+      {label:'นำส่งรัฐ (พันล้านบาท)',data:[38,36,40,44,48.5,50.8],backgroundColor:'#22c55e60',borderColor:'#22c55e',borderWidth:1,borderRadius:4},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#7a7164',font:{family:'Sarabun'}}}},
+    scales:{
+      x:{ticks:{color:'#7a7164',font:{family:'Sarabun',weight:700}},grid:{color:'#e0d9ce'}},
+      y:{ticks:{color:'#7a7164',callback:v=>v+'B'},grid:{color:'#e0d9ce'},min:0}
+    }
+  }
+});
+
+// ── Ticket Pie ──
+new Chart(document.getElementById('ticketPie'),{
+  type:'doughnut',
+  data:{
+    labels:['กระดาษจริง (68M)','เป๋าตัง (29M)','LotteryPlus ซื้อใบ→ดิจิทัล (10M)'],
+    datasets:[{data:[68,29,10],backgroundColor:['#f97316','#6366f1','#0891b2'],borderWidth:0}]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#7a7164',font:{family:'Sarabun',weight:700},padding:12}}}
+  }
+});
+
+// ── PAGE 2: Digital Target Chart ──
+new Chart(document.getElementById('digitalTargetChart'),{
+  type:'bar',
+  data:{
+    labels:['เปิดตัว\nมิ.ย.65','FY65','FY66\nเป้า 30M','FY67\nเป้า 40M','FY68\nเป้า 50M'],
+    datasets:[
+      {label:'เป๋าตัง (ล้านใบ/งวด)',data:[5,16,20,27,29],backgroundColor:'#6366f180',borderColor:'#6366f1',borderWidth:2,borderRadius:4},
+      {label:'LotteryPlus ซื้อใบ→ดิจิทัล',data:[0,0,0,7,10],backgroundColor:'#0891b260',borderColor:'#0891b2',borderWidth:2,borderRadius:4},
+      {label:'เป้า GLO',data:[null,null,30,40,50],type:'line',borderColor:'#ef4444',borderDash:[6,4],borderWidth:2,pointRadius:5,pointBackgroundColor:'#ef4444',fill:false,tension:0},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#7a7164',font:{family:'Sarabun'}}}},
+    scales:{
+      x:{stacked:true,ticks:{color:'#7a7164',font:{family:'Sarabun',weight:700}},grid:{color:'#e0d9ce'}},
+      y:{stacked:true,ticks:{color:'#7a7164',callback:v=>v+'M'},grid:{color:'#e0d9ce'},min:0,max:55}
+    }
+  }
+});
+
+// ── Digital Share Chart ──
+new Chart(document.getElementById('digitalShareChart'),{
+  type:'line',
+  data:{
+    labels:['มิ.ย.65','ธ.ค.65','มิ.ย.66','ธ.ค.66','มิ.ย.67','ธ.ค.67','มิ.ย.68','2569'],
+    datasets:[
+      {label:'เป๋าตัง (% ของ L6)',data:[5,12,16,19,22,24,26,27.1],borderColor:'#6366f1',backgroundColor:'rgba(99,102,241,0.08)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#6366f1'},
+      {label:'ดิจิทัลรวม เป๋าตัง+LotteryPlus (actual)',data:[5,12,16,19,25,28,31,33.5],borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,0.06)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#22c55e',borderDash:[6,4]},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#7a7164',font:{family:'Sarabun'}}}},
+    scales:{
+      x:{ticks:{color:'#7a7164',font:{family:'Sarabun'}},grid:{color:'#e0d9ce'}},
+      y:{ticks:{color:'#7a7164',callback:v=>v+'%'},grid:{color:'#e0d9ce'},min:0,max:45}
+    }
+  }
+});
+
+// ── PAGE 3: Buyer Bubbles ──
+makeBubble('buyerBubbles',[
+  {val:'21.4M',unit:'คน',label:'ซื้อสลากรัฐ',size:170,bg:'linear-gradient(135deg,#2563eb,#1d4ed8)'},
+  {val:'17.3M',unit:'คน',label:'เล่นหวยใต้ดิน',size:150,bg:'linear-gradient(135deg,#ef4444,#b91c1c)'},
+  {val:'12.6M',unit:'คน',label:'ซื้อทั้ง 2 ช่อง',size:130,bg:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},
+  {val:'28.9M',unit:'คน',label:'นักพนันทั้งหมด',size:200,bg:'linear-gradient(135deg,#f97316,#c2410c)'},
+]);
+
+// ── Overlap Chart ──
+new Chart(document.getElementById('overlapChart'),{
+  type:'doughnut',
+  data:{
+    labels:['ซื้อเฉพาะสลากรัฐ (8.8M)','ซื้อทั้ง 2 ช่อง (12.6M)','เล่นเฉพาะใต้ดิน (4.7M)','ไม่ซื้อหวย (~37M)'],
+    datasets:[{data:[8.8,12.6,4.7,37],backgroundColor:['#2563eb','#8b5cf6','#ef4444','#e0d9ce'],borderWidth:0}]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{color:'#7a7164',font:{family:'Sarabun',size:11},padding:8}}}
+  }
+});
+
+// ── PAGE 4: PromptPay Chart ──
+new Chart(document.getElementById('promptpayChart'),{
+  type:'line',
+  data:{
+    labels:['2563','2564','2565','2566','2567'].map(y=>'พ.ศ.'+y),
+    datasets:[{
+      label:'ธุรกรรม PromptPay (พันล้านรายการ)',
+      data:[8.5,12.3,15.8,19.9,24.3],
+      borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,0.08)',fill:true,
+      tension:.3,borderWidth:3,pointRadius:6,pointBackgroundColor:'#2563eb'
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#7a7164',font:{family:'Sarabun'}}}},
+    scales:{
+      x:{ticks:{color:'#7a7164',font:{family:'Sarabun',weight:700}},grid:{color:'#e0d9ce'}},
+      y:{ticks:{color:'#7a7164',callback:v=>v+'B'},grid:{color:'#e0d9ce'},min:0}
+    }
+  }
+});
+
+// ── PAGE 5: Opportunities ──
+const opps = [
+  {n:'01',h:'LotteryPlus Model: Bypass GLO Bottleneck',t:'LotteryPlus ซื้อสลากใบมาขายดิจิทัล เป้า 10M/งวด → ดิจิทัลรวม 39M (36.4%) โดยไม่ต้องรอ GLO เพิ่มโควตา เร่ง 50-50 เร็วขึ้น 1-2 ปี',c:'#0891b2'},
+  {n:'02',h:'Supply < Demand',t:'สลากดิจิทัลขายหมดเกือบทุกงวด (sell-through >99%) ดีมานด์ยังเหลืออีกมากถ้าเพิ่มโควตา',c:'#22c55e'},
+  {n:'03',h:'ราคา 80 บาทคงที่',t:'ดิจิทัลขาย 80 บาทตามกฎหมาย vs กระดาษ 100-120 บาท ส่วนต่าง 20-40 บาท/ใบ เป็นแรงดึง',c:'#2563eb'},
+  {n:'04',h:'Underground Conversion',t:'ตลาดหวยใต้ดิน ~164,000 ล้านบาท/ปี ผู้เล่น 17-20M คน Lotto-style jackpot อาจดึงเข้าระบบได้',c:'#ef4444'},
+  {n:'05',h:'Mobile-first Nation',t:'Internet 91.2%, mobile banking 97%, PromptPay 90M+ — โครงสร้างพร้อมเต็มที่',c:'#8b5cf6'},
+  {n:'06',h:'GLO = SOE #1 รายได้',t:'174,000 ล้าน/ปี นำส่งรัฐ 50,800 ล้าน มีแรงจูงใจขยายดิจิทัล',c:'#f97316'},
+];
+const og = document.getElementById('oppGrid');
+opps.forEach(d => {
+  og.innerHTML += `<div class="insight-card"><div class="i-num">${d.n}</div><h4 style="color:${d.c}">${d.h}</h4><p>${d.t}</p></div>`;
+});
+
+// ── Barriers ──
+const bars = [
+  {n:'01',h:'พ.ร.บ. GLO อายุ 50+ ปี',t:'ต้องแก้กฎหมายเพื่อเปิด Lotto-style และให้เอกชนร่วม กระบวนการทางกฎหมายอาจใช้เวลา 1-3 ปี',c:'#ef4444'},
+  {n:'02',h:'ตัวแทนจำหน่าย 166K ราย',t:'เครือข่ายผู้ค้ากระดาษมีแรงกดดันทางการเมืองสูง ลดโควตากระทบรายได้หลายแสนครอบครัว',c:'#f97316'},
+  {n:'03',h:'Digital Literacy Gap',t:'ประชากรสูงอายุ 20%+ ไม่ถนัดใช้แอป ยังนิยมซื้อจากแผง',c:'#6b7280'},
+  {n:'04',h:'N3 Underperformance',t:'สลาก 3 หลัก ขายได้ ~2M จากเพดาน 6M — product-market fit ยังไม่ถูก',c:'#8b5cf6'},
+  {n:'05',h:'วัฒนธรรมเลือกเลข',t:'คนไทยชอบเลือกเลขจากฝัน ทะเบียนรถ วัดดัง — ดิจิทัลเป็นแบบสุ่ม',c:'#d97706'},
+  {n:'06',h:'Casino Bill ไม่แน่นอน',t:'ถอนออกแล้ว อาจกลับมา 2569 — ความไม่แน่นอนเชิงนโยบาย',c:'#dc2626'},
+];
+const bg = document.getElementById('barGrid');
+bars.forEach(d => {
+  bg.innerHTML += `<div class="insight-card"><div class="i-num">${d.n}</div><h4 style="color:${d.c}">${d.h}</h4><p>${d.t}</p></div>`;
+});
+
+// ── Underground Chart ──
+new Chart(document.getElementById('undergroundChart'),{
+  type:'bar',
+  data:{
+    labels:['GLO Revenue','หวยใต้ดิน','นำส่งรัฐ'],
+    datasets:[{
+      data:[174,164,50.8],
+      backgroundColor:['#f9731680','#ef444480','#22c55e80'],
+      borderColor:['#f97316','#ef4444','#22c55e'],
+      borderWidth:2,borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw+'K ล้านบาท'}}},
+    scales:{
+      x:{ticks:{color:'#7a7164',callback:v=>v+'K'},grid:{color:'#e0d9ce'}},
+      y:{ticks:{color:'#7a7164',font:{family:'Sarabun',weight:700}},grid:{display:false}}
+    }
+  }
+});
+
+// ── PAGE 5 (LotteryPlus Model): Before/After Chart ──
+new Chart(document.getElementById('beforeAfterChart'),{
+  type:'bar',
+  data:{
+    labels:['ก่อน LotteryPlus Model','หลัง LotteryPlus Model'],
+    datasets:[
+      {label:'กระดาษ (ขายเป็นใบ)',data:[78,68],backgroundColor:'#f9731680',borderColor:'#f97316',borderWidth:2,borderRadius:4},
+      {label:'เป๋าตัง',data:[29,29],backgroundColor:'#6366f180',borderColor:'#6366f1',borderWidth:2,borderRadius:4},
+      {label:'LotteryPlus (ใบ→ดิจิทัล)',data:[0,10],backgroundColor:'#0891b280',borderColor:'#0891b2',borderWidth:2,borderRadius:4},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{labels:{color:'#7a7164',font:{family:'Sarabun'}}},
+      tooltip:{callbacks:{afterBody:(items)=>{
+        const i=items[0].dataIndex;
+        const dig = i===0 ? 29 : 39;
+        return `Digital รวม: ${dig}M (${i===0?'27.1':'36.4'}%)`;
+      }}}
+    },
+    scales:{
+      x:{stacked:true,ticks:{color:'#7a7164',font:{family:'Sarabun',weight:700}},grid:{color:'#e0d9ce'}},
+      y:{stacked:true,ticks:{color:'#7a7164',callback:v=>v+'M'},grid:{color:'#e0d9ce'},min:0,max:115}
+    }
+  }
+});
+
+// ── LP Projection Chart ──
+new Chart(document.getElementById('lpProjectionChart'),{
+  type:'line',
+  data:{
+    labels:['2569','2570','2571','2572','2573','2574'].map(y=>'พ.ศ.'+y),
+    datasets:[
+      {label:'เป๋าตัง',data:[29,32,35,38,42,46],borderColor:'#6366f1',backgroundColor:'rgba(99,102,241,0.06)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#6366f1'},
+      {label:'LotteryPlus (ซื้อใบ→ดิจิทัล)',data:[10,12,14,16,18,20],borderColor:'#0891b2',backgroundColor:'rgba(8,145,178,0.06)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#0891b2'},
+      {label:'ดิจิทัลรวม',data:[39,44,49,54,60,66],borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,0.04)',fill:false,tension:.3,borderWidth:4,pointRadius:6,pointBackgroundColor:'#22c55e',borderDash:[0]},
+      {label:'กระดาษจริง (หลังหัก LotteryPlus)',data:[68,66,64,62,60,58],borderColor:'#f97316',backgroundColor:'rgba(249,115,22,0.04)',fill:false,tension:.3,borderWidth:2,pointRadius:4,pointBackgroundColor:'#f97316',borderDash:[6,4]},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{labels:{color:'#7a7164',font:{family:'Sarabun',size:11}}},
+      tooltip:{callbacks:{afterBody:(items)=>{
+        const i=items[0].dataIndex;
+        const dig=[39,44,49,54,60,66];
+        const total=107;
+        return `Digital share: ${(dig[i]/total*100).toFixed(1)}%`;
+      }}}
+    },
+    scales:{
+      x:{ticks:{color:'#7a7164',font:{family:'Sarabun',weight:700}},grid:{color:'#e0d9ce'}},
+      y:{ticks:{color:'#7a7164',callback:v=>v+'M'},grid:{color:'#e0d9ce'},min:0,max:75,title:{display:true,text:'ล้านใบ/งวด',color:'#7a7164',font:{family:'Sarabun'}}}
+    }
+  }
+});
+
+// ── PAGE 5: LP Actual Data Analytics ──
+const LP_RAW = [
+  {d:'2023-07-01',u:79043,o:147396,it:548598,aov:6.94},
+  {d:'2023-07-16',u:170686,o:281800,it:1281842,aov:7.51},
+  {d:'2023-07-31',u:275154,o:498273,it:2569515,aov:9.34},
+  {d:'2023-08-16',u:306097,o:567395,it:3300186,aov:10.78},
+  {d:'2023-09-01',u:283480,o:535873,it:3400376,aov:11.99},
+  {d:'2023-09-16',u:389986,o:736390,it:4029879,aov:10.33},
+  {d:'2023-10-01',u:382740,o:706368,it:4733959,aov:12.37},
+  {d:'2023-10-16',u:400289,o:727996,it:5171299,aov:12.92},
+  {d:'2023-11-01',u:355876,o:638680,it:4001493,aov:11.24},
+  {d:'2023-11-16',u:418293,o:745560,it:4415238,aov:10.56},
+  {d:'2023-12-01',u:424716,o:772128,it:5680051,aov:13.37},
+  {d:'2023-12-16',u:368311,o:663457,it:4618307,aov:12.54},
+  {d:'2023-12-30',u:439804,o:809230,it:5138343,aov:11.68},
+  {d:'2024-01-17',u:435443,o:810457,it:5072760,aov:11.65},
+  {d:'2024-02-01',u:385207,o:731981,it:3377506,aov:8.77},
+  {d:'2024-02-16',u:419454,o:771074,it:5168251,aov:12.32},
+  {d:'2024-03-01',u:464707,o:868553,it:6332589,aov:13.63},
+  {d:'2024-03-16',u:493556,o:940452,it:7004331,aov:14.19},
+  {d:'2024-04-01',u:451512,o:833407,it:7138798,aov:15.81},
+  {d:'2024-04-16',u:417847,o:769124,it:6773459,aov:16.21},
+  {d:'2024-05-02',u:451275,o:822317,it:4953611,aov:10.98},
+  {d:'2024-05-16',u:442537,o:780696,it:5725690,aov:12.94},
+  {d:'2024-06-01',u:234819,o:385577,it:2077840,aov:8.85},
+  {d:'2024-06-16',u:355916,o:625552,it:4418094,aov:12.41},
+  {d:'2024-07-01',u:474849,o:877364,it:5284442,aov:11.13},
+  {d:'2024-07-16',u:488939,o:886264,it:5811078,aov:11.89},
+  {d:'2024-08-01',u:540524,o:957305,it:6301695,aov:11.66},
+  {d:'2024-08-16',u:610095,o:1034389,it:6560104,aov:10.75},
+  {d:'2024-09-01',u:580321,o:1039326,it:7035104,aov:12.12},
+  {d:'2024-09-16',u:583204,o:994217,it:6711958,aov:11.51},
+  {d:'2024-10-01',u:713568,o:1193228,it:6908485,aov:9.68},
+  {d:'2024-10-16',u:694430,o:1174368,it:6477862,aov:9.33},
+  {d:'2024-11-01',u:651527,o:1047778,it:6109731,aov:9.38},
+  {d:'2024-11-16',u:651922,o:1039423,it:6168890,aov:9.46},
+  {d:'2024-12-01',u:756123,o:1211771,it:6534383,aov:8.64},
+  {d:'2024-12-16',u:706852,o:1155270,it:6076686,aov:8.60},
+  {d:'2025-01-02',u:679004,o:1173129,it:6507653,aov:9.58},
+  {d:'2025-01-17',u:736931,o:1217644,it:6505099,aov:8.83},
+  {d:'2025-02-01',u:735537,o:1227355,it:6383315,aov:8.68},
+  {d:'2025-02-16',u:823334,o:1374836,it:6257798,aov:7.60},
+  {d:'2025-03-01',u:800159,o:1282381,it:5822330,aov:7.28},
+  {d:'2025-03-16',u:866315,o:1433211,it:6469120,aov:7.47},
+  {d:'2025-04-01',u:885522,o:1487771,it:6711906,aov:7.58},
+  {d:'2025-04-16',u:881153,o:1486931,it:6584471,aov:7.47},
+  {d:'2025-05-02',u:720441,o:1186766,it:5490085,aov:7.62},
+  {d:'2025-05-16',u:862024,o:1372025,it:6499999,aov:7.54},
+  {d:'2025-06-01',u:788507,o:1296663,it:6800096,aov:8.62},
+  {d:'2025-06-16',u:890230,o:1450742,it:6886271,aov:7.74},
+  {d:'2025-07-01',u:946701,o:1504247,it:7007474,aov:7.40},
+  {d:'2025-07-16',u:908499,o:1458957,it:7091001,aov:7.81},
+  {d:'2025-08-01',u:881324,o:1413126,it:7112993,aov:8.07},
+  {d:'2025-08-16',u:844842,o:1371220,it:6802958,aov:8.05},
+  {d:'2025-09-01',u:918741,o:1485204,it:7094077,aov:7.72},
+  {d:'2025-09-16',u:879945,o:1460280,it:6484968,aov:7.37},
+  {d:'2025-10-01',u:870517,o:1420699,it:6167571,aov:7.08},
+  {d:'2025-10-16',u:831019,o:1345669,it:6263383,aov:7.54},
+  {d:'2025-11-01',u:727166,o:1223679,it:6408482,aov:8.81},
+  {d:'2025-11-16',u:779995,o:1286990,it:6492887,aov:8.32},
+  {d:'2025-12-01',u:875530,o:1424255,it:6465411,aov:7.38},
+  {d:'2025-12-16',u:590644,o:923038,it:5641293,aov:9.55},
+  {d:'2026-01-02',u:557461,o:937750,it:6004063,aov:10.77},
+  {d:'2026-01-17',u:631970,o:1028259,it:6516174,aov:10.31},
+  {d:'2026-02-01',u:633479,o:1051505,it:6703162,aov:10.58},
+  {d:'2026-02-16',u:655296,o:1078374,it:6894444,aov:10.52},
+  {d:'2026-03-01',u:594368,o:944651,it:6844803,aov:11.52},
+  {d:'2026-03-16',u:263028,o:400756,it:2310247,aov:8.78},
+];
+
+// Skip last row (incomplete draw)
+const LP = LP_RAW.slice(0,-1);
+const lpLabels = LP.map(d=>{const p=d.d.split('-');return p[2]+'/'+p[1].replace('0','')});
+const lpShortLabels = LP.map((d,i)=>i%3===0?d.d.substring(2,7).replace('-','/'):' ');
+
+// KPIs
+const lpLatest = LP[LP.length-1];
+const lpFirst = LP[0];
+const lpPeakU = LP.reduce((a,b)=>b.u>a.u?b:a);
+const lpPeakIt = LP.reduce((a,b)=>b.it>a.it?b:a);
+const lpTotalItems = LP.reduce((a,b)=>a+b.it,0);
+const lpTotalOrders = LP.reduce((a,b)=>a+b.o,0);
+const lpAvgItems = lpTotalItems/LP.length;
+const lpAvgUsers = LP.reduce((a,b)=>a+b.u,0)/LP.length;
+const f=n=>n>=1e6?(n/1e6).toFixed(2)+'M':n>=1e3?(n/1e3).toFixed(0)+'K':n.toFixed(0);
+
+// Year-based analysis
+const lpByYear = {};
+LP.forEach(d=>{const y=d.d.substring(0,4);if(!lpByYear[y])lpByYear[y]={items:[],users:[],cnt:0};lpByYear[y].items.push(d.it);lpByYear[y].users.push(d.u);lpByYear[y].cnt++;});
+
+const lpKpi = document.getElementById('lpKpiRow');
+lpKpi.innerHTML = `
+  <div class="kpi-card" style="border-left:4px solid #0891b2">
+    <div class="k-label">ล่าสุด (${lpLatest.d})</div>
+    <div class="k-val" style="color:#0891b2;font-size:22px">${f(lpLatest.it)}</div>
+    <div class="k-detail">ใบ · ${f(lpLatest.u)} users · AOV ${lpLatest.aov}</div>
+  </div>
+  <div class="kpi-card" style="border-left:4px solid #22c55e">
+    <div class="k-label">Peak Users</div>
+    <div class="k-val" style="color:#22c55e;font-size:22px">${f(lpPeakU.u)}</div>
+    <div class="k-detail">${lpPeakU.d} · ${f(lpPeakU.it)} ใบ</div>
+  </div>
+  <div class="kpi-card" style="border-left:4px solid #6366f1">
+    <div class="k-label">Peak Items</div>
+    <div class="k-val" style="color:#6366f1;font-size:22px">${f(lpPeakIt.it)}</div>
+    <div class="k-detail">${lpPeakIt.d} · ${f(lpPeakIt.u)} users</div>
+  </div>
+  <div class="kpi-card" style="border-left:4px solid #f97316">
+    <div class="k-label">สะสมทั้งหมด (${LP.length} งวด)</div>
+    <div class="k-val" style="color:#f97316;font-size:22px">${f(lpTotalItems)}</div>
+    <div class="k-detail">ใบ · avg ${f(lpAvgItems)}/งวด · ${f(lpTotalOrders)} orders</div>
+  </div>
+`;
+
+// Users chart
+new Chart(document.getElementById('lpUsersChart'),{
+  type:'line',
+  data:{
+    labels:LP.map(d=>d.d.substring(2,10)),
+    datasets:[{
+      label:'Users/งวด',data:LP.map(d=>d.u),
+      borderColor:'#0891b2',backgroundColor:'rgba(8,145,178,0.08)',fill:true,
+      tension:.3,borderWidth:2,pointRadius:2,pointBackgroundColor:'#0891b2'
+    }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{
+      x:{ticks:{color:'#7a7164',font:{size:9},maxTicksLimit:12},grid:{color:'#e0d9ce'}},
+      y:{ticks:{color:'#7a7164',callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':(v/1e3).toFixed(0)+'K'},grid:{color:'#e0d9ce'},min:0}
+    }
+  }
+});
+
+// Items chart
+new Chart(document.getElementById('lpItemsChart'),{
+  type:'bar',
+  data:{
+    labels:LP.map(d=>d.d.substring(2,10)),
+    datasets:[{
+      label:'Items/งวด',data:LP.map(d=>d.it),
+      backgroundColor:LP.map(d=>d.it>=7e6?'#22c55e80':d.it>=6e6?'#0891b260':'#6366f140'),
+      borderColor:LP.map(d=>d.it>=7e6?'#22c55e':d.it>=6e6?'#0891b2':'#6366f1'),
+      borderWidth:1,borderRadius:2
+    }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+    tooltip:{callbacks:{label:ctx=>(ctx.raw/1e6).toFixed(2)+'M ใบ'}}},
+    scales:{
+      x:{ticks:{color:'#7a7164',font:{size:9},maxTicksLimit:12},grid:{color:'#e0d9ce'}},
+      y:{ticks:{color:'#7a7164',callback:v=>(v/1e6).toFixed(0)+'M'},grid:{color:'#e0d9ce'},min:0}
+    }
+  }
+});
+
+// AOV chart
+new Chart(document.getElementById('lpAovChart'),{
+  type:'line',
+  data:{
+    labels:LP.map(d=>d.d.substring(2,10)),
+    datasets:[{
+      label:'ใบ/คน',data:LP.map(d=>d.aov),
+      borderColor:'#f97316',backgroundColor:'rgba(249,115,22,0.08)',fill:true,
+      tension:.3,borderWidth:2,pointRadius:2,pointBackgroundColor:'#f97316'
+    }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{
+      x:{ticks:{color:'#7a7164',font:{size:9},maxTicksLimit:12},grid:{color:'#e0d9ce'}},
+      y:{ticks:{color:'#7a7164'},grid:{color:'#e0d9ce'},min:5,max:18}
+    }
+  }
+});
+
+// Orders chart
+new Chart(document.getElementById('lpOrdersChart'),{
+  type:'line',
+  data:{
+    labels:LP.map(d=>d.d.substring(2,10)),
+    datasets:[{
+      label:'Orders/งวด',data:LP.map(d=>d.o),
+      borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,0.08)',fill:true,
+      tension:.3,borderWidth:2,pointRadius:2,pointBackgroundColor:'#8b5cf6'
+    }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{
+      x:{ticks:{color:'#7a7164',font:{size:9},maxTicksLimit:12},grid:{color:'#e0d9ce'}},
+      y:{ticks:{color:'#7a7164',callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':(v/1e3).toFixed(0)+'K'},grid:{color:'#e0d9ce'},min:0}
+    }
+  }
+});
+
+// LP Insights
+const lpH2_2023 = LP.filter(d=>d.d.startsWith('2023'));
+const lpH_2024 = LP.filter(d=>d.d.startsWith('2024'));
+const lpH_2025 = LP.filter(d=>d.d.startsWith('2025'));
+const lpH_2026 = LP.filter(d=>d.d.startsWith('2026'));
+const avgIt=arr=>arr.reduce((a,b)=>a+b.it,0)/arr.length;
+const avgU=arr=>arr.reduce((a,b)=>a+b.u,0)/arr.length;
+const avgAov=arr=>arr.reduce((a,b)=>a+b.aov,0)/arr.length;
+
+const ig = document.getElementById('lpInsightsGrid');
+ig.innerHTML = `
+  <div class="insight-card" style="border-left:4px solid #0891b2">
+    <div class="i-num">01</div>
+    <h4 style="color:#0891b2">Users: ${f(lpFirst.u)} → ${f(lpPeakU.u)}</h4>
+    <p>จาก ${f(lpFirst.u)} (ก.ค. 66) สู่ peak ${f(lpPeakU.u)} (${lpPeakU.d}) = <strong>${(lpPeakU.u/lpFirst.u).toFixed(0)}x</strong><br>ปัจจุบันลดลงเหลือ ~600K-650K แต่ AOV เพิ่ม = ใบขายไม่ลด</p>
+  </div>
+  <div class="insight-card" style="border-left:4px solid #22c55e">
+    <div class="i-num">02</div>
+    <h4 style="color:#22c55e">Items: ${f(lpFirst.it)} → ${f(lpPeakIt.it)}</h4>
+    <p>สลากขายจาก ${f(lpFirst.it)} สู่ peak ${f(lpPeakIt.it)} = <strong>${(lpPeakIt.it/lpFirst.it).toFixed(0)}x</strong><br>ปี 2568-69 คงที่ ~6.5-7M ใบ/งวด เข้าใกล้เป้า 10M</p>
+  </div>
+  <div class="insight-card" style="border-left:4px solid #f97316">
+    <div class="i-num">03</div>
+    <h4 style="color:#f97316">AOV เปลี่ยน Phase</h4>
+    <p><strong>Phase 1 (66-ต้น 67):</strong> AOV 10-16 ใบ/คน → users น้อยแต่ซื้อเยอะ (heavy buyers)<br>
+    <strong>Phase 2 (ก.ค.67-68):</strong> AOV 7-8 → users เพิ่มมาก (mass adoption)<br>
+    <strong>Phase 3 (69):</strong> AOV กลับมา 10-11 → users ลด แต่ loyalty สูงขึ้น</p>
+  </div>
+  <div class="insight-card" style="border-left:4px solid #8b5cf6">
+    <div class="i-num">04</div>
+    <h4 style="color:#8b5cf6">Year-over-Year</h4>
+    <p>Avg items/งวด:<br>
+    <strong>2566:</strong> ${f(avgIt(lpH2_2023))} · <strong>2567:</strong> ${f(avgIt(lpH_2024))} (${((avgIt(lpH_2024)/avgIt(lpH2_2023)-1)*100).toFixed(0)}%↑)<br>
+    <strong>2568:</strong> ${f(avgIt(lpH_2025))} (${((avgIt(lpH_2025)/avgIt(lpH_2024)-1)*100).toFixed(0)}%↑) · <strong>2569:</strong> ${f(avgIt(lpH_2026))}</p>
+  </div>
+  <div class="insight-card" style="border-left:4px solid #ec4899">
+    <div class="i-num">05</div>
+    <h4 style="color:#ec4899">Users ลดแต่ Volume คงที่</h4>
+    <p>Users peak ก.ค. 68 (${f(lpPeakU.u)}) แล้วลดเหลือ ~600K ปี 69<br>แต่ items ยังอยู่ 6.5-6.9M เพราะ AOV เพิ่มจาก 7 เป็น 11<br>= <strong>กลุ่ม loyal ซื้อมากขึ้น ชดเชยคนที่ออก</strong></p>
+  </div>
+  <div class="insight-card" style="border-left:4px solid #059669">
+    <div class="i-num">06</div>
+    <h4 style="color:#059669">Road to 10M</h4>
+    <p>ปัจจุบัน ~6.8M/งวด → เป้า 10M = ต้องเพิ่มอีก <strong>47%</strong><br>ทางเลือก: เพิ่ม users กลับมา 900K+ (ที่ AOV 11) หรือ เพิ่ม AOV เป็น 15+ (ที่ 650K users)<br>หรือผสม: 750K users × 13.3 ใบ/คน = 10M</p>
+  </div>
+`;
+
+// Data table (last 12 draws)
+const lpTable = document.getElementById('lpDataTable');
+const last12 = LP.slice(-12);
+last12.forEach((d,i)=>{
+  const prev = i>0?last12[i-1]:LP[LP.length-13];
+  const growth = prev?((d.it/prev.it-1)*100).toFixed(1)+'%':'—';
+  const growthColor = prev&&d.it>=prev.it?'#16a34a':'#dc2626';
+  lpTable.innerHTML += `<tr>
+    <td style="font-weight:700">${d.d}</td>
+    <td>${(d.u/1e3).toFixed(0)}K</td>
+    <td>${(d.o/1e3).toFixed(0)}K</td>
+    <td style="font-weight:700">${(d.it/1e6).toFixed(2)}M</td>
+    <td>${d.aov.toFixed(1)}</td>
+    <td>${(d.o/d.u).toFixed(2)}</td>
+    <td style="color:${growthColor};font-weight:700">${growth}</td>
+  </tr>`;
+});
+
+// ── PAGE 8: Executive Summary Timelines ──
+document.getElementById('genDate2').textContent = 'Generated: ' + new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+
+// Market Value Timeline (digital lottery)
+// Market value = (เป๋าตัง avg + LP avg) × 80 × 24
+// 2565: 11M+0 = 21,120M | 2566: 20M+3.6M = 45,312M | 2567: 24M+5.8M = 57,216M
+// 2568: 28M+6.5M = 66,240M | 2569: 29M+6.8M = 68,736M (actual)
+// 2570: 32M+10M = 80,640M | 2572: 38M+15M = 101,760M | 2574: 40M+16M = 107,520M (base case)
+const mktData = [
+  {year:'2565',val:'2.1 หมื่น',unit:'ล้านบาท',growth:'',size:75,bg:'linear-gradient(135deg,#818cf8,#6366f1)',label:'เป๋าตัง 11M'},
+  {year:'2566',val:'4.5 หมื่น',unit:'ล้านบาท',growth:'+114%',size:100,bg:'linear-gradient(135deg,#a78bfa,#7c3aed)',label:'PT 20M + LotteryPlus 3.6M'},
+  {year:'2567',val:'5.7 หมื่น',unit:'ล้านบาท',growth:'+27%',size:120,bg:'linear-gradient(135deg,#c084fc,#9333ea)',label:'PT 24M + LotteryPlus 5.8M'},
+  {year:'2568',val:'6.6 หมื่น',unit:'ล้านบาท',growth:'+16%',size:135,bg:'linear-gradient(135deg,#f0abfc,#d946ef)',label:'PT 28M + LotteryPlus 6.5M'},
+  {year:'2569',val:'6.9 หมื่น',unit:'ล้านบาท',growth:'+4%',size:140,bg:'linear-gradient(135deg,#f472b6,#ec4899)',label:'PT 29M + LotteryPlus 6.8M'},
+  {year:'2570',val:'8.1 หมื่น',unit:'ล้านบาท',growth:'+17%',size:160,bg:'linear-gradient(135deg,#fb923c,#f97316)',label:'PT 32M + LotteryPlus 10M'},
+  {year:'2572',val:'1.02 แสน',unit:'ล้านบาท',growth:'+26%',size:190,bg:'linear-gradient(135deg,#fbbf24,#d97706)',label:'PT 38M + LotteryPlus 15M'},
+  {year:'2574',val:'1.08 แสน',unit:'ล้านบาท',growth:'+6%',size:210,bg:'linear-gradient(135deg,#fbbf24,#f59e0b)',label:'PT 40M + LotteryPlus 16M'},
+];
+const mtl = document.getElementById('mktTimeline');
+mktData.forEach(d=>{
+  mtl.innerHTML += `<div class="tl-item">
+    <div class="tl-growth">${d.growth}</div>
+    <div class="tl-bubble" style="width:${d.size}px;height:${d.size}px;background:${d.bg}">
+      <div class="tl-val" style="font-size:${Math.max(14,d.size/6)}px">${d.val}</div>
+      <div class="tl-unit">${d.unit}</div>
+    </div>
+    <div class="tl-year">${d.year}</div>
+    <div class="tl-label">${d.label}</div>
+  </div>`;
+});
+
+// Digital Share Timeline
+// Digital share = (PT+LP) / total L6 · actual data
+// 2565: 11/91=12% | 2566: 23.6/100=24% | 2567: 29.8/104=29% | 2568: 34.5/106=33% | 2569: 35.8/107=33.5%
+const shareData = [
+  {year:'2565',val:'12%',unit:'digital',size:65,bg:'linear-gradient(135deg,#818cf880,#6366f180)',label:'PT 11M เริ่มต้น'},
+  {year:'2566',val:'24%',unit:'digital',size:90,bg:'linear-gradient(135deg,#818cf8,#6366f1)',label:'PT 20M + LotteryPlus 3.6M'},
+  {year:'2567',val:'29%',unit:'digital',size:105,bg:'linear-gradient(135deg,#a78bfa,#7c3aed)',label:'PT 24M + LotteryPlus 5.8M'},
+  {year:'2568',val:'33%',unit:'digital',size:120,bg:'linear-gradient(135deg,#c084fc,#9333ea)',label:'PT 28M + LotteryPlus 6.5M'},
+  {year:'2569',val:'33.5%',unit:'actual',size:125,bg:'linear-gradient(135deg,#f472b6,#ec4899)',label:'PT 29M + LotteryPlus 6.8M'},
+  {year:'2570',val:'39%',unit:'คาดการณ์',size:145,bg:'linear-gradient(135deg,#fb923c,#f97316)',label:'PT 32M + LotteryPlus 10M'},
+  {year:'2572',val:'48%',unit:'คาดการณ์',size:175,bg:'linear-gradient(135deg,#fbbf24,#d97706)',label:'PT 38M + LotteryPlus 15M'},
+  {year:'2574',val:'52%',unit:'Base Case',size:200,bg:'linear-gradient(135deg,#4ade80,#22c55e)',label:'PT 40M + LotteryPlus 16M'},
+];
+const stl = document.getElementById('shareTimeline');
+shareData.forEach(d=>{
+  stl.innerHTML += `<div class="tl-item">
+    <div class="tl-growth"></div>
+    <div class="tl-bubble" style="width:${d.size}px;height:${d.size}px;background:${d.bg}">
+      <div class="tl-val" style="font-size:${Math.max(16,d.size/4.5)}px">${d.val}</div>
+      <div class="tl-unit">${d.unit}</div>
+    </div>
+    <div class="tl-year">${d.year}</div>
+    <div class="tl-label">${d.label}</div>
+  </div>`;
+});
+
+// ── Paper Decline Stacked Area Chart ──
+new Chart(document.getElementById('paperDeclineChart'),{
+  type:'bar',
+  data:{
+    labels:['2565','2566','2567','2568','2569','2570','2571','2572','2573','2574'],
+    datasets:[
+      {label:'เป๋าตัง (GLO ดิจิทัล)',data:[11,20,24,28,29,32,35,38,39,40],
+        backgroundColor:'#818cf8',borderColor:'#6366f1',borderWidth:0,borderRadius:0,stack:'s'},
+      {label:'LotteryPlus (ใบ→สแกน→ออนไลน์)',data:[0,3.6,5.8,6.5,6.8,10,12,15,16,16],
+        backgroundColor:'#22d3ee',borderColor:'#0891b2',borderWidth:0,borderRadius:0,stack:'s'},
+      {label:'สลากใบจริง (ขายเป็นกระดาษ)',data:[80,76.4,74.2,71.5,71.2,66,62,57,54,52],
+        backgroundColor:'#f9731680',borderColor:'#f97316',borderWidth:2,borderRadius:0,stack:'s'},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{color:'#ffffffcc',font:{size:11,family:'Sarabun'},usePointStyle:true,padding:16}},
+      tooltip:{callbacks:{
+        label:function(ctx){return ctx.dataset.label+': '+ctx.raw+'M ใบ/งวด'},
+        afterBody:function(items){
+          var idx=items[0].dataIndex;
+          var total=[91,100,104,106,107,108,109,110,109,108];
+          var paper=[80,76.4,74.2,71.5,71.2,66,62,57,54,52];
+          return ['─────────','รวมทั้งหมด: '+total[idx]+'M','กระดาษจริง: '+paper[idx]+'M ('+Math.round(paper[idx]/total[idx]*100)+'%)'];
+        }
+      }}
+    },
+    scales:{
+      x:{stacked:true,ticks:{color:'#ffffff90',font:{size:12,weight:'bold',family:'Sarabun'}},grid:{color:'#ffffff10'}},
+      y:{stacked:true,ticks:{color:'#ffffff70',callback:function(v){return v+'M'}},grid:{color:'#ffffff10'},
+        title:{display:true,text:'ใบ/งวด (ล้าน)',color:'#ffffff70',font:{size:12,family:'Sarabun'}}}
+    }
+  },
+  plugins:[{
+    id:'paperLine',
+    afterDraw:function(chart){
+      var ctx=chart.ctx;
+      var xS=chart.scales.x;
+      var yS=chart.scales.y;
+      var paperData=[80,76.4,74.2,71.5,71.2,66,62,57,54,52];
+      // Draw line on top of paper bars showing decline
+      ctx.save();
+      ctx.strokeStyle='#ef4444';
+      ctx.lineWidth=3;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      for(var i=0;i<paperData.length;i++){
+        var px=xS.getPixelForValue(i);
+        var py=yS.getPixelForValue(paperData[i]);
+        if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+      // Dots
+      for(var j=0;j<paperData.length;j++){
+        ctx.beginPath();
+        ctx.arc(xS.getPixelForValue(j),yS.getPixelForValue(paperData[j]),4,0,Math.PI*2);
+        ctx.fillStyle=j<=4?'#f97316':'#ef4444';
+        ctx.fill();
+      }
+      // Label
+      ctx.fillStyle='#ef4444';
+      ctx.font='bold 12px Sarabun';
+      ctx.fillText('สลากใบจริง: 80M → 52M (−35%)',xS.getPixelForValue(4)+10,yS.getPixelForValue(65));
+      // Divider line at year 2569 (actual vs forecast)
+      ctx.strokeStyle='#ffffff30';
+      ctx.lineWidth=1;
+      ctx.setLineDash([6,4]);
+      ctx.beginPath();
+      var divX=(xS.getPixelForValue(3)+xS.getPixelForValue(4))/2+xS.getPixelForValue(1)*0.15;
+      divX=xS.getPixelForValue(4)+(xS.getPixelForValue(5)-xS.getPixelForValue(4))/2;
+      ctx.moveTo(divX,chart.chartArea.top);
+      ctx.lineTo(divX,chart.chartArea.bottom);
+      ctx.stroke();
+      ctx.fillStyle='#ffffff50';
+      ctx.font='11px Sarabun';
+      ctx.fillText('← ข้อมูลจริง | คาดการณ์ →',divX-60,chart.chartArea.top+14);
+      ctx.restore();
+    }
+  }]
+});
+
+// ── PAGE 9: Growth Strategy Charts ──
+document.getElementById('genDate3').textContent = 'Generated: ' + new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+
+// Competitive Positioning Chart — bubble: x=ความสะดวก, y=ราคา, r=volume
+new Chart(document.getElementById('positionChart'),{
+  type:'bubble',
+  data:{
+    datasets:[
+      {label:'LotteryPlus',data:[{x:8,y:105,r:18}],backgroundColor:'#0891b280',borderColor:'#0891b2',borderWidth:3},
+      {label:'เป๋าตัง (GLO)',data:[{x:5,y:80,r:30}],backgroundColor:'#6366f180',borderColor:'#6366f1',borderWidth:3},
+      {label:'แผงกระดาษ',data:[{x:3,y:110,r:35}],backgroundColor:'#f9731680',borderColor:'#f97316',borderWidth:3},
+      {label:'หวยใต้ดิน (ออนไลน์)',data:[{x:9,y:120,r:25}],backgroundColor:'#dc262680',borderColor:'#dc2626',borderWidth:2,borderDash:[4,4]},
+      {label:'LotteryPlus เป้า 10M',data:[{x:9.5,y:100,r:22}],backgroundColor:'#22c55e40',borderColor:'#22c55e',borderWidth:2,borderDash:[6,3]},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:11,family:'Sarabun'},usePointStyle:true,padding:12}},
+      tooltip:{callbacks:{label:ctx=>{
+        const names={0:'LotteryPlus (ปัจจุบัน)',1:'เป๋าตัง',2:'แผงกระดาษ',3:'หวยใต้ดิน',4:'LotteryPlus (เป้า 10M)'};
+        return (names[ctx.datasetIndex]||ctx.dataset.label)+': ราคา '+ctx.raw.y+' บาท, ความสะดวก '+ctx.raw.x+'/10';
+      }}}
+    },
+    scales:{
+      x:{title:{display:true,text:'ความสะดวกในการซื้อ (1=ยาก, 10=ง่ายมาก)',font:{size:12,weight:'bold',family:'Sarabun'},color:'#6d5c3e'},
+        ticks:{color:'#7a7164'},grid:{color:'#e0d9ce'},min:0,max:11},
+      y:{title:{display:true,text:'ราคาต่อใบ (บาท)',font:{size:12,weight:'bold',family:'Sarabun'},color:'#6d5c3e'},
+        ticks:{color:'#7a7164'},grid:{color:'#e0d9ce'},min:70,max:130,reverse:false}
+    }
+  },
+  plugins:[{
+    id:'sweetSpot',
+    afterDraw(chart){
+      const ctx=chart.ctx;
+      const xS=chart.scales.x;
+      const yS=chart.scales.y;
+      // Draw "sweet spot" zone
+      ctx.save();
+      ctx.fillStyle='rgba(34,197,94,0.06)';
+      ctx.strokeStyle='#22c55e40';
+      ctx.lineWidth=1;
+      ctx.setLineDash([4,4]);
+      const x1=xS.getPixelForValue(7),x2=xS.getPixelForValue(11);
+      const y1=yS.getPixelForValue(95),y2=yS.getPixelForValue(108);
+      ctx.fillRect(x1,y1,x2-x1,y2-y1);
+      ctx.strokeRect(x1,y1,x2-x1,y2-y1);
+      ctx.fillStyle='#22c55e';
+      ctx.font='bold 11px Sarabun';
+      ctx.fillText('Sweet Spot: สะดวก + ราคาแข่งแผงได้',x1+4,y1-4);
+      ctx.restore();
+    }
+  }]
+});
+
+// Scenario Matrix — scatter/bubble showing Users × AOV = 10M paths
+new Chart(document.getElementById('scenarioMatrix'),{
+  type:'bubble',
+  data:{
+    datasets:[
+      {label:'ปัจจุบัน (2569)',data:[{x:611,y:10.5,r:18}],backgroundColor:'#dc262680',borderColor:'#dc2626',borderWidth:2},
+      {label:'A: Win Back Users',data:[{x:950,y:10.5,r:20}],backgroundColor:'#3b82f680',borderColor:'#3b82f6',borderWidth:2},
+      {label:'B: Push AOV',data:[{x:611,y:16.4,r:20}],backgroundColor:'#8b5cf680',borderColor:'#8b5cf6',borderWidth:2},
+      {label:'C: Balanced (แนะนำ)',data:[{x:800,y:12.5,r:22}],backgroundColor:'#0d948880',borderColor:'#0d9488',borderWidth:3},
+      {label:'D: Power Users',data:[{x:770,y:13,r:20}],backgroundColor:'#d9770680',borderColor:'#d97706',borderWidth:2},
+      {label:'Peak (ก.ค. 68)',data:[{x:947,y:7.4,r:16}],backgroundColor:'#64748b40',borderColor:'#94a3b8',borderWidth:1,borderDash:[4,4]},
+      {label:'Best Draw (เม.ย. 67)',data:[{x:452,y:15.8,r:16}],backgroundColor:'#64748b40',borderColor:'#94a3b8',borderWidth:1,borderDash:[4,4]},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:11,family:'Sarabun'},usePointStyle:true,padding:12}},
+      tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.raw.x}K users × AOV ${ctx.raw.y} = ${(ctx.raw.x*1000*ctx.raw.y/1e6).toFixed(1)}M ใบ`}}
+    },
+    scales:{
+      x:{title:{display:true,text:'Users (พันคน)',font:{size:13,weight:'bold',family:'Sarabun'},color:'#6d5c3e'},
+        ticks:{color:'#7a7164',callback:v=>v+'K'},grid:{color:'#e0d9ce'},min:300,max:1050},
+      y:{title:{display:true,text:'AOV (ใบ/คน)',font:{size:13,weight:'bold',family:'Sarabun'},color:'#6d5c3e'},
+        ticks:{color:'#7a7164'},grid:{color:'#e0d9ce'},min:5,max:20}
+    },
+    // Draw 10M isoline
+  },
+  plugins:[{
+    id:'isoline',
+    afterDraw(chart){
+      const ctx=chart.ctx;
+      const xScale=chart.scales.x;
+      const yScale=chart.scales.y;
+      ctx.save();
+      ctx.strokeStyle='#22c55e60';
+      ctx.lineWidth=2;
+      ctx.setLineDash([8,4]);
+      ctx.beginPath();
+      for(let u=400;u<=1050;u+=5){
+        const aov=10000000/(u*1000);
+        if(aov>=5&&aov<=20){
+          const px=xScale.getPixelForValue(u);
+          const py=yScale.getPixelForValue(aov);
+          if(u===400)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+        }
+      }
+      ctx.stroke();
+      // Label
+      const lx=xScale.getPixelForValue(980);
+      const ly=yScale.getPixelForValue(10000000/980000);
+      ctx.fillStyle='#22c55e';
+      ctx.font='bold 12px Sarabun';
+      ctx.fillText('10M Line',lx+5,ly-8);
+      ctx.restore();
+    }
+  }]
+});
+
+// Waterfall chart
+new Chart(document.getElementById('waterfallChart'),{
+  type:'bar',
+  data:{
+    labels:['ปัจจุบัน','Re-engage\nUsers','ขยาย AOV\n(Bundle)','Subscription\nAuto-buy','New Users\n(ต่างจังหวัด)','UX\nOptimize','รวม'],
+    datasets:[{
+      label:'ใบ/งวด (M)',
+      data:[6.4,2.0,1.6,1.5,1.2,0.8,13.5],
+      backgroundColor:['#64748b','#dc2626','#059669','#8b5cf6','#ec4899','#f97316','#22c55e'],
+      borderColor:['#475569','#b91c1c','#047857','#7c3aed','#db2777','#ea580c','#16a34a'],
+      borderWidth:2,
+      borderRadius:6,
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>{
+        if(ctx.dataIndex===0)return 'ปัจจุบัน: '+ctx.raw+'M ใบ/งวด';
+        if(ctx.dataIndex===6)return 'รวมถ้าทำครบ: '+ctx.raw+'M ใบ/งวด';
+        return '+'+ctx.raw+'M ใบ/งวด';
+      }}}
+    },
+    scales:{
+      x:{ticks:{color:'#6d5c3e',font:{size:11,weight:'bold',family:'Sarabun'}},grid:{display:false}},
+      y:{ticks:{color:'#7a7164',callback:v=>v+'M'},grid:{color:'#e0d9ce'},min:0,max:16,
+        title:{display:true,text:'ใบ/งวด (ล้าน)',font:{size:12,family:'Sarabun'},color:'#6d5c3e'}}
+    }
+  },
+  plugins:[{
+    id:'targetLine',
+    afterDraw(chart){
+      const ctx=chart.ctx;
+      const yScale=chart.scales.y;
+      const py=yScale.getPixelForValue(10);
+      ctx.save();
+      ctx.strokeStyle='#dc2626';
+      ctx.lineWidth=2;
+      ctx.setLineDash([8,4]);
+      ctx.beginPath();
+      ctx.moveTo(chart.chartArea.left,py);
+      ctx.lineTo(chart.chartArea.right,py);
+      ctx.stroke();
+      ctx.fillStyle='#dc2626';
+      ctx.font='bold 12px Sarabun';
+      ctx.fillText('เป้า 10M ขั้นต่ำ',chart.chartArea.right-100,py-8);
+      ctx.restore();
+    }
+  }]
+});
+</script>
+
+</body>
+</html>
