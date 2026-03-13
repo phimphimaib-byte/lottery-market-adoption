@@ -699,11 +699,12 @@ export default function GlobeView({ customers = [], onSelectProvince, onSelectRe
       )}
 
       <button
-        className="gesture-toggle-btn"
+        className={`gesture-toggle-btn${isTracking ? ' active' : ''}`}
         onClick={isTracking ? stop : start}
         disabled={isLoading}
+        title={isTracking ? 'ปิดท่ามือ' : 'เปิดท่ามือ'}
       >
-        {isLoading ? '⏳ กำลังโหลด...' : isTracking ? '🖐️ ON' : '🖐️ OFF'}
+        {isLoading ? '⏳' : '🖐️'}
       </button>
 
       <div className={`webcam-preview ${isTracking ? 'visible' : ''}`}>

@@ -216,24 +216,60 @@
     </div>
   </div>
 
-  <!-- Sources table -->
+  <!-- Sources cards -->
   <div class="chart-section">
     <h3>แหล่งข้อมูล — มูลค่าตลาด</h3>
-    <div class="tbl-wrap">
-      <table>
-        <tr><th>Data Point</th><th>Value</th><th>Year</th><th>Source</th><th>Confidence</th></tr>
-        <tr><td>รายได้รวม GLO</td><td>174,000 ล้านบาท</td><td>2567</td><td>Bangkok Post</td><td><span class="badge b-high">High</span></td></tr>
-        <tr><td>กำไรสุทธิ GLO</td><td>7,040 ล้านบาท</td><td>2567</td><td>Bangkok Post</td><td><span class="badge b-high">High</span></td></tr>
-        <tr><td>นำส่งรายได้รัฐ</td><td>50,800 ล้านบาท</td><td>2567</td><td>Bangkok Post</td><td><span class="badge b-high">High</span></td></tr>
-        <tr><td>นำส่งรัฐสะสม 5 ปี</td><td>240,000 ล้านบาท</td><td>2562-2566</td><td>Wealthy Thai</td><td><span class="badge b-high">High</span></td></tr>
-        <tr><td>สลากขายทั้งปี</td><td>2.47 พันล้านใบ</td><td>2567</td><td>Bangkok Post</td><td><span class="badge b-high">High</span></td></tr>
-        <tr><td>สลาก L6 / งวด (GLO)</td><td>107 ล้านใบ (78+29)</td><td>2569</td><td>สำนักงานสลาก</td><td><span class="badge b-high">High</span></td></tr>
-        <tr><td>สลากกระดาษ / งวด</td><td>78 ล้านใบ</td><td>2569</td><td>สำนักงานสลาก</td><td><span class="badge b-high">High</span></td></tr>
-        <tr><td>สลากดิจิทัล เป๋าตัง / งวด</td><td>29 ล้านใบ</td><td>2569</td><td>สำนักงานสลาก</td><td><span class="badge b-high">High</span></td></tr>
-        <tr><td>LotteryPlus เป้า / งวด</td><td>10 ล้านใบ (ซื้อใบ→ขายดิจิทัล)</td><td>2569</td><td>User data</td><td><span class="badge b-high">High</span></td></tr>
-        <tr><td>ตลาดหวยใต้ดิน</td><td>~164,000 ล้านบาท</td><td>ล่าสุด</td><td>Nation Thailand</td><td><span class="badge b-med">Medium</span></td></tr>
-        <tr><td>เศรษฐกิจการพนันใต้ดินรวม</td><td>1.1 ล้านล้านบาท/ปี</td><td>2567</td><td>Nation Thailand</td><td><span class="badge b-med">Medium</span></td></tr>
-      </table>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px">
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #2563eb">
+        <div style="font-size:11px;color:#8a7e6e;font-weight:600">รายได้รวม GLO</div>
+        <div style="font-size:22px;font-weight:800;color:#2563eb;margin:4px 0">174,000</div>
+        <div style="font-size:11px;color:#8a7e6e">ล้านบาท · 2567 · Bangkok Post</div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #059669">
+        <div style="font-size:11px;color:#8a7e6e;font-weight:600">กำไรสุทธิ GLO</div>
+        <div style="font-size:22px;font-weight:800;color:#059669;margin:4px 0">7,040</div>
+        <div style="font-size:11px;color:#8a7e6e">ล้านบาท · 2567 · Bangkok Post</div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #8b5cf6">
+        <div style="font-size:11px;color:#8a7e6e;font-weight:600">นำส่งรายได้รัฐ</div>
+        <div style="font-size:22px;font-weight:800;color:#8b5cf6;margin:4px 0">50,800</div>
+        <div style="font-size:11px;color:#8a7e6e">ล้านบาท · 2567 · Bangkok Post</div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #c026d3">
+        <div style="font-size:11px;color:#8a7e6e;font-weight:600">นำส่งรัฐสะสม 5 ปี</div>
+        <div style="font-size:22px;font-weight:800;color:#c026d3;margin:4px 0">240,000</div>
+        <div style="font-size:11px;color:#8a7e6e">ล้านบาท · 2562-2566 · Wealthy Thai</div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #f97316">
+        <div style="font-size:11px;color:#8a7e6e;font-weight:600">สลากขายทั้งปี</div>
+        <div style="font-size:22px;font-weight:800;color:#f97316;margin:4px 0">2.47 พันล้าน</div>
+        <div style="font-size:11px;color:#8a7e6e">ใบ · 2567 · Bangkok Post</div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #0891b2">
+        <div style="font-size:11px;color:#8a7e6e;font-weight:600">สลาก L6 / งวด</div>
+        <div style="font-size:22px;font-weight:800;color:#0891b2;margin:4px 0">107 ล้านใบ</div>
+        <div style="font-size:11px;color:#8a7e6e">กระดาษ 78M + ดิจิทัล 29M · 2569</div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #6366f1">
+        <div style="font-size:11px;color:#8a7e6e;font-weight:600">สลากดิจิทัล เป๋าตัง</div>
+        <div style="font-size:22px;font-weight:800;color:#6366f1;margin:4px 0">29 ล้านใบ</div>
+        <div style="font-size:11px;color:#8a7e6e">ต่องวด · 2569 · สำนักงานสลาก</div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #0d9488">
+        <div style="font-size:11px;color:#8a7e6e;font-weight:600">LotteryPlus เป้า</div>
+        <div style="font-size:22px;font-weight:800;color:#0d9488;margin:4px 0">10 ล้านใบ</div>
+        <div style="font-size:11px;color:#8a7e6e">ต่องวด (ซื้อใบ→ขายดิจิทัล) · 2569</div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #dc2626">
+        <div style="font-size:11px;color:#8a7e6e;font-weight:600">ตลาดหวยใต้ดิน</div>
+        <div style="font-size:22px;font-weight:800;color:#dc2626;margin:4px 0">~164,000</div>
+        <div style="font-size:11px;color:#8a7e6e">ล้านบาท · Nation Thailand</div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #b91c1c">
+        <div style="font-size:11px;color:#8a7e6e;font-weight:600">เศรษฐกิจพนันใต้ดินรวม</div>
+        <div style="font-size:22px;font-weight:800;color:#b91c1c;margin:4px 0">1.1 ล้านล้าน</div>
+        <div style="font-size:11px;color:#8a7e6e">บาท/ปี · 2567 · Nation Thailand</div>
+      </div>
     </div>
   </div>
 </div>
@@ -611,12 +647,12 @@
       <div class="insight-card" style="border-left:4px solid #f97316">
         <div class="i-num">03</div>
         <h4 style="color:#f97316">ตัวแทนกระดาษ = Supplier ให้ LotteryPlus</h4>
-        <p>ตัวแทนกระดาษ 165,988 ราย บางส่วนจะเปลี่ยนจาก "ขายเอง" เป็น "ขายให้ LotteryPlus" — รายได้ไม่หาย แต่เปลี่ยนบทบาท</p>
+        <p>ตัวแทนกระดาษ 165,988 ราย บางส่วนจะเปลี่ยนจาก "ขายเอง" เป็น "ขายให้ LotteryPlus" — รายได้ไม่หาย แต่เปลี่ยนบทบาท<br><br><strong style="color:#dc2626">หมายเหตุ:</strong> สำนักงานสลากไม่อนุญาตอย่างเป็นทางการให้ตัวแทนนำสลากมาให้ LotteryPlus ขาย (มีความผิด) แต่ในทางปฏิบัติยังไม่มีการบังคับใช้จริง</p>
       </div>
       <div class="insight-card" style="border-left:4px solid #8b5cf6">
         <div class="i-num">04</div>
-        <h4 style="color:#8b5cf6">แข่งด้วยราคา 80 บาท</h4>
-        <p>LotteryPlus ขายราคา 80 บาท เท่ากับเป๋าตัง แต่แข่งกับตลาดกระดาษที่ขาย 100-120 บาท — ดึงคนจากกระดาษสู่ดิจิทัล</p>
+        <h4 style="color:#8b5cf6">แข่งด้วยราคา 105 บาท</h4>
+        <p>LotteryPlus ขายราคา 105 บาท (80 + ค่าบริการ 25) แพงกว่าเป๋าตัง แต่ยัง "ถูกกว่าแผง" ที่ขาย 100-120 บาท พร้อมความสะดวกเลือกเลขได้ — ดึงคนจากกระดาษสู่ดิจิทัล</p>
       </div>
       <div class="insight-card" style="border-left:4px solid #ec4899">
         <div class="i-num">05</div>
@@ -1577,25 +1613,153 @@
     </div>
   </div>
 
+  <!-- ── SUPPLY SQUEEZE ANALYSIS ── -->
+  <div class="chart-section" style="background:linear-gradient(135deg,#fef2f2,#fff1f2);border:2px solid #fca5a5">
+    <h3 style="color:#dc2626">วิเคราะห์: สลากใบหดตัว — LotteryPlus จะหาของขายได้ไหม?</h3>
+    <p style="font-size:14px;color:#78716c;line-height:1.8;margin-bottom:16px">
+      LotteryPlus พึ่งพาสลากใบ 100% — ถ้า GLO เพิ่มสลากดิจิทัลและลดกระดาษ + ตัวแทนบางส่วนไม่ยอมขายให้<br>
+      คำถามสำคัญ: <strong style="color:#dc2626">supply จะพอรองรับการเติบโตหรือไม่?</strong>
+    </p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px">
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #6366f1">
+        <div style="font-size:11px;color:#8a7e6e;font-weight:600">ตัวแทนกระดาษทั้งหมด</div>
+        <div style="font-size:22px;font-weight:800;color:#6366f1">165,988</div>
+        <div style="font-size:11px;color:#8a7e6e">ราย (GLO จัดสรรโควตาให้)</div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #f97316">
+        <div style="font-size:11px;color:#8a7e6e;font-weight:600">ตัวแทนที่ขายให้ LP (ประมาณ)</div>
+        <div style="font-size:22px;font-weight:800;color:#f97316">~30%</div>
+        <div style="font-size:11px;color:#8a7e6e">~50,000 ราย · ที่เหลือขายเองหรือไม่ยอมขาย</div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #dc2626">
+        <div style="font-size:11px;color:#8a7e6e;font-weight:600">ความเสี่ยงจาก GLO</div>
+        <div style="font-size:22px;font-weight:800;color:#dc2626">ไม่อนุญาต</div>
+        <div style="font-size:11px;color:#8a7e6e">สำนักงานสลากห้ามตัวแทนขายให้ LP อย่างเป็นทางการ</div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:16px;border-left:4px solid #059669">
+        <div style="font-size:11px;color:#8a7e6e;font-weight:600">สถานการณ์จริง</div>
+        <div style="font-size:22px;font-weight:800;color:#059669">ยังไม่บังคับ</div>
+        <div style="font-size:11px;color:#8a7e6e">ในทางปฏิบัติยังไม่มีการลงโทษจริง</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap tall">
+      <canvas id="supplySqueezeChart"></canvas>
+    </div>
+
+    <!-- Year-by-year crisis timeline -->
+    <div style="margin-top:20px;padding:20px;background:linear-gradient(135deg,#fef2f2,#fff1f2);border-radius:12px;border:2px solid #fca5a5">
+      <h4 style="color:#dc2626;margin-bottom:12px;font-size:15px">📅 จุดวิกฤตอยู่ช่วงไหน? (วิเคราะห์ 5–10 ปี)</h4>
+      <div style="display:grid;gap:8px;font-size:13px;color:#334155;line-height:1.8">
+        <div style="padding:10px 14px;background:#fff;border-radius:8px;border-left:4px solid #22c55e">
+          <strong style="color:#22c55e">2569–2571 (ปีที่ 1–3): ปลอดภัย ✅</strong><br>
+          กระดาษยังเหลือ 57–67M ใบ · แม้ตัวแทน 20% ก็ได้ supply 11–13M → พอสำหรับเป้า 10M ขั้นต่ำ<br>
+          <em>ช่วงนี้ควรเร่งสร้าง network ตัวแทนให้แข็งแกร่ง</em>
+        </div>
+        <div style="padding:10px 14px;background:#fff;border-radius:8px;border-left:4px solid #f59e0b">
+          <strong style="color:#f59e0b">2572–2573 (ปีที่ 4–5): เริ่มตึง ⚠️</strong><br>
+          กระดาษเหลือ 48–52M · ตัวแทน 20% → supply 9.6–10.4M · <strong>พอดีเป้า 10M แต่ไม่มี buffer</strong><br>
+          ถ้าต้องการโต 13–14M → <span style="color:#dc2626;font-weight:700">supply ขาด 3–4M ใบ</span><br>
+          <em>จุดตัดสินใจ: ต้องขยายฐานตัวแทนหรือเตรียม pivot ก่อนปี 2572</em>
+        </div>
+        <div style="padding:10px 14px;background:#fff;border-radius:8px;border-left:4px solid #dc2626">
+          <strong style="color:#dc2626">2574–2575 (ปีที่ 6–7): จุดวิกฤตจริง 🚨</strong><br>
+          กระดาษเหลือ 40–44M · ตัวแทน 20% → supply 8–8.8M · <strong style="color:#dc2626">ไม่พอแม้แต่เป้า 10M ขั้นต่ำ</strong><br>
+          ตัวแทน 30% → supply 12–13M ยังพอ แต่ถ้า GLO เริ่มบังคับ → ลดเหลือ 10% → <span style="color:#dc2626">supply 4–4.4M เท่านั้น</span><br>
+          <em>ถ้ายังไม่มีทางออก ณ จุดนี้ = ถึงเพดานการเติบโต</em>
+        </div>
+        <div style="padding:10px 14px;background:#fff;border-radius:8px;border-left:4px solid #7c3aed">
+          <strong style="color:#7c3aed">2576–2578 (ปีที่ 8–10): ต้องเปลี่ยนโมเดลแล้ว 🔄</strong><br>
+          กระดาษเหลือ 30–36M · แม้ตัวแทน 30% ก็ได้แค่ 9–10.8M → <strong>ไม่พอสำหรับเป้า 16–18M</strong><br>
+          LP ต้อง pivot ไป model ใหม่ (marketplace / ผลิตภัณฑ์อื่นที่ไม่พึ่ง GLO) ก่อนหน้านี้ <strong>อย่างน้อย 2–3 ปี</strong>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding:14px;background:#1e293b;border-radius:10px;color:#e2e8f0;font-size:14px;line-height:1.8">
+        <strong style="color:#fbbf24">🎯 สรุป: จุดวิกฤตจริง = ปี 2574–2575 (อีก 6–7 ปี)</strong><br>
+        <span style="color:#94a3b8">• ปี 2572–2573 เริ่มตึง (supply พอดีเป้า 10M ไม่มี room เติบโต)</span><br>
+        <span style="color:#94a3b8">• ปี 2574–2575 วิกฤตจริง (supply ไม่พอแม้เป้าขั้นต่ำ ถ้าตัวแทนลดเหลือ 20%)</span><br>
+        <span style="color:#94a3b8">• ปี 2576+ ต้องเปลี่ยนโมเดลแล้ว ไม่ว่า scenario ใด</span><br>
+        <span style="color:#fbbf24;font-weight:700">→ LotteryPlus มีเวลา 4–5 ปี (ถึง 2573) ในการเตรียมทางออก</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supply Squeeze Scenarios -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:16px 0">
+    <div class="chart-section" style="margin:0;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:2px solid #86efac">
+      <h3 style="color:#059669;font-size:15px">Best Case: ตัวแทน 30% ยังขายให้ LP</h3>
+      <p style="font-size:13px;color:#64748b;line-height:1.8">
+        ถ้าตัวแทน ~50,000 ราย ยังยอมขายให้ LotteryPlus<br>
+        แม้ GLO ลดกระดาษเหลือ 68M (ปี 2574)<br>
+        <strong>Supply ≈ 20M+ ใบ → เหลือเฟือ</strong> สำหรับเป้า 16M<br><br>
+        <span style="color:#059669;font-weight:700">สรุป: ไม่มีปัญหา supply</span>
+      </p>
+    </div>
+    <div class="chart-section" style="margin:0;background:linear-gradient(135deg,#fffbeb,#fef3c7);border:2px solid #fcd34d">
+      <h3 style="color:#d97706;font-size:15px">Base Case: ตัวแทนลดเหลือ 20%</h3>
+      <p style="font-size:13px;color:#64748b;line-height:1.8">
+        GLO กดดันมากขึ้น + ตัวแทนบางส่วนถอยออก<br>
+        เหลือ ~33,000 ราย ขายให้ LP<br>
+        กระดาษ 68M → <strong>Supply ≈ 13.6M ใบ</strong><br><br>
+        <span style="color:#d97706;font-weight:700">สรุป: ไม่พอ! ขาดอีก 2.4M สำหรับเป้า 16M</span><br>
+        แต่ยังพอสำหรับ 10M ขั้นต่ำ
+      </p>
+    </div>
+    <div class="chart-section" style="margin:0;background:linear-gradient(135deg,#fef2f2,#fee2e2);border:2px solid #fca5a5">
+      <h3 style="color:#dc2626;font-size:15px">Worst Case: GLO บังคับใช้จริง</h3>
+      <p style="font-size:13px;color:#64748b;line-height:1.8">
+        ถ้า GLO เริ่มลงโทษตัวแทนที่ขายให้ LP จริง<br>
+        ตัวแทนลดเหลือ 10-15% (~20,000 ราย)<br>
+        <strong>Supply ≈ 8-10M ใบ</strong><br><br>
+        <span style="color:#dc2626;font-weight:700">สรุป: LP ถึงเพดาน ~8-10M ไม่โตต่อ</span><br>
+        ต้องหาทางออกใหม่ (ดูด้านล่าง)
+      </p>
+    </div>
+  </div>
+
+  <!-- Exit Strategy -->
+  <div class="chart-section" style="background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:2px solid #7dd3fc">
+    <h3 style="color:#0369a1">ทางออก: ถ้า supply สลากใบไม่พอ</h3>
+    <div class="insight-grid">
+      <div class="insight-card" style="border-left:4px solid #f97316">
+        <h4 style="color:#f97316">1. สร้าง Network ตัวแทนที่แข็งแกร่ง</h4>
+        <p>Lock-in ตัวแทนด้วยสัญญาระยะยาว + ราคารับซื้อที่ดีกว่าตลาด ให้ตัวแทนมีแรงจูงใจขายให้ LP แม้ GLO กดดัน<br><strong>โอกาส:</strong> ถ้ารับซื้อสูงกว่าคู่แข่ง ตัวแทนจะเลือก LP · ยิ่งมากรายยิ่งมี supply เสถียร</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #8b5cf6">
+        <h4 style="color:#8b5cf6">2. ขยายไปผลิตภัณฑ์หวยอื่นที่ไม่พึ่ง GLO</h4>
+        <p>หวยหุ้น, หวยต่างประเทศ, เกม prediction ที่ถูกกฎหมาย — ใช้ฐานลูกค้า 600K+ users ขายผลิตภัณฑ์ใหม่<br><strong>โอกาส:</strong> ลด dependency จากสลาก GLO ทั้งหมด · สร้างรายได้หลายช่องทาง</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #059669">
+        <h4 style="color:#059669">3. เป็น Marketplace ให้ตัวแทนขายเอง</h4>
+        <p>แทนที่ LP ซื้อมาขาย → เปิดให้ตัวแทนตั้งร้านบน platform แล้ว LP เก็บค่า commission<br><strong>โอกาส:</strong> ไม่ต้องแบกสต็อก · ตัวแทนได้ลูกค้าดิจิทัล · LP ได้ค่าธรรมเนียมไม่มีความเสี่ยง</p>
+      </div>
+      <div class="insight-card" style="border-left:4px solid #2563eb">
+        <h4 style="color:#2563eb">4. Monetize ฐานลูกค้า (Beyond Lottery)</h4>
+        <p>ใช้ user base เป็น asset — เพิ่มบริการทางการเงิน (ประกัน, ออมทอง, สินเชื่อ) หรือ advertising platform<br><strong>โอกาส:</strong> แม้สลากใบหมด ฐานลูกค้ายังมีค่า · รายได้ไม่ผูกกับ supply สลาก</p>
+      </div>
+    </div>
+  </div>
+
   <!-- ── RISK & DEPENDENCY ── -->
   <div class="chart-section">
     <h3>ความเสี่ยง & สิ่งที่ต้องระวัง</h3>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
       <div class="insight-card" style="border-left:4px solid #dc2626">
-        <h4 style="color:#dc2626">Supply Constraint</h4>
-        <p>ถ้าขยาย users/AOV ได้แต่ไม่มีสลากใบพอขาย → คอขวด<br><strong>แก้:</strong> ขยาย supplier network ล่วงหน้า ก่อน demand มา</p>
+        <h4 style="color:#dc2626">Supply Squeeze (ความเสี่ยงหลัก)</h4>
+        <p>GLO เพิ่มดิจิทัล → กระดาษลด → LP หาของขายยากขึ้น + ตัวแทนบางส่วนไม่ขายให้อยู่แล้ว + GLO ไม่อนุญาตอย่างเป็นทางการ<br><strong>จุดวิกฤต:</strong> ถ้าตัวแทนที่ขายให้ลดเหลือ 20% และกระดาษเหลือ 68M → supply ไม่พอเป้า 16M<br><strong>แก้:</strong> Lock-in ตัวแทน + ขยายไปผลิตภัณฑ์อื่นที่ไม่พึ่ง GLO + เปลี่ยนเป็น marketplace model</p>
       </div>
       <div class="insight-card" style="border-left:4px solid #f97316">
-        <h4 style="color:#f97316">นโยบาย GLO</h4>
-        <p>GLO อาจปรับกฎจำกัดการซื้อสลากใบไปขายดิจิทัล<br><strong>แก้:</strong> สร้างความสัมพันธ์กับ GLO แสดงว่า win-win (ช่วยลดราคาเกิน 80 บาท)</p>
+        <h4 style="color:#f97316">นโยบาย GLO เปลี่ยน</h4>
+        <p>ถ้า GLO เริ่มบังคับใช้กฎ "ห้ามตัวแทนขายให้ LP" จริง → supply หายทันที<br><strong>แก้:</strong> Lock-in ตัวแทนให้แน่น + เตรียม pivot ไป model อื่นที่ไม่พึ่งสลากใบ</p>
       </div>
       <div class="insight-card" style="border-left:4px solid #8b5cf6">
         <h4 style="color:#8b5cf6">คู่แข่ง</h4>
-        <p>Platform อื่นอาจใช้ model เดียวกัน (ซื้อใบ→ขายดิจิทัล)<br><strong>แก้:</strong> First-mover advantage + lock-in suppliers ด้วย exclusive deals</p>
+        <p>Platform อื่นอาจใช้ model เดียวกัน (ซื้อใบ→ขายดิจิทัล) มาแย่งตัวแทน<br><strong>แก้:</strong> First-mover advantage + lock-in suppliers ด้วย exclusive deals</p>
       </div>
       <div class="insight-card" style="border-left:4px solid #059669">
         <h4 style="color:#059669">Margin Pressure</h4>
-        <p>ซื้อสลากใบ 80 บาท ขาย 80 บาท → margin จาก commission เท่านั้น<br><strong>แก้:</strong> Volume play + ข้อตกลงซื้อขั้นต่ำจากตัวแทนในราคาพิเศษ</p>
+        <p>ซื้อสลากใบ 80 บาท + ค่าบริการ 25 = ขาย 105 บาท margin บาง<br><strong>แก้:</strong> Volume play + ข้อตกลงซื้อขั้นต่ำจากตัวแทนในราคาพิเศษ</p>
       </div>
     </div>
   </div>
@@ -2399,6 +2563,123 @@ new Chart(document.getElementById('scenarioMatrix'),{
     }
   }]
 });
+
+// Supply Squeeze Timeline Chart — จุดวิกฤตปีไหน?
+(function(){
+  // Assumptions:
+  // GLO total print: 100M (2569) → ลดลงปีละ ~4-5M เมื่อดิจิทัลโต
+  // Digital share: 39% (2570) → 48% (2572) → 60% (2575) → 70% (2578)
+  // Paper = total × (1 - digital%)
+  // LP demand grows: 10M (2570) → 13M (2572) → 16M (2575) → 18M (2578)
+  const years = ['2569','2570','2571','2572','2573','2574','2575','2576','2577','2578'];
+  const totalPrint = [100,100,100,100,100,100,100,100,100,100]; // GLO total stays ~100M
+  const digitalPct = [0.33,0.39,0.43,0.48,0.52,0.56,0.60,0.64,0.67,0.70];
+  const paper = totalPrint.map((t,i)=>Math.round(t*(1-digitalPct[i])));
+  // paper = [67, 61, 57, 52, 48, 44, 40, 36, 33, 30]
+
+  // LP target demand (growth path)
+  const lpDemand = [8.5, 10, 11.5, 13, 14, 15, 16, 16.5, 17, 18];
+
+  // Supply = paper × agent% × tickets-per-agent-ratio
+  // Each agent gets ~600 tickets/draw, ~166K agents
+  // supply30 = paper (M) × 30% (best case)
+  const supply30 = paper.map(p=>+(p*0.30).toFixed(1));
+  // supply20 = paper (M) × 20% (base case)
+  const supply20 = paper.map(p=>+(p*0.20).toFixed(1));
+  // supply10 = paper (M) × 10% (worst case - GLO enforce)
+  const supply10 = paper.map(p=>+(p*0.10).toFixed(1));
+
+  new Chart(document.getElementById('supplySqueezeChart'),{
+    type:'line',
+    data:{
+      labels:years,
+      datasets:[
+        {
+          label:'LP Demand (เป้าหมาย)',
+          data:lpDemand,
+          borderColor:'#dc2626',
+          backgroundColor:'#dc262620',
+          borderWidth:3,
+          borderDash:[8,4],
+          pointRadius:5,
+          pointBackgroundColor:'#dc2626',
+          fill:false,
+          tension:0.3
+        },
+        {
+          label:'Supply (30% agents — Best)',
+          data:supply30,
+          borderColor:'#22c55e',
+          backgroundColor:'#22c55e15',
+          borderWidth:2.5,
+          pointRadius:4,
+          pointBackgroundColor:'#22c55e',
+          fill:true,
+          tension:0.3
+        },
+        {
+          label:'Supply (20% agents — Base)',
+          data:supply20,
+          borderColor:'#f59e0b',
+          backgroundColor:'#f59e0b15',
+          borderWidth:2.5,
+          pointRadius:4,
+          pointBackgroundColor:'#f59e0b',
+          fill:true,
+          tension:0.3
+        },
+        {
+          label:'Supply (10% agents — Worst)',
+          data:supply10,
+          borderColor:'#ef4444',
+          backgroundColor:'#ef444415',
+          borderWidth:2.5,
+          pointRadius:4,
+          pointBackgroundColor:'#ef4444',
+          fill:true,
+          tension:0.3
+        }
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{labels:{color:'#6d5c3e',font:{size:12,family:'Sarabun',weight:'bold'}}},
+        tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.raw+'M ใบ'}}
+      },
+      scales:{
+        x:{ticks:{color:'#6d5c3e',font:{size:12,weight:'bold',family:'Sarabun'}},grid:{display:false},
+          title:{display:true,text:'ปี พ.ศ.',font:{size:12,family:'Sarabun'},color:'#6d5c3e'}},
+        y:{ticks:{color:'#7a7164',callback:v=>v+'M'},grid:{color:'#e0d9ce40'},min:0,max:25,
+          title:{display:true,text:'จำนวนสลาก (ล้านใบ/งวด)',font:{size:12,family:'Sarabun'},color:'#6d5c3e'}}
+      }
+    },
+    plugins:[{
+      id:'crisisZone',
+      afterDraw(chart){
+        const ctx=chart.ctx;
+        const xScale=chart.scales.x;
+        const yScale=chart.scales.y;
+        // Find where demand crosses supply20 line
+        // Mark crisis zone
+        ctx.save();
+        ctx.fillStyle='#dc262608';
+        // shade area where demand > supply20 (from ~2573 onward)
+        const x2573=xScale.getPixelForValue(4); // index 4 = 2573
+        ctx.fillRect(x2573,chart.chartArea.top,chart.chartArea.right-x2573,chart.chartArea.bottom-chart.chartArea.top);
+        // Label
+        ctx.fillStyle='#dc2626';
+        ctx.font='bold 13px Sarabun';
+        ctx.textAlign='center';
+        const midX=(x2573+chart.chartArea.right)/2;
+        ctx.fillText('⚠ DANGER ZONE',midX,chart.chartArea.top+20);
+        ctx.font='11px Sarabun';
+        ctx.fillText('Demand > Supply (Base Case)',midX,chart.chartArea.top+36);
+        ctx.restore();
+      }
+    }]
+  });
+})();
 
 // Waterfall chart
 new Chart(document.getElementById('waterfallChart'),{
